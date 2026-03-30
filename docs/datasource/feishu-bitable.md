@@ -1,10 +1,18 @@
-# Feishu Bitable data source
+# Feishu app + Bitable setup for AIPanel
 
-AIPanel currently uses one shared Feishu Bitable as its source of truth.
+AIPanel currently uses **one shared Feishu Bitable** as its source of truth.
 
-## Canonical runtime env names
+This guide explains what you need before deployment:
 
-Use these environment variable names consistently:
+- a Feishu app
+- app credentials
+- a Bitable app + table
+- correct field schema
+- sufficient permissions for read/write access
+
+## What AIPanel expects
+
+At runtime, the current app expects these canonical env values:
 
 - `FEISHU_APP_ID`
 - `FEISHU_APP_SECRET`
@@ -12,21 +20,182 @@ Use these environment variable names consistently:
 - `FEISHU_BITABLE_TABLE_ID`
 - `FEISHU_BITABLE_SOURCE_URL`
 
-## Temporary private-alpha compatibility aliases
+## 1. Create or choose a Feishu app
 
-To avoid breaking older deployment notes during private alpha, the API also accepts:
+You need a Feishu app that can call Bitable APIs.
 
-- `FEISHU_APP_TOKEN` as a legacy alias for `FEISHU_BITABLE_APP_TOKEN`
-- `FEISHU_TABLE_ID` as a legacy alias for `FEISHU_BITABLE_TABLE_ID`
+From the Feishu Open Platform:
 
-Do not use the legacy names in new docs, examples, or deploy setup. They should disappear in the later open-source cleanup phase.
+1. create an app
+2. record the App ID
+3. record the App Secret
+4. enable the permissions needed for Bitable access
 
-## OpenClaw skill location
+These credentials become:
 
-The project-specific OpenClaw integration lives at:
+- `FEISHU_APP_ID`
+- `FEISHU_APP_SECRET`
 
-- `integrations/openclaw-skill/`
+## 2. Create or choose a Bitable app
 
-The convenience installer lives at:
+Inside Feishu Bitable:
 
-- `integrations/install-scripts/install-openclaw-skill.sh`
+1. create a new Bitable app, or reuse an existing one for AIPanel
+2. create one table for panel records
+3. copy the Bitable URL
+4. extract the app token and table ID
+
+You will use:
+
+- `FEISHU_BITABLE_APP_TOKEN` → the Bitable app token
+- `FEISHU_BITABLE_TABLE_ID` → the specific table ID
+- `FEISHU_BITABLE_SOURCE_URL` → the full Bitable URL for deep links
+
+## 3. Required table fields
+
+The current AIPanel API expects these field names exactly.
+
+| Field name | Expected type | Meaning |
+| --- | --- | --- |
+| `标题` | text | display title |
+| `副标题` | text | subtitle / description |
+| `链接` | url | target URL |
+| `图标` | text | favicon URL or explicit icon URL |
+| `分类` | single select | category name |
+| `排序` | number | order within one category |
+| `分类排序` | number | category order across the whole panel |
+
+If the field names or field types do not match, the app may read or write incorrectly.
+
+## 4. Field behavior and semantics
+
+### `标题`
+
+The visible title shown in the panel.
+
+### `副标题`
+
+A short description or note shown under the title.
+
+### `链接`
+
+The real bookmark URL.
+
+### `图标`
+
+An icon URL. If empty or unusable, the frontend falls back to `/favicon.ico` on the target origin when possible.
+
+### `分类`
+
+Single-select category used to group bookmarks.
+
+### `排序`
+
+Sort order inside one category.
+
+### `分类排序`
+
+Sort order across categories.
+
+This is how AIPanel preserves the category sequence in the UI.
+
+## 5. Placeholder-row behavior
+
+AIPanel currently supports category creation by writing a placeholder row.
+
+Current placeholder values are:
+
+- `标题`: `—`
+- `副标题`: `—`
+- `链接`: `https://placeholder.local`
+- `图标`: empty string
+- `排序`: `0`
+- `分类排序`: append position
+
+Why this exists:
+
+- the current UI derives visible categories from live records
+- a new category needs at least one row to appear immediately
+
+This is acceptable for private alpha. A future public release may choose a cleaner category model.
+
+## 6. Minimum permission expectations
+
+Your Feishu app should be able to:
+
+- obtain a tenant access token
+- read Bitable table records
+- create Bitable records
+- update Bitable records
+- delete Bitable records
+- read table field metadata
+- update field options if category option management is used
+
+If permissions are too narrow, you may see:
+
+- reads work but writes fail
+- category creation fails
+- field-option updates fail
+
+## 7. Data source URL
+
+Set:
+
+- `FEISHU_BITABLE_SOURCE_URL`
+
+This is mainly used for UI deep-linking back to the underlying Feishu data source.
+
+It is not the primary credential, but it is very helpful operationally.
+
+## 8. Canonical env names vs temporary aliases
+
+Use these canonical names in all new setup:
+
+- `FEISHU_BITABLE_APP_TOKEN`
+- `FEISHU_BITABLE_TABLE_ID`
+
+The API still accepts legacy aliases for private-alpha transition safety:
+
+- `FEISHU_APP_TOKEN`
+- `FEISHU_TABLE_ID`
+
+Those aliases should be treated as temporary only.
+
+## 9. What users need before deploy
+
+Before someone can deploy AIPanel successfully, they need all of the following:
+
+- a Feishu account with access to Open Platform
+- a Feishu app with usable credentials
+- a Bitable app and correctly structured table
+- permission for the app to access that Bitable
+- the exact app token and table ID
+- a Vercel project with the matching env vars configured
+
+Without these, the repo may build, but the live panel will not function correctly.
+
+## 10. Recommended validation checklist
+
+Before deploying to Vercel, verify:
+
+- App ID and App Secret are copied correctly
+- Bitable app token is correct
+- table ID is correct
+- field names exactly match the expected Chinese names
+- `分类` is a single-select field
+- `排序` and `分类排序` are number fields
+- the Bitable URL opens correctly for the intended workspace
+
+## 11. OpenClaw relationship
+
+The current OpenClaw skill operates against the same Feishu Bitable data source.
+
+That means:
+
+- agent-side operations and UI-side operations affect the same records
+- the Bitable schema is part of the product contract
+- future public open-source work should clarify which parts are product-specific and which are reusable templates
+
+For that integration story, see:
+
+- [OpenClaw integration](../integrations/openclaw.md)
