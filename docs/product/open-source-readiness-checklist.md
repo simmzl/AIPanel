@@ -19,9 +19,9 @@ This checklist is for moving AIPanel from a working private-alpha repo to a cred
 
 ## 2. Secrets and security hygiene
 
-- [~] Run full repo secrets audit before public release
+- [x] Run a practical first-pass repo secrets audit for current tree and history
 - [x] Verify `.env*` examples contain placeholders only
-- [ ] Review git history for accidentally committed credentials or fixed internal-only endpoints
+- [x] Review git history for accidentally committed credentials or fixed internal-only endpoints
 - [ ] Remove or rotate any leaked identifiers if discovered
 - [~] Keep required envs documented in one place
 - [x] Remove the live debug-write endpoint from the deployed API surface and keep any remaining smoke-test flow local-only
@@ -67,7 +67,7 @@ This checklist is for moving AIPanel from a working private-alpha repo to a cred
 
 ## 7. Community / contribution readiness
 
-- [x] Add `LICENSE` status file / placeholder pending final license selection
+- [x] Add final `LICENSE`
 - [x] Add `CONTRIBUTING.md`
 - [x] Add `.github/ISSUE_TEMPLATE/`
 - [x] Add pull request template
@@ -76,7 +76,7 @@ This checklist is for moving AIPanel from a working private-alpha repo to a cred
 
 ## 8. Technical cleanup before opening the repo
 
-- [~] Review hard-coded product text for internal/private-only language
+- [~] Review hard-coded product text for internal/private-only language and keep trimming where it weakens public presentation
 - [~] Review fixed URLs and example tokens in docs and skill references
 - [x] Decide and document that `integrations/openclaw-skill/` is canonical while `skills/` is rendered/distribution output
 - [ ] Remove stale private-alpha migration notes that do not help public users
@@ -88,7 +88,7 @@ This checklist is for moving AIPanel from a working private-alpha repo to a cred
 - [ ] Prepare release notes for `v0.x`
 - [ ] Define support level: experimental / alpha / beta
 - [ ] Publish demo instance or screenshots-only landing page
-- [ ] Verify installation from a clean machine using docs only
+- [x] Verify installation from a clean machine using docs only
 
 ## Suggested release gate
 

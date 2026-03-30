@@ -143,4 +143,4 @@ That means the next step is **not** a big rewrite.
 
 The next step is a disciplined cleanup and packaging pass.
 
-That cleanup now includes repo contribution scaffolding and a documented first-pass public-release audit, but still needs the actual public-safe code and packaging decisions implemented.
+That cleanup now includes repo contribution scaffolding, a documented first-pass public-release audit, a real license choice, and a scratch-clone validation pass, but it still needs stronger public-facing assets and a few final packaging/policy decisions.

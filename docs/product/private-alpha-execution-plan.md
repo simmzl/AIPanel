@@ -175,8 +175,8 @@ Priority order:
 - [x] Harden `integrations/install-scripts/install-openclaw-skill.sh`
 - [x] Review skill docs for naming consistency
 - [x] Add temporary legacy env compatibility bridge for private alpha
-- [ ] Run `npm run build`
-- [ ] Commit and push open-source-prep infrastructure batch
+- [x] Run `npm run build`
+- [x] Commit and push open-source-prep infrastructure batch
 
 ---
 

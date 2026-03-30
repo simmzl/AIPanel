@@ -2,7 +2,7 @@
 
 Thanks for taking a look.
 
-AIPanel is currently in a **private-alpha / pre-public-release** stage, so contributions are welcome in a pragmatic, low-drama way, but the repo is not fully productized for broad external collaboration yet.
+AIPanel is currently in an **experimental early-release** stage, so contributions are welcome in a pragmatic, low-drama way, but the repo is not fully productized for broad external collaboration yet.
 
 ## Current contribution posture
 
@@ -56,20 +56,20 @@ npm run build
 
 ### Keep changes incremental
 
-AIPanel is in an open-source preparation phase, not a giant architecture rewrite phase.
+AIPanel is in an early public-release hardening phase, not a giant architecture rewrite phase.
 
 Please prefer:
 
 - small PRs
 - explicit docs updates
 - minimal surprise changes
-- preserving current private-alpha usability
+- preserving current self-hosted usability for existing operators
 
 ### Respect current product boundaries
 
 For now, the repo still contains:
 
-- private-alpha-oriented docs
+- some migration-oriented docs
 - a project-specific OpenClaw skill
 - temporary compatibility aliases for older env names
 
@@ -136,8 +136,8 @@ The following areas should generally start with discussion first:
 
 ## License note
 
-The final public-release license has not been chosen yet.
-See `LICENSE` for current status.
+AIPanel is released under the MIT license.
+See `LICENSE` for the full text.
 
 ## Be practical
 

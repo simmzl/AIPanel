@@ -12,17 +12,20 @@ The goal is not to redesign the whole project at once; the goal is to make the c
 - runtime no longer depends on hardcoded fallback Feishu IDs in `api/_lib.ts`
 - `.env.example` and `.env.vercel.local.example` use placeholders only
 - generated build output is gitignored
-- README and deployment docs now explain the repo honestly as pre-public-release
+- README and deployment docs now explain the repo honestly as an experimental early-release candidate
 - OpenClaw integration is documented instead of being hidden tribal knowledge
 - the live debug write path has been moved out of the deployed API surface into a local-only script
 - the OpenClaw skill now has a clearer canonical template source and rendered mirror flow
+- scratch-clone validation succeeded for install, build, render, and installer flows
+- the repo now has a real MIT license instead of a placeholder license-status file
 
 ### What still blocks a clean public release
 
 - the current skill is still AIPanel-shaped rather than fully generic
-- some docs still intentionally reference private-alpha migration behavior and legacy env aliases
-- git history has not yet been audited for past accidental secret leakage
+- some docs still intentionally reference legacy migration behavior and compatibility aliases
+- optional git-history cleanup is still recommended before broader public launch
 - the repo still lacks screenshots / demo assets / architecture diagram polish
+- there is no short public security/reporting note yet
 
 ## First-pass findings by area
 
@@ -38,12 +41,26 @@ Examples checked:
 - `.env.vercel.local.example`
 - runtime env loading in `api/_lib.ts`
 - README + setup docs
+- install/render scripts and checked-in skill mirror
 
-### Still required before public release
+### Git history findings from this pass
 
-- review full git history, not just current files
-- scan for accidentally committed tokens, cookies, secrets, or webhook URLs
-- rotate anything sensitive if history ever contained real values
+A practical history scan did **not** surface obvious live credentials.
+
+It **did** surface older private-deployment residue that should be treated consciously before broad public launch:
+
+- an older checked-in Feishu base URL under `my.feishu.cn`
+- older debug-write examples tied to `panel.simmzl.cn`
+- local machine paths under `/Users/simmzl/...` in historical documentation/examples
+
+These findings are not the same as confirmed secret leakage, but they are still project-specific historical identifiers.
+
+### Recommended remediation posture
+
+- do **not** treat history as perfectly public-clean yet
+- if the repository is about to become broadly public, consider a targeted history rewrite to remove the old private Feishu base URL and historical deployment residue
+- if history is left intact, document that current main is clean enough for evaluation while older history still contains private deployment context
+- continue using placeholder-only env examples in the working tree
 
 ## 2. Hardcoded project-specific identifiers
 
@@ -75,17 +92,17 @@ A local-only replacement now exists at:
 
 That is a safer release-candidate posture because the repo no longer advertises a normal serverless endpoint whose main purpose is to perform a live debug write.
 
-## 3. Private-alpha-only language and migration notes
+## 3. Public-facing wording and migration notes
 
-These are still present across product docs and are mostly intentional for now.
+Migration notes are still present across product docs and are mostly intentional for now.
 
 Examples:
 
 - legacy env alias notes
-- private-alpha rollout framing
+- older rollout framing
 - migration notes for old naming
 
-These are not inherently unsafe, but they should be tightened before public launch so the docs read as product docs instead of internal migration notes.
+These are not inherently unsafe, but they should keep getting tightened so the docs read as product docs instead of internal migration notes.
 
 ## 4. Skill packaging boundary
 
@@ -117,10 +134,10 @@ A future public release may still want a more generic Feishu-Bitable skill plus 
 
 ### High-priority blockers
 
-- choose actual public license text
-- audit git history for leaked secrets
-- reduce or finish removal of lingering private-alpha migration wording in public docs
-- validate clean-machine install flow end to end
+- decide whether to rewrite git history to remove older private deployment residue before broad public launch
+- reduce or finish removal of lingering migration wording in public docs
+- add screenshots / demo visuals / lightweight architecture explanation
+- add a short security reporting path
 - decide whether first public release ships only the rendered AIPanel preset or also a generic reusable template
 
 ### Medium-priority cleanup
@@ -140,7 +157,7 @@ A future public release may still want a more generic Feishu-Bitable skill plus 
 A credible first public release should not ship until:
 
 1. license is finalized
-2. git history audit is done
+2. git history audit is done and its remediation decision is explicit
 3. core docs are validated from a clean machine
 4. skill packaging/install flow is validated end to end
 5. screenshots and basic product visuals are added
@@ -148,8 +165,11 @@ A credible first public release should not ship until:
 ## Practical conclusion
 
 AIPanel is now in a much better documentation and repo-hygiene state than the original private-alpha baseline.
-It is not public-release ready yet, but this pass materially improved the release-candidate shape by:
+It is getting close to a credible experimental first public release candidate, but it is not fully polished yet.
+This pass materially improved the release-candidate shape by:
 
 - removing the live debug-write API surface
 - making the skill packaging story less ambiguous
 - reducing dependence on one checked-in fixed Feishu deployment in the canonical skill source
+- validating the install/build/render flow from a scratch clone
+- replacing the license placeholder with a real MIT license

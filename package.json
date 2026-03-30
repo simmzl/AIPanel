@@ -2,6 +2,7 @@
   "name": "aipanel",
   "private": true,
   "version": "1.0.0",
+  "license": "MIT",
   "type": "module",
   "scripts": {
     "clean": "rm -rf dist tsconfig.app.tsbuildinfo tsconfig.node.tsbuildinfo",
