@@ -13,7 +13,7 @@ const PINNED_KEY = 'homepanel_pinned_ids';
 const RECENT_KEY = 'homepanel_recent_ids';
 const THEME_KEY = 'homepanel_theme_preference';
 const RECENT_LIMIT = 12;
-const DATA_SOURCE_URL = 'https://my.feishu.cn/base/PB5gb73iHaxINIsmbnwcQWSQnSb';
+const DATA_SOURCE_URL = __AIPANEL_FEISHU_BITABLE_SOURCE_URL__;
 
 type ThemePreference = 'system' | 'light' | 'dark';
 type ResolvedTheme = 'light' | 'dark';
@@ -279,7 +279,7 @@ export default function App() {
           <div className="grid gap-6 lg:grid-cols-[minmax(0,1fr)_auto] lg:items-end">
             <div>
               <p className="text-[11px] uppercase tracking-[0.3em] text-[var(--accent-strong)] sm:text-sm sm:tracking-[0.35em]">
-                Personal navigation
+                Agent-first panel
               </p>
               <div className="mt-3 flex items-end justify-between gap-3">
                 <div>
@@ -287,7 +287,7 @@ export default function App() {
                     className="text-[36px] leading-none text-[var(--text-main)] sm:text-5xl lg:text-6xl"
                     style={{ fontFamily: 'Instrument Serif, serif' }}
                   >
-                    HomePanel
+                    AIPanel
                   </h1>
                   {/* <p className="mt-2 max-w-3xl text-[13px] leading-5 text-[#b4b8b1] sm:mt-4 sm:text-sm sm:leading-6 lg:text-[15px]">
                     先打开你最常用的入口，再从分组流里往下浏览。
@@ -474,18 +474,20 @@ export default function App() {
         <footer className="mt-10 border-t border-[var(--border-subtle)] px-2 pt-6 pb-2 md:mt-14 md:px-4 md:pt-8" style={{ borderTopWidth: '0.5px' }}>
           <div className="flex flex-col gap-3 text-sm text-[var(--text-muted)] md:flex-row md:items-center md:justify-between">
             <div>
-              <p className="text-[var(--text-strong)]">HomePanel</p>
-              <p className="mt-1 text-xs md:text-sm">你的常用入口面板，支持分类整理、搜索、拖拽排序与快速维护。</p>
+              <p className="text-[var(--text-strong)]">AIPanel</p>
+              <p className="mt-1 text-xs md:text-sm">你的 agent-first 入口面板，支持分类整理、搜索、拖拽排序与快速维护。</p>
             </div>
             <div className="flex flex-wrap items-center gap-x-4 gap-y-2 text-xs md:text-sm">
-              <a
-                href={DATA_SOURCE_URL}
-                target="_blank"
-                rel="noreferrer"
-                className="underline underline-offset-4 transition duration-200 hover:text-[var(--text-main)]"
-              >
-                数据源
-              </a>
+              {DATA_SOURCE_URL ? (
+                <a
+                  href={DATA_SOURCE_URL}
+                  target="_blank"
+                  rel="noreferrer"
+                  className="underline underline-offset-4 transition duration-200 hover:text-[var(--text-main)]"
+                >
+                  数据源
+                </a>
+              ) : null}
               <span className="text-[var(--text-soft)]">Powered by Feishu Bitable · Vercel</span>
             </div>
           </div>

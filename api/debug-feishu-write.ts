@@ -35,10 +35,10 @@ export default async function handler(req: ApiRequest, res: ApiResponse) {
       body: JSON.stringify({
         fields: {
           标题: `DEBUG ${now}`,
-          副标题: 'HomePanel debug write test',
+          副标题: 'AIPanel debug write test',
           链接: {
             link: 'https://panel.simmzl.cn/',
-            text: 'HomePanel Debug'
+            text: 'AIPanel Debug'
           },
           图标: 'https://panel.simmzl.cn/favicon.ico',
           分类: '其他',

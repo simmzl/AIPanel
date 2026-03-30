@@ -21,7 +21,7 @@ After installation, you can ask the agent to:
 Run:
 
 ```bash
-python3 /Users/simmzl/.nvm/versions/node/v22.22.1/lib/node_modules/openclaw/skills/skill-creator/scripts/package_skill.py /tmp/AIPanel/skills/aipanel-feishu-bitable /tmp/AIPanel/dist-skills
+python3 /Users/simmzl/.nvm/versions/node/v22.22.1/lib/node_modules/openclaw/skills/skill-creator/scripts/package_skill.py /tmp/AIPanel/integrations/openclaw-skill /tmp/AIPanel/dist-skills
 ```
 
 This produces:
@@ -40,7 +40,7 @@ You can use either approach.
 
 Copy this folder into your local skills directory:
 
-- source: `/tmp/AIPanel/skills/aipanel-feishu-bitable`
+- source: `/tmp/AIPanel/integrations/openclaw-skill`
 - target example: `~/.openclaw/skills/aipanel-feishu-bitable`
 
 ### Option B: install from the packaged `.skill` file

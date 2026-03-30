@@ -1,3 +1,11 @@
 *.tsbuildinfo
 .env.vercel.local
 .vercel
+dist
+node_modules
+.env.local
+.env.*.local
+api/*.js
+api/*.d.ts
+vite.config.js
+vite.config.d.ts

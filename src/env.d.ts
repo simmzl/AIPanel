@@ -1,0 +1,1 @@
+declare const __AIPANEL_FEISHU_BITABLE_SOURCE_URL__: string;

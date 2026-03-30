@@ -20,13 +20,10 @@ interface FeishuAccessTokenCache {
 
 declare global {
   // eslint-disable-next-line no-var
-  var __homePanelFeishuTokenCache: FeishuAccessTokenCache | undefined;
+  var __aiPanelFeishuTokenCache: FeishuAccessTokenCache | undefined;
 }
 
 const ACCESS_TOKEN_BUFFER_MS = 5 * 60 * 1000;
-const DEFAULT_APP_TOKEN = 'PB5gb73iHaxINIsmbnwcQWSQnSb';
-const DEFAULT_TABLE_ID = 'tblGD9WAXjXhWfsX';
-
 export function sendMethodNotAllowed(res: ApiResponse, allowed: string[]) {
   res.setHeader('Allow', allowed.join(', '));
   res.status(405).json({ message: 'Method Not Allowed' });
@@ -50,15 +47,15 @@ export function getFeishuConfig() {
   return {
     appId: getEnv('FEISHU_APP_ID'),
     appSecret: getEnv('FEISHU_APP_SECRET'),
-    appToken: process.env.FEISHU_APP_TOKEN || DEFAULT_APP_TOKEN,
-    tableId: process.env.FEISHU_TABLE_ID || DEFAULT_TABLE_ID
+    appToken: getEnv('FEISHU_BITABLE_APP_TOKEN'),
+    tableId: getEnv('FEISHU_BITABLE_TABLE_ID')
   };
 }
 
 export function createJwt() {
   const secret = getEnv('JWT_SECRET');
 
-  return jwt.sign({ scope: 'homepanel' }, secret, {
+  return jwt.sign({ scope: 'aipanel' }, secret, {
     expiresIn: '7d'
   });
 }
@@ -104,7 +101,7 @@ export function normalizeUrl(rawUrl: string): URL {
 }
 
 export async function getFeishuTenantAccessToken() {
-  const cache = globalThis.__homePanelFeishuTokenCache;
+  const cache = globalThis.__aiPanelFeishuTokenCache;
 
   if (cache && cache.expiresAt > Date.now()) {
     return cache.token;
@@ -138,7 +135,7 @@ export async function getFeishuTenantAccessToken() {
     throw new Error(data.msg || 'Failed to fetch Feishu access token');
   }
 
-  globalThis.__homePanelFeishuTokenCache = {
+  globalThis.__aiPanelFeishuTokenCache = {
     token: data.tenant_access_token,
     expiresAt: Date.now() + data.expire * 1000 - ACCESS_TOKEN_BUFFER_MS
   };
