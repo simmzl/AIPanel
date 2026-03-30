@@ -1,6 +1,7 @@
 import { useEffect, useMemo, useState, type DragEvent, type KeyboardEvent } from 'react';
+import { readMigratedStorageItem, writeStorageItem } from '../utils/localStorage';
 
-const STORAGE_KEY = 'homepanel_category_order';
+const STORAGE_KEY = 'category_order';
 
 interface CategoryTabsProps {
   tabs: string[];
@@ -14,7 +15,7 @@ function readStoredOrder() {
   if (typeof window === 'undefined') return [] as string[];
 
   try {
-    const raw = localStorage.getItem(STORAGE_KEY);
+    const raw = readMigratedStorageItem(STORAGE_KEY);
     if (!raw) return [] as string[];
     const parsed = JSON.parse(raw);
     return Array.isArray(parsed) ? parsed.filter((item): item is string => typeof item === 'string') : [];
@@ -27,7 +28,7 @@ function writeStoredOrder(order: string[]) {
   if (typeof window === 'undefined') return;
 
   try {
-    localStorage.setItem(STORAGE_KEY, JSON.stringify(order));
+    writeStorageItem(STORAGE_KEY, JSON.stringify(order));
   } catch {
     // ignore
   }

@@ -7,11 +7,12 @@ import { SearchBar } from './components/SearchBar';
 import { useBookmarks } from './hooks/useBookmarks';
 import { api } from './services/api';
 import type { Bookmark, BookmarkPayload } from './types';
+import { readMigratedStorageItem, removeStorageItem, writeStorageItem } from './utils/localStorage';
 
-const TOKEN_KEY = 'homepanel_token';
-const PINNED_KEY = 'homepanel_pinned_ids';
-const RECENT_KEY = 'homepanel_recent_ids';
-const THEME_KEY = 'homepanel_theme_preference';
+const TOKEN_KEY = 'token';
+const PINNED_KEY = 'pinned_ids';
+const RECENT_KEY = 'recent_ids';
+const THEME_KEY = 'theme_preference';
 const RECENT_LIMIT = 12;
 const DATA_SOURCE_URL = __AIPANEL_FEISHU_BITABLE_SOURCE_URL__;
 
@@ -20,7 +21,7 @@ type ResolvedTheme = 'light' | 'dark';
 
 function readStringArray(key: string) {
   try {
-    const raw = localStorage.getItem(key);
+    const raw = readMigratedStorageItem(key);
     if (!raw) return [] as string[];
     const parsed = JSON.parse(raw);
     return Array.isArray(parsed) ? parsed.filter((item): item is string => typeof item === 'string') : [];
@@ -31,7 +32,7 @@ function readStringArray(key: string) {
 
 function writeStringArray(key: string, value: string[]) {
   try {
-    localStorage.setItem(key, JSON.stringify(value));
+    writeStorageItem(key, JSON.stringify(value));
   } catch {
     // ignore
   }
@@ -53,7 +54,7 @@ function getSystemTheme(): ResolvedTheme {
 
 function getStoredThemePreference(): ThemePreference {
   if (typeof window === 'undefined') return 'system';
-  const stored = localStorage.getItem(THEME_KEY);
+  const stored = readMigratedStorageItem(THEME_KEY);
   return stored === 'light' || stored === 'dark' || stored === 'system' ? stored : 'system';
 }
 
@@ -95,7 +96,7 @@ export default function App() {
   const [recentIds, setRecentIds] = useState<string[]>([]);
 
   useEffect(() => {
-    const storedToken = localStorage.getItem(TOKEN_KEY);
+    const storedToken = readMigratedStorageItem(TOKEN_KEY);
     setPinnedIds(readStringArray(PINNED_KEY));
     setRecentIds(readStringArray(RECENT_KEY));
     setThemePreference(getStoredThemePreference());
@@ -110,7 +111,7 @@ export default function App() {
         await api.verifyToken(storedToken);
         setToken(storedToken);
       } catch {
-        localStorage.removeItem(TOKEN_KEY);
+        removeStorageItem(TOKEN_KEY);
       } finally {
         setAuthReady(true);
       }
@@ -197,7 +198,7 @@ export default function App() {
 
     try {
       const response = await api.login(password);
-      localStorage.setItem(TOKEN_KEY, response.token);
+      writeStorageItem(TOKEN_KEY, response.token);
       setToken(response.token);
     } catch (loginError) {
       setAuthError(loginError instanceof Error ? loginError.message : '登录失败');
@@ -253,11 +254,11 @@ export default function App() {
 
   const handleThemeChange = (nextTheme: ThemePreference) => {
     setThemePreference(nextTheme);
-    localStorage.setItem(THEME_KEY, nextTheme);
+    writeStorageItem(THEME_KEY, nextTheme);
   };
 
   const handleLogout = () => {
-    localStorage.removeItem(TOKEN_KEY);
+    removeStorageItem(TOKEN_KEY);
     setToken(null);
     setAuthError(null);
   };

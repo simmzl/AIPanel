@@ -4,6 +4,8 @@
 
 This skill lets an OpenClaw-style agent operate the AIPanel Feishu Bitable with natural language.
 
+It is currently packaged as a project-specific private-alpha skill, not a generic public template.
+
 After installation, you can ask the agent to:
 
 - read AIPanel data

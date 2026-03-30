@@ -1,8 +1,9 @@
 import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import { api } from '../services/api';
 import type { Bookmark, BookmarkPayload } from '../types';
+import { readMigratedStorageItem, writeStorageItem } from '../utils/localStorage';
 
-const CACHE_KEY = 'homepanel_cache';
+const CACHE_KEY = 'cache';
 
 interface CachedData {
   bookmarks: Bookmark[];
@@ -12,7 +13,7 @@ interface CachedData {
 
 function readCache(): CachedData | null {
   try {
-    const raw = localStorage.getItem(CACHE_KEY);
+    const raw = readMigratedStorageItem(CACHE_KEY);
     if (!raw) return null;
     return JSON.parse(raw) as CachedData;
   } catch {
@@ -22,7 +23,7 @@ function readCache(): CachedData | null {
 
 function writeCache(bookmarks: Bookmark[], categories: string[]) {
   try {
-    localStorage.setItem(
+    writeStorageItem(
       CACHE_KEY,
       JSON.stringify({ bookmarks, categories, ts: Date.now() } satisfies CachedData)
     );
