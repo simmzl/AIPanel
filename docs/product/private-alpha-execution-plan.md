@@ -23,15 +23,18 @@ Priority order:
 - Current web + API baseline imported
 - Local build verified with `npm run build`
 - Push pipeline stabilized via incremental migration strategy
+- Major visible HomePanel → AIPanel rename completed
+- Runtime env naming normalized to `FEISHU_BITABLE_*`
+- Temporary legacy env compatibility layer added for safer private-alpha deployment migration
+- Generated local build output kept out of version control
+- Install/docs flow tightened for private-alpha handoff
 
-### Not done yet
+### Intentionally deferred
 
-- Full AIPanel branding pass
-- Runtime config/env cleanup
-- Removal of owner-specific defaults and hardcoded fallbacks
-- Skill/install naming consistency end-to-end
-- Public-open-source-ready docs and release structure
-- Data-layer extraction for future multi-agent integrations
+- Splitting the project-specific OpenClaw skill into generic reusable + configured variants
+- Larger package/app structure extraction (`apps/web`, `packages/core`, etc.)
+- Public open-source README polish, screenshots, templates, and contribution packaging
+- Full multi-datasource / multi-tenant abstraction work
 
 ---
 
@@ -49,6 +52,8 @@ Priority order:
 - No major user-facing HomePanel branding remains
 - README/docs align with AIPanel product direction
 
+**Status:** effectively complete for private alpha.
+
 ---
 
 ### 2. Environment-driven runtime
@@ -61,10 +66,14 @@ Priority order:
   - `FEISHU_BITABLE_SOURCE_URL`
 - Align `.env.example` with actual runtime usage
 - Ensure app can fail loudly and clearly when env is missing
+- Keep a temporary compatibility bridge for old env names during private alpha
 
 #### Definition of done
-- Fresh deployment depends only on env, not owner defaults
+- Fresh deployment depends primarily on env, not owner defaults
 - No private production IDs are embedded as fallback runtime behavior
+- Older private-alpha env naming can still be migrated safely without instant breakage
+
+**Status:** complete for private alpha.
 
 ---
 
@@ -73,6 +82,7 @@ Priority order:
 #### Tasks
 - Remove generated JS / tsbuildinfo / local junk from tracked files
 - Keep install/integration/docs directories organized
+- Ensure build output is cleaned before fresh builds
 - Prepare future split toward:
   - `apps/web`
   - `packages/core`
@@ -83,6 +93,8 @@ Priority order:
 #### Definition of done
 - Repo is clean enough to evolve without confusion
 - Build artifacts are not tracked
+
+**Status:** complete for private alpha.
 
 ---
 
@@ -97,6 +109,8 @@ Priority order:
 #### Definition of done
 - Skill can be installed reproducibly into OpenClaw
 - Docs and examples use AIPanel naming consistently
+
+**Status:** complete for private alpha, with generic/public skill split intentionally deferred.
 
 ---
 
@@ -114,6 +128,8 @@ Priority order:
 #### Definition of done
 - Private alpha remains usable during refactor
 - No regression in core panel behavior
+
+**Status:** complete once build remains green on current main.
 
 ---
 
@@ -146,26 +162,15 @@ Priority order:
 
 ---
 
-## Recommended execution order
-
-1. Branding pass
-2. Env/config cleanup
-3. Repo hygiene cleanup
-4. Skill/install hardening
-5. Build verification
-6. Docs pass
-7. Future architecture notes
-
----
-
 ## Immediate execution checklist
 
 - [x] Replace major HomePanel user-facing strings with AIPanel
 - [x] Audit runtime env usage and remove hardcoded fallback IDs
 - [x] Update `.env.example` to exactly match runtime requirements
-- [x] Remove tracked generated build artifacts where present
+- [x] Remove tracked/generated build artifacts where present
 - [x] Harden `integrations/install-scripts/install-openclaw-skill.sh`
 - [x] Review skill docs for naming consistency
+- [x] Add temporary legacy env compatibility bridge for private alpha
 - [ ] Run `npm run build`
 - [ ] Commit and push private-alpha refactor batch
 
