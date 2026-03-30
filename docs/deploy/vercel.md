@@ -49,12 +49,46 @@ It is used so the UI can deep-link back to the real Feishu data source.
 
 ### Legacy compatibility aliases
 
-The current API still accepts these aliases for transition safety:
+The current API still accepts these aliases for transition safety during the first experimental public `v0.x` release window:
 
 - `FEISHU_APP_TOKEN` → `FEISHU_BITABLE_APP_TOKEN`
 - `FEISHU_TABLE_ID` → `FEISHU_BITABLE_TABLE_ID`
 
 For any new deployment, use only the canonical `FEISHU_BITABLE_*` names.
+Plan to remove the aliases in the next cleanup-oriented release after users have migration time.
+
+## Deploy-button status
+
+AIPanel is close to being deploy-button friendly, but for this first experimental public release the safer posture is:
+
+- keep the repo manually deployable through the normal Vercel import flow
+- document the expected env set clearly
+- add a deploy button only after the public env names, screenshots, and onboarding flow have settled
+
+### Why not add a live button immediately?
+
+A Vercel deploy button is easy to expose but slightly expensive to maintain well:
+
+- the env contract needs to stay stable
+- the post-import experience should be obvious for new users
+- screenshots/docs should already match the actual deploy flow
+
+That means the repo is **deploy-button ready in principle**, but this release treats it as a documented next-step polish item rather than mandatory launch scope.
+
+### Placeholder deploy-button snippet
+
+When the repo is ready to expose one publicly, the README can add a section like this:
+
+```md
+[![Deploy with Vercel](https://vercel.com/button)](https://vercel.com/new/clone?repository-url=https://github.com/simmzl/AIPanel)
+```
+
+Before enabling that publicly, verify:
+
+- repository URL is final
+- env variable names in docs are final
+- import flow produces the expected Vercel project layout
+- the button does not imply the Feishu setup is optional
 
 ## Step-by-step deployment
 

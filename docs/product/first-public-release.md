@@ -75,43 +75,91 @@ This keeps the first release practical without overengineering:
 
 Recommended folder structure for the first public release pass:
 
+- `docs/assets/screenshots/login-screen.png`
 - `docs/assets/screenshots/desktop-home.png`
+- `docs/assets/screenshots/desktop-edit-bookmark.png`
 - `docs/assets/screenshots/mobile-home.png`
 - `docs/assets/demo/add-bookmark.gif`
-- `docs/assets/diagrams/aipanel-architecture.png`
+- `docs/assets/demo/agent-and-ui-shared-data.gif`
+- `docs/assets/diagrams/aipanel-architecture.svg`
 
 These files do not need to be perfect studio assets.
 They just need to make the release checklist executable.
 
-## Lightweight capture checklist
+## Concrete asset capture checklist
 
-### Desktop screenshot
+### 1. Login screen — `docs/assets/screenshots/login-screen.png`
 
 Capture:
 
-- login-success state or home screen
+- app name visible
+- password entry form visible
+- clean, non-broken initial state
+- no personal/private deployment details
+
+### 2. Desktop home view — `docs/assets/screenshots/desktop-home.png`
+
+Capture:
+
+- a logged-in state
 - category tabs visible
-- bookmark card grid visible
+- bookmark card grid populated
+- search or top navigation visible if present
 - footer/source link area if present
 
-### Mobile screenshot
+### 3. Desktop edit flow — `docs/assets/screenshots/desktop-edit-bookmark.png`
 
 Capture:
 
-- one narrow-width browsing view
-- category navigation and readability
+- edit modal or edit surface open
+- representative bookmark metadata visible
+- no secrets, tokens, or private URLs shown unless intentionally public
+
+### 4. Mobile home view — `docs/assets/screenshots/mobile-home.png`
+
+Capture:
+
+- narrow-width layout
+- readable category navigation
 - at least one populated category
+- no obviously broken spacing or overflow
 
-### Demo GIF / recording
+### 5. Demo GIF / short recording — `docs/assets/demo/add-bookmark.gif`
 
-Prefer one short flow:
+Preferred flow:
 
-- add bookmark
-- edit bookmark
-- reorder category
-- or show agent + UI sharing the same data source
+- open add-bookmark flow
+- paste URL
+- confirm metadata fetch or manual completion
+- save bookmark
+- show bookmark appearing in the panel
 
-Keep it under 30 seconds.
+Target:
+
+- under 30 seconds
+- readable at normal playback speed
+- no zooming chaos
+
+### 6. Optional shared-data demo — `docs/assets/demo/agent-and-ui-shared-data.gif`
+
+Preferred flow:
+
+- make one change in the UI or via the agent
+- show the same change reflected in the shared dataset / panel
+
+This is the best single asset if you want to communicate the product thesis quickly.
+
+## Expected screenshot quality bar
+
+For the first public experimental release, screenshots only need to be:
+
+- current
+- real
+- readable
+- free of private information
+- roughly consistent in theme and naming
+
+They do **not** need polished marketing treatment yet.
 
 ## Known limitations that are still acceptable for first release
 

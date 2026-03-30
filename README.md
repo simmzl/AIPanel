@@ -129,12 +129,18 @@ Detailed guides:
 
 ## Documentation map
 
+### Architecture
+
+- [Architecture overview](docs/architecture.md)
+
+
 ### Product and release docs
 
 - [Open-source readiness checklist](docs/product/open-source-readiness-checklist.md)
 - [Public release audit (first pass)](docs/product/public-release-audit.md)
 - [First public release candidate checklist](docs/product/release-candidate-checklist.md)
 - [First public release plan](docs/product/first-public-release.md)
+- [Release announcement draft](docs/product/release-announcement-v0-experimental.md)
 - [Release notes template](docs/product/release-notes-template.md)
 - [Roadmap](docs/product/roadmap.md)
 - [Private-alpha execution plan](docs/product/private-alpha-execution-plan.md)
@@ -189,12 +195,14 @@ Use the canonical env names below in all new setup:
 - `FEISHU_BITABLE_APP_TOKEN`
 - `FEISHU_BITABLE_TABLE_ID`
 
-The API still accepts these temporary legacy aliases for compatibility with older setups:
+For the first experimental public release, the API will **keep the legacy aliases for exactly one compatibility release window**, then remove them in the next cleanup-oriented release once public adopters have had time to migrate.
+
+Temporary legacy aliases still accepted today:
 
 - `FEISHU_APP_TOKEN` → `FEISHU_BITABLE_APP_TOKEN`
 - `FEISHU_TABLE_ID` → `FEISHU_BITABLE_TABLE_ID`
 
-Do not rely on those aliases in future public docs.
+Public docs, examples, and deploy instructions should use only the canonical `FEISHU_BITABLE_*` names.
 
 ## Debug / local maintenance note
 

@@ -24,7 +24,8 @@ It exists to answer one practical question:
 
 - add desktop and mobile screenshots
 - add one short demo GIF or screen recording
-- add a lightweight architecture diagram
+- [x] add a lightweight architecture diagram / architecture doc
+- add the concrete screenshot set documented in `docs/product/first-public-release.md`
 
 ### Security / hygiene
 
@@ -44,7 +45,9 @@ It exists to answer one practical question:
   - author in `integrations/openclaw-skill/`
   - ship/install from `skills/aipanel-feishu-bitable/`
   - optionally generate future `.skill` artifacts from the rendered folder
-- decide whether to keep legacy env aliases for one more release or remove them
+- [x] legacy env alias decision made:
+  - keep `FEISHU_APP_TOKEN` and `FEISHU_TABLE_ID` for one experimental public v0.x compatibility window
+  - remove them in the next cleanup-oriented release after migration time
 
 ## Practical release judgment
 
