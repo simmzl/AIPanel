@@ -1,0 +1,140 @@
+@import url('https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;700&family=Instrument+Serif:ital@0;1&display=swap');
+
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+:root {
+  color-scheme: dark;
+  font-family: 'DM Sans', 'Segoe UI', sans-serif;
+  background: #0f1111;
+  --text-main: #f3f3ee;
+  --text-muted: #b4b8b1;
+  --text-soft: #8f9890;
+  --text-strong: #d3d8d2;
+  --accent: #5db7ad;
+  --accent-strong: #8fcfc6;
+  --accent-soft: rgba(93, 183, 173, 0.16);
+  --app-bg: radial-gradient(circle at top, rgba(93, 183, 173, 0.1), transparent 28%), radial-gradient(circle at 84% 16%, rgba(87, 146, 173, 0.08), transparent 20%), linear-gradient(180deg, #101211 0%, #121514 42%, #0f1111 100%);
+  --panel-soft: rgba(255, 255, 255, 0.015);
+  --panel-card: rgba(255, 255, 255, 0.045);
+  --panel-card-hover: rgba(255, 255, 255, 0.06);
+  --panel-card-active: rgba(255, 255, 255, 0.08);
+  --panel-elevated: rgba(20, 22, 21, 0.94);
+  --surface-subtle: rgba(255, 255, 255, 0.04);
+  --surface-subtle-hover: rgba(255, 255, 255, 0.08);
+  --surface-input: rgba(0, 0, 0, 0.18);
+  --surface-input-focus: rgba(0, 0, 0, 0.28);
+  --surface-chip: rgba(255, 255, 255, 0.035);
+  --surface-chip-hover: rgba(255, 255, 255, 0.07);
+  --surface-chip-active: rgba(93, 183, 173, 0.14);
+  --surface-overlay: rgba(8, 10, 10, 0.8);
+  --surface-button: rgba(255, 255, 255, 0.08);
+  --surface-button-danger: rgba(120, 24, 42, 0.8);
+  --button-ghost: rgba(255, 255, 255, 0.06);
+  --button-ghost-hover: rgba(255, 255, 255, 0.1);
+  --button-secondary: rgba(255, 255, 255, 0.08);
+  --button-secondary-hover: rgba(255, 255, 255, 0.12);
+  --button-primary: rgba(93, 183, 173, 0.22);
+  --button-primary-hover: rgba(93, 183, 173, 0.3);
+  --border-soft: rgba(255, 255, 255, 0.08);
+  --border-subtle: rgba(255, 255, 255, 0.06);
+  --shadow-strong: 0 24px 80px rgba(0, 0, 0, 0.28);
+  --card-shadow: 0 10px 30px rgba(0, 0, 0, 0.14);
+}
+
+:root[data-theme='light'] {
+  color-scheme: light;
+  background: #f5f7f5;
+  --text-main: #17211f;
+  --text-muted: #50605b;
+  --text-soft: #6f807a;
+  --text-strong: #2b3c37;
+  --accent: #3f9d92;
+  --accent-strong: #2f8d82;
+  --accent-soft: rgba(63, 157, 146, 0.14);
+  --app-bg: radial-gradient(circle at top, rgba(93, 183, 173, 0.16), transparent 28%), radial-gradient(circle at 84% 16%, rgba(87, 146, 173, 0.12), transparent 22%), linear-gradient(180deg, #f6faf8 0%, #eff6f3 42%, #edf3f0 100%);
+  --panel-soft: rgba(255, 255, 255, 0.56);
+  --panel-card: rgba(255, 255, 255, 0.72);
+  --panel-card-hover: rgba(255, 255, 255, 0.88);
+  --panel-card-active: rgba(255, 255, 255, 0.94);
+  --panel-elevated: rgba(255, 255, 255, 0.94);
+  --surface-subtle: rgba(20, 38, 32, 0.05);
+  --surface-subtle-hover: rgba(20, 38, 32, 0.08);
+  --surface-input: rgba(255, 255, 255, 0.85);
+  --surface-input-focus: rgba(255, 255, 255, 1);
+  --surface-chip: rgba(20, 38, 32, 0.05);
+  --surface-chip-hover: rgba(20, 38, 32, 0.09);
+  --surface-chip-active: rgba(63, 157, 146, 0.15);
+  --surface-overlay: rgba(235, 241, 238, 0.88);
+  --surface-button: rgba(20, 38, 32, 0.06);
+  --surface-button-danger: rgba(190, 60, 90, 0.12);
+  --button-ghost: rgba(20, 38, 32, 0.06);
+  --button-ghost-hover: rgba(20, 38, 32, 0.1);
+  --button-secondary: rgba(20, 38, 32, 0.08);
+  --button-secondary-hover: rgba(20, 38, 32, 0.12);
+  --button-primary: rgba(63, 157, 146, 0.18);
+  --button-primary-hover: rgba(63, 157, 146, 0.26);
+  --border-soft: rgba(20, 38, 32, 0.08);
+  --border-subtle: rgba(20, 38, 32, 0.08);
+  --shadow-strong: none;
+  --card-shadow: none;
+}
+
+* {
+  box-sizing: border-box;
+}
+
+html,
+body,
+#root {
+  min-height: 100%;
+}
+
+html {
+  scroll-behavior: smooth;
+  -webkit-text-size-adjust: 100%;
+}
+
+body {
+  margin: 0;
+  min-height: 100vh;
+  color: var(--text-main);
+  background: var(--app-bg);
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+  transition: background-color 180ms ease, color 180ms ease, background-image 180ms ease;
+}
+
+a {
+  color: inherit;
+  text-decoration: none;
+}
+
+button,
+input,
+textarea,
+select {
+  font: inherit;
+}
+
+img,
+a,
+button {
+  -webkit-touch-callout: none;
+}
+
+::selection {
+  background: rgba(93, 183, 173, 0.25);
+}
+
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+    scroll-behavior: auto !important;
+  }
+}
