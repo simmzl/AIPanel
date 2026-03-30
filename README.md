@@ -52,7 +52,7 @@ What is already true:
 
 What is not finished yet:
 
-- final screenshots / GIFs / demo assets
+- short polished demo GIF/video exports (the screenshot set and capture runbook now exist)
 - optional git-history cleanup for old private deployment residue
 - more generic skill packaging beyond the current AIPanel-shaped template
 - optional deploy-button polish once onboarding flow is fully settled
@@ -224,4 +224,4 @@ If you are looking for a fully productized public open-source dashboard today, A
 
 If you want a practical, already-working **agent-first panel architecture** with Feishu Bitable + web UI + OpenClaw integration, this repo is already a strong starting point.
 
-The repo now has baseline open-source contribution scaffolding (`LICENSE`, `CONTRIBUTING.md`, issue templates, PR template), a safer debug story, a clearer OpenClaw packaging boundary, a real MIT license, a basic `SECURITY.md`, architecture documentation, and documented release/readiness materials — but it still needs real screenshots/demo assets and an explicit git-history cleanup decision before a broader public announcement.
+The repo now has baseline open-source contribution scaffolding (`LICENSE`, `CONTRIBUTING.md`, issue templates, PR template), a safer debug story, a clearer OpenClaw packaging boundary, a real MIT license, a basic `SECURITY.md`, architecture documentation, and documented release/readiness materials — but it still needs short polished demo exports and an explicit git-history cleanup decision before a broader public announcement.

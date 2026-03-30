@@ -8,6 +8,21 @@ AIPanel currently assumes:
 - Feishu Bitable is the source of truth
 - authentication is password-based for simple self-hosted access in the current release-candidate build
 
+## Fast happy-path: Vercel + Feishu in one pass
+
+If you want the shortest reliable path, use this checklist exactly in order:
+
+1. prepare the Feishu app and Bitable table first
+2. import this repo into Vercel
+3. paste the environment variables below into Vercel
+4. deploy
+5. log in with your `ACCESS_PASSWORD`
+6. verify you can read and write one test bookmark
+
+If the Feishu side is not ready yet, read first:
+
+- [Feishu app + Bitable setup](../datasource/feishu-bitable.md)
+
 ## Before you start
 
 You should already have:
@@ -17,27 +32,131 @@ You should already have:
 3. a Feishu Bitable app and table prepared for AIPanel
 4. the table URL, app token, and table ID
 
-If the Feishu side is not ready yet, read:
+## Copy-paste environment block
 
-- [Feishu app + Bitable setup](../datasource/feishu-bitable.md)
+Use these exact variable names in **Vercel → Project Settings → Environment Variables**.
 
-## Required environment variables
+```env
+APP_NAME=AIPanel
+ACCESS_PASSWORD=change-this-to-a-real-password
+JWT_SECRET=change-this-to-a-long-random-secret
+FEISHU_APP_ID=cli_xxx
+FEISHU_APP_SECRET=xxx
+FEISHU_BITABLE_APP_TOKEN=bascn_xxx
+FEISHU_BITABLE_TABLE_ID=tblxxxxxx
+FEISHU_BITABLE_SOURCE_URL=https://your-domain.feishu.cn/base/xxxxxxxx?table=tblxxxxxx
+```
 
-Set these in Vercel Project Settings → Environment Variables.
+### What each value is
 
-### Application
+#### Application
 
-- `APP_NAME` — display name for the panel, for example `AIPanel`
-- `ACCESS_PASSWORD` — password required to enter the panel
-- `JWT_SECRET` — random secret used to sign auth tokens
+- `APP_NAME` — display name shown in the panel UI
+- `ACCESS_PASSWORD` — password used to enter the panel
+- `JWT_SECRET` — long random string used to sign auth tokens
 
-### Feishu
+#### Feishu
 
-- `FEISHU_APP_ID`
-- `FEISHU_APP_SECRET`
-- `FEISHU_BITABLE_APP_TOKEN`
-- `FEISHU_BITABLE_TABLE_ID`
-- `FEISHU_BITABLE_SOURCE_URL`
+- `FEISHU_APP_ID` — from your Feishu app credentials page
+- `FEISHU_APP_SECRET` — from your Feishu app credentials page
+- `FEISHU_BITABLE_APP_TOKEN` — the Bitable app token (`bascn_...`)
+- `FEISHU_BITABLE_TABLE_ID` — the target table ID inside that Bitable app
+- `FEISHU_BITABLE_SOURCE_URL` — the browser URL you want the footer “数据源” link to open
+
+## Vercel import settings
+
+In most cases, Vercel detects the project correctly.
+
+Use these values if you want to confirm everything explicitly:
+
+- **Framework Preset:** `Vite`
+- **Install Command:** `npm install`
+- **Build Command:** `npm run build`
+- **Output Directory:** `dist`
+
+No monorepo config is required for the current repo layout.
+
+## Exact deploy flow
+
+### 1. Import the repository into Vercel
+
+Create a new Vercel project and connect this repo.
+
+### 2. Confirm build settings
+
+Expected commands:
+
+```bash
+npm install
+npm run build
+```
+
+### 3. Add the environment variables
+
+Paste the env block above into Vercel.
+
+Minimum recommendation:
+
+- use a real password for `ACCESS_PASSWORD`
+- generate a real long random value for `JWT_SECRET`
+- copy the Feishu values exactly; do not retype by hand if you can avoid it
+
+### 4. Deploy
+
+Trigger the first deployment.
+
+If envs are correct, the build should complete without code changes.
+
+### 5. Open the deployed site
+
+After deploy, visit the Vercel production URL.
+
+Expected first view:
+
+- login page loads
+- branding renders correctly
+- password form is visible
+
+After successful login:
+
+- bookmark categories load
+- bookmark cards render
+- footer can link back to Feishu if `FEISHU_BITABLE_SOURCE_URL` is set
+
+## First production verification checklist
+
+After the first successful deploy, test these in order.
+
+### Authentication
+
+- wrong password is rejected
+- correct password works
+- refresh keeps you logged in locally
+
+### Data read
+
+- categories appear
+- bookmark list renders
+- one known Feishu record is visible
+
+### Data write
+
+- create one test bookmark
+- edit that bookmark
+- delete that bookmark
+- reorder one category and confirm it persists
+
+### Feishu linkage
+
+- the UI writes appear in Bitable
+- Bitable edits show up in the panel after reload
+- the footer source link opens the intended Bitable page
+
+### Basic UX sanity
+
+- desktop view is usable
+- mobile view is readable enough for alpha use
+- theme switching is acceptable
 
 ## Optional / transitional environment notes
 
@@ -56,140 +175,6 @@ The current API still accepts these aliases for transition safety during the fir
 
 For any new deployment, use only the canonical `FEISHU_BITABLE_*` names.
 Plan to remove the aliases in the next cleanup-oriented release after users have migration time.
-
-## Deploy-button status
-
-AIPanel is close to being deploy-button friendly, but for this first experimental public release the safer posture is:
-
-- keep the repo manually deployable through the normal Vercel import flow
-- document the expected env set clearly
-- add a deploy button only after the public env names, screenshots, and onboarding flow have settled
-
-### Why not add a live button immediately?
-
-A Vercel deploy button is easy to expose but slightly expensive to maintain well:
-
-- the env contract needs to stay stable
-- the post-import experience should be obvious for new users
-- screenshots/docs should already match the actual deploy flow
-
-That means the repo is **deploy-button ready in principle**, but this release treats it as a documented next-step polish item rather than mandatory launch scope.
-
-### Placeholder deploy-button snippet
-
-When the repo is ready to expose one publicly, the README can add a section like this:
-
-```md
-[![Deploy with Vercel](https://vercel.com/button)](https://vercel.com/new/clone?repository-url=https://github.com/simmzl/AIPanel)
-```
-
-Before enabling that publicly, verify:
-
-- repository URL is final
-- env variable names in docs are final
-- import flow produces the expected Vercel project layout
-- the button does not imply the Feishu setup is optional
-
-## Step-by-step deployment
-
-### 1. Import the repository into Vercel
-
-Create a new Vercel project and connect this repo.
-
-AIPanel does not require special monorepo handling in its current form.
-
-### 2. Confirm framework/build settings
-
-The repo is Vite-based and already includes Vercel-compatible API routes.
-
-In most cases, Vercel should detect the setup automatically.
-
-Expected build command:
-
-```bash
-npm run build
-```
-
-Expected install command:
-
-```bash
-npm install
-```
-
-### 3. Add environment variables
-
-Add all required envs listed above.
-
-Recommended values:
-
-- `APP_NAME=AIPanel`
-- `ACCESS_PASSWORD=<your private password>`
-- `JWT_SECRET=<long random secret>`
-- Feishu values copied exactly from your Feishu app / Bitable setup
-
-### 4. Deploy
-
-Trigger the first deployment.
-
-If envs are correct, the build should complete without extra code changes.
-
-### 5. Open the deployed site
-
-After deploy, visit the Vercel production URL.
-
-You should see:
-
-- the login page
-- the AIPanel branding / name
-- successful login with `ACCESS_PASSWORD`
-- bookmark data loading from Feishu after login
-
-## Expected outcome after a successful deploy
-
-A healthy deployment should allow you to:
-
-- log in with the configured password
-- browse categories and bookmarks
-- search bookmarks
-- create / edit / delete bookmarks
-- reorder categories
-- fetch site metadata when adding a bookmark
-- open the Feishu source link from the UI footer when configured
-
-## Post-deploy checks
-
-Run this checklist after the first production deploy.
-
-### Authentication
-
-- confirm wrong password is rejected
-- confirm correct password returns access
-- confirm refresh keeps you logged in locally
-
-### Data read
-
-- confirm categories load
-- confirm bookmark list renders
-- confirm a known record from Feishu appears in the panel
-
-### Data write
-
-- create a test bookmark
-- edit the test bookmark
-- delete the test bookmark
-- reorder one category and confirm the result persists
-
-### Feishu linkage
-
-- confirm records written in the UI appear in Bitable
-- confirm records edited in Bitable are reflected in the panel after reload
-- confirm `FEISHU_BITABLE_SOURCE_URL` opens the expected data source
-
-### Basic UX sanity
-
-- confirm desktop view is usable
-- confirm mobile view is readable enough for alpha use
-- confirm theme behavior is acceptable
 
 ## Troubleshooting notes
 
@@ -244,3 +229,26 @@ npm run dev
 ```
 
 If local build and local runtime are clean, Vercel deployment is usually straightforward.
+
+## Deploy-button status
+
+AIPanel is close to being deploy-button friendly, but for this first experimental public release the safer posture is:
+
+- keep the repo manually deployable through the normal Vercel import flow
+- document the expected env set clearly
+- add a deploy button only after the public env names, screenshots, and onboarding flow have settled
+
+### Placeholder deploy-button snippet
+
+When the repo is ready to expose one publicly, the README can add a section like this:
+
+```md
+[![Deploy with Vercel](https://vercel.com/button)](https://vercel.com/new/clone?repository-url=https://github.com/simmzl/AIPanel)
+```
+
+Before enabling that publicly, verify:
+
+- repository URL is final
+- env variable names in docs are final
+- import flow produces the expected Vercel project layout
+- the button does not imply the Feishu setup is optional

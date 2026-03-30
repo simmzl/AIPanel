@@ -22,8 +22,12 @@ This folder contains the current setup, architecture, and release-readiness docs
 ## Assets
 
 - [Architecture diagram](./assets/diagrams/aipanel-architecture.svg)
-- [Screenshot placeholders](./assets/screenshots/README.md)
-- [Demo placeholders](./assets/demo/README.md)
+- [Screenshot index](./assets/screenshots/README.md)
+- [Login screenshot](./assets/screenshots/login-screen.png)
+- [Desktop home screenshot](./assets/screenshots/desktop-home.png)
+- [Desktop edit modal screenshot](./assets/screenshots/desktop-edit-bookmark.png)
+- [Mobile home screenshot](./assets/screenshots/mobile-home.png)
+- [Demo capture runbook](./assets/demo/README.md)
 
 ## Suggested reading order for a new public reader
 
