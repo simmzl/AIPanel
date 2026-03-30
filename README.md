@@ -2,23 +2,26 @@
 
 Agent-first bookmarks and lightweight ops panel, backed by Feishu Bitable.
 
-AIPanel is built around a simple idea: **agents should be able to operate the same structured data that humans see in the UI**. The web app is the human surface. The real center of the product is the shared data source and the agent workflows around it.
+AIPanel is built around a simple idea: **agents and humans should be able to operate the same structured data source**.
+The browser is the human surface.
+Feishu Bitable is the source of truth.
+OpenClaw is the optional agent/operator layer.
 
-Today, AIPanel is in an **early experimental self-hostable** stage. The repo is already usable for real deployment, but it is **not yet packaged as a polished general-purpose public product**.
+Today, AIPanel is an **experimental self-hostable v0.x release**: already usable in real deployment, but not yet packaged as a polished general-purpose public product.
 
 ## Why AIPanel
 
 Most bookmark dashboards are UI-first. AIPanel is different:
 
 - **Agent-first data model**: the same bookmark dataset can be queried and edited by an AI agent or by a person in the browser
-- **Human UI second**: the web UI is intentionally lightweight, fast, and practical for browsing, cleanup, and maintenance
-- **One source of truth**: Feishu Bitable stores the canonical records, categories, and ordering
+- **Shared source of truth**: Feishu Bitable stores the canonical records, categories, and ordering
+- **Practical human UI**: the web UI is intentionally lightweight, fast, and useful for browsing, cleanup, and maintenance
 - **Natural-language operations**: the current OpenClaw integration can add, edit, delete, reorder, and audit panel records
-- **Low-friction deployment**: one Vercel project + one Feishu app + one Bitable table is enough for the current architecture
+- **Small deployment surface**: one Vercel project + one Feishu app + one Bitable table is enough for the current architecture
 
-## Current product scope
+## What’s included in the current v0.x release
 
-The current AIPanel build includes:
+The current AIPanel release includes:
 
 - password-protected web panel
 - bookmark browsing and search
@@ -28,6 +31,8 @@ The current AIPanel build includes:
 - metadata fetching from target URLs
 - Feishu Bitable-backed API layer
 - OpenClaw skill for agent operations against the same dataset
+- deployment and setup docs for Vercel + Feishu + OpenClaw
+- release/readiness docs for the first public experimental launch
 
 This is intentionally a **focused v1 architecture**, not a broad platform yet.
 
@@ -47,9 +52,10 @@ What is already true:
 
 What is not finished yet:
 
-- screenshots / GIFs / deploy button polish
+- final screenshots / GIFs / demo assets
 - optional git-history cleanup for old private deployment residue
 - more generic skill packaging beyond the current AIPanel-shaped template
+- optional deploy-button polish once onboarding flow is fully settled
 
 ## Tech stack
 
@@ -129,27 +135,23 @@ Detailed guides:
 
 ## Documentation map
 
-### Architecture
+Start here:
 
+- [Docs index](docs/README.md)
 - [Architecture overview](docs/architecture.md)
-
-
-### Product and release docs
-
-- [Open-source readiness checklist](docs/product/open-source-readiness-checklist.md)
-- [Public release audit (first pass)](docs/product/public-release-audit.md)
-- [First public release candidate checklist](docs/product/release-candidate-checklist.md)
-- [First public release plan](docs/product/first-public-release.md)
-- [Release announcement draft](docs/product/release-announcement-v0-experimental.md)
-- [Release notes template](docs/product/release-notes-template.md)
-- [Roadmap](docs/product/roadmap.md)
-- [Private-alpha execution plan](docs/product/private-alpha-execution-plan.md)
-
-### Setup and integrations
-
 - [Deploy to Vercel](docs/deploy/vercel.md)
 - [Feishu Bitable setup](docs/datasource/feishu-bitable.md)
 - [OpenClaw integration](docs/integrations/openclaw.md)
+
+Release/readiness docs:
+
+- [First public release plan](docs/product/first-public-release.md)
+- [First public release candidate checklist](docs/product/release-candidate-checklist.md)
+- [Release announcement draft](docs/product/release-announcement-v0-experimental.md)
+- [Release notes template](docs/product/release-notes-template.md)
+- [Open-source readiness checklist](docs/product/open-source-readiness-checklist.md)
+- [Public release audit (first pass)](docs/product/public-release-audit.md)
+- [Roadmap](docs/product/roadmap.md)
 
 ## OpenClaw integration
 
@@ -216,26 +218,10 @@ node scripts/debug/feishu-write.mjs
 
 That keeps release candidates safer while preserving a practical internal debug path.
 
-## What a future public release should look like
-
-A credible first public release should include:
-
-- cleaned env and secrets story
-- stable install docs
-- screenshots / demo GIFs
-- deploy button or one-click template
-- contribution docs
-- issue templates
-- clear license
-- security reporting guidance
-- validated skill packaging / install story
-
-That work is now documented, but not fully completed yet.
-
 ## Honest note
 
 If you are looking for a fully productized public open-source dashboard today, AIPanel is **not there yet**.
 
 If you want a practical, already-working **agent-first panel architecture** with Feishu Bitable + web UI + OpenClaw integration, this repo is already a strong starting point.
 
-The repo now has baseline open-source contribution scaffolding (`LICENSE`, `CONTRIBUTING.md`, issue templates, PR template), a safer debug story, a clearer OpenClaw packaging boundary, a real MIT license, a basic `SECURITY.md`, and a documented scratch-clone validation pass — but it still needs screenshots, optional demo assets, and optional git-history cleanup before a stronger first public release.
+The repo now has baseline open-source contribution scaffolding (`LICENSE`, `CONTRIBUTING.md`, issue templates, PR template), a safer debug story, a clearer OpenClaw packaging boundary, a real MIT license, a basic `SECURITY.md`, architecture documentation, and documented release/readiness materials — but it still needs real screenshots/demo assets and an explicit git-history cleanup decision before a broader public announcement.

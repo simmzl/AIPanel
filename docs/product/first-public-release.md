@@ -71,9 +71,15 @@ This keeps the first release practical without overengineering:
 - one architecture diagram
 - one release notes entry or changelog seed
 
-## Screenshots and demo asset plan
+## Presentation asset structure
 
-Recommended folder structure for the first public release pass:
+The repo now ships an asset structure that future screenshots/demo drops can fill without renaming churn:
+
+- `docs/assets/screenshots/`
+- `docs/assets/demo/`
+- `docs/assets/diagrams/`
+
+Expected first-release filenames:
 
 - `docs/assets/screenshots/login-screen.png`
 - `docs/assets/screenshots/desktop-home.png`
@@ -82,9 +88,6 @@ Recommended folder structure for the first public release pass:
 - `docs/assets/demo/add-bookmark.gif`
 - `docs/assets/demo/agent-and-ui-shared-data.gif`
 - `docs/assets/diagrams/aipanel-architecture.svg`
-
-These files do not need to be perfect studio assets.
-They just need to make the release checklist executable.
 
 ## Concrete asset capture checklist
 
@@ -148,6 +151,17 @@ Preferred flow:
 - show the same change reflected in the shared dataset / panel
 
 This is the best single asset if you want to communicate the product thesis quickly.
+
+## Operator-ready capture runbook
+
+Use this sequence for the first screenshot/demo capture pass:
+
+1. prepare a public-safe demo dataset in Feishu Bitable
+2. verify the deployed or local panel has no private URLs, tokens, or internal names visible
+3. capture screenshots in the exact filenames listed above
+4. keep all raw captures outside the repo; commit only the curated final assets
+5. update `README.md` and `docs/README.md` to embed the real assets once available
+6. if a GIF looks noisy or too large, prefer a short MP4/WebM linked from docs rather than committing a bloated asset
 
 ## Expected screenshot quality bar
 

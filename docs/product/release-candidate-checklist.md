@@ -17,6 +17,9 @@ It exists to answer one practical question:
   - `bash integrations/install-scripts/install-openclaw-skill.sh <target>`
 - MIT license has been chosen and added
 - first-pass history/current-tree audit has been documented
+- architecture doc + diagram are present
+- screenshot/demo folder structure and placeholder docs are present
+- README/release docs now reflect an experimental public v0.x package stance
 
 ## Still recommended before calling the repo publicly polished
 
@@ -25,7 +28,7 @@ It exists to answer one practical question:
 - add desktop and mobile screenshots
 - add one short demo GIF or screen recording
 - [x] add a lightweight architecture diagram / architecture doc
-- add the concrete screenshot set documented in `docs/product/first-public-release.md`
+- [x] add the concrete screenshot/demo capture plan in `docs/product/first-public-release.md`
 
 ### Security / hygiene
 
@@ -37,7 +40,8 @@ It exists to answer one practical question:
 
 - keep trimming internal/private-alpha phrasing where it no longer helps readers
 - add one fully copy-pasteable happy-path setup section for Vercel + Feishu
-- document known limitations in one concise place
+- [x] document known limitations in one concise place
+- [x] add docs navigation entrypoints from README and `docs/README.md`
 
 ### Integration packaging
 
@@ -51,8 +55,8 @@ It exists to answer one practical question:
 
 ## Practical release judgment
 
-With `SECURITY.md` and the packaging stance now documented, AIPanel is at a credible **experimental `v0.x` public release candidate baseline**.
+With `SECURITY.md`, the packaging stance, the architecture docs, and the asset-capture plan now documented, AIPanel is at a credible **experimental `v0.x` public release candidate baseline**.
 
-The biggest remaining gaps are screenshots/demo assets, an architecture visual, and the explicit git-history cleanup decision.
+The biggest remaining gaps are real screenshots/demo assets, one especially smooth copy-paste happy-path setup section, and the explicit git-history cleanup decision.
 
 The remaining work is now more about presentation, confidence, and policy than about core repo correctness.

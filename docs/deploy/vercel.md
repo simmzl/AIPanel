@@ -244,4 +244,3 @@ npm run dev
 ```
 
 If local build and local runtime are clean, Vercel deployment is usually straightforward.
-yment is usually straightforward.
