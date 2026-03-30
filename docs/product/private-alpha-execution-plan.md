@@ -28,6 +28,8 @@ Priority order:
 - Temporary legacy env compatibility layer added for safer private-alpha deployment migration
 - Generated local build output kept out of version control
 - Install/docs flow tightened for private-alpha handoff
+- Baseline repo contribution infrastructure added (`LICENSE` status file, `CONTRIBUTING.md`, issue templates, PR template)
+- First-pass public-release audit documented
 
 ### Intentionally deferred
 
@@ -159,6 +161,8 @@ Priority order:
   - possible CLI
   - possible MCP server
 - Keep current repo structure compatible with that future
+- Clarify `skills/` vs `integrations/openclaw-skill/` ownership before public launch
+- Decide how project-specific preset packaging should relate to a future generic skill template
 
 ---
 
@@ -172,7 +176,7 @@ Priority order:
 - [x] Review skill docs for naming consistency
 - [x] Add temporary legacy env compatibility bridge for private alpha
 - [ ] Run `npm run build`
-- [ ] Commit and push private-alpha refactor batch
+- [ ] Commit and push open-source-prep infrastructure batch
 
 ---
 

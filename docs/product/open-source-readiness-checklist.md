@@ -19,13 +19,14 @@ This checklist is for moving AIPanel from a working private-alpha repo to a cred
 
 ## 2. Secrets and security hygiene
 
-- [ ] Run full repo secrets audit before public release
-- [ ] Verify `.env*` examples contain placeholders only
+- [~] Run full repo secrets audit before public release
+- [x] Verify `.env*` examples contain placeholders only
 - [ ] Review git history for accidentally committed credentials or fixed internal-only endpoints
 - [ ] Remove or rotate any leaked identifiers if discovered
 - [~] Keep required envs documented in one place
-- [ ] Review whether `api/debug-feishu-write.ts` should be removed, gated, or excluded before public launch
+- [x] Review whether `api/debug-feishu-write.ts` should be removed, gated, or excluded before public launch
 - [ ] Add a short security policy / reporting path if the repo becomes public
+- [x] Add a first-pass public release audit doc
 
 ## 3. Environment and configuration validation
 
@@ -59,24 +60,25 @@ This checklist is for moving AIPanel from a working private-alpha repo to a cred
 - [x] State that the current skill is project-specific / private-alpha oriented
 - [x] Document current install path and installer script
 - [ ] Split private-alpha fixed-ID skill from public reusable template
-- [ ] Decide packaging format for public release (`integrations/`, `skills/`, package artifact, or both)
+- [~] Decide packaging format for public release (`integrations/`, `skills/`, package artifact, or both)
 - [ ] Remove or parameterize project-specific fixed identifiers before public launch
 - [ ] Add a short compatibility matrix for supported OpenClaw versions if needed
+- [x] Document current `skills/` vs `integrations/openclaw-skill/` boundary and recommended direction
 
 ## 7. Community / contribution readiness
 
-- [ ] Add `LICENSE`
-- [ ] Add `CONTRIBUTING.md`
-- [ ] Add `.github/ISSUE_TEMPLATE/`
-- [ ] Add pull request template
+- [x] Add `LICENSE` status file / placeholder pending final license selection
+- [x] Add `CONTRIBUTING.md`
+- [x] Add `.github/ISSUE_TEMPLATE/`
+- [x] Add pull request template
 - [ ] Add code of conduct if public contributions are expected
 - [ ] Add maintainer expectations / review policy if desired
 
 ## 8. Technical cleanup before opening the repo
 
-- [ ] Review hard-coded product text for internal/private-only language
-- [ ] Review fixed URLs and example tokens in docs and skill references
-- [ ] Decide whether `skills/` and `integrations/openclaw-skill/` should both exist, or whether one should become generated/distribution output
+- [~] Review hard-coded product text for internal/private-only language
+- [~] Review fixed URLs and example tokens in docs and skill references
+- [~] Decide whether `skills/` and `integrations/openclaw-skill/` should both exist, or whether one should become generated/distribution output
 - [ ] Remove stale private-alpha migration notes that do not help public users
 - [ ] Add architecture notes about why Feishu Bitable is the current source of truth
 
@@ -100,4 +102,4 @@ Before making the repo public, the minimum recommended gate is:
 6. OpenClaw packaging story clarified
 7. screenshots added
 
-Right now, AIPanel has the **documentation baseline** for that work, but not the full release gate yet.
+Right now, AIPanel has the **documentation baseline plus repo-level contribution infrastructure** for that work, but not the full release gate yet.

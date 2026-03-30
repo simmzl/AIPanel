@@ -1,0 +1,19 @@
+AIPanel license status: pending public-release decision
+
+This repository is not yet published as a final public open-source release.
+No public open-source license has been selected for the first release yet.
+
+Until a final license is chosen and this file is replaced, treat the code and docs
+in this repository as shared for private-alpha evaluation and internal review only.
+Do not assume permission for public redistribution, resale, or derivative commercial use.
+
+Before public release, replace this file with the actual project license text.
+Recommended decision options to evaluate:
+- MIT: simplest permissive default
+- Apache-2.0: permissive with explicit patent grant
+- AGPL-3.0: if network-use copyleft is desired
+
+Related docs:
+- CONTRIBUTING.md
+- docs/product/open-source-readiness-checklist.md
+- docs/product/public-release-audit.md

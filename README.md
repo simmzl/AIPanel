@@ -133,6 +133,7 @@ Detailed guides:
 ### Product and release docs
 
 - [Open-source readiness checklist](docs/product/open-source-readiness-checklist.md)
+- [Public release audit (first pass)](docs/product/public-release-audit.md)
 - [Roadmap](docs/product/roadmap.md)
 - [Private-alpha execution plan](docs/product/private-alpha-execution-plan.md)
 
@@ -199,3 +200,5 @@ That work is now documented, but not fully completed yet.
 If you are looking for a fully productized public open-source dashboard today, AIPanel is **not there yet**.
 
 If you want a practical, already-working **agent-first panel architecture** with Feishu Bitable + web UI + OpenClaw integration, this repo is already a strong starting point.
+
+The repo now has baseline open-source contribution scaffolding (`LICENSE` status file, `CONTRIBUTING.md`, issue templates, PR template), but it still needs a final license choice, git-history audit, and public-safe cleanup of debug/project-specific integration details before a credible first public release.

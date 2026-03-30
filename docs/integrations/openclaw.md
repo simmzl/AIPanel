@@ -10,7 +10,7 @@ This is one of the core ideas behind the project:
 
 ## Current location
 
-Canonical skill source:
+Canonical skill source for now:
 
 - `integrations/openclaw-skill/`
 
@@ -18,7 +18,16 @@ Convenience installer:
 
 - `integrations/install-scripts/install-openclaw-skill.sh`
 
-There is also a mirrored skill copy under `skills/`, but the repo should eventually make the distribution story cleaner for public release.
+There is also a mirrored copy under:
+
+- `skills/aipanel-feishu-bitable/`
+
+Current recommended interpretation:
+
+- `integrations/openclaw-skill/` is the editable source-of-truth for packaging/install docs
+- `skills/aipanel-feishu-bitable/` is a convenience mirror for local/OpenClaw-style skill browsing
+
+For public release, this dual-location setup should be simplified so contributors know which copy is authoritative.
 
 ## What the current skill can do
 
@@ -151,6 +160,13 @@ For open-source release prep, the main integration tasks are:
 - document install flow from a clean machine
 - decide whether to ship a packaged `.skill` artifact, folder-only source, or both
 - add a public-safe explanation of required OpenClaw capabilities
+
+A practical future split would be:
+
+- generic Feishu-Bitable skill/template for broader reuse
+- AIPanel-specific configured preset layered on top of that generic template
+
+That keeps private-alpha usability intact while making the public packaging story much cleaner.
 
 ## Related docs
 

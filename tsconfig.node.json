@@ -8,5 +8,6 @@
     "noEmit": true,
     "types": ["node"]
   },
-  "include": ["vite.config.ts", "api/**/*.ts"]
+  "include": ["vite.config.ts", "api/**/*.ts"],
+  "exclude": ["api/debug-feishu-write.ts"]
 }

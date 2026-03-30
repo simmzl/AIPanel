@@ -42,6 +42,8 @@ Focus: **productization and documentation, not large architecture rewrite**.
 - document Feishu app + Bitable setup clearly
 - explain the OpenClaw integration honestly
 - define the boundary between project-specific alpha code and future reusable open-source packaging
+- add baseline repo contribution infrastructure
+- record a first-pass public-release audit and cleanup list
 
 ### Desired outcome
 
@@ -60,10 +62,11 @@ This should be the minimum bar before the first real public release.
 ### Repo readiness
 
 - complete secrets audit
-- choose and add license
+- choose and add final public license
 - add contribution guide
 - add issue templates and PR template
 - remove or justify internal-only/debug artifacts
+- clarify canonical OpenClaw skill source and packaging ownership
 
 ### Product readiness
 
@@ -95,8 +98,9 @@ A likely first release would still be labeled experimental.
 - verified Vercel + Feishu docs
 - screenshots
 - contribution basics
-- license
+- final public license
 - clarified OpenClaw story
+- removal or quarantine of debug-only write surfaces
 
 ## 5. Post-release evolution
 
@@ -138,3 +142,5 @@ Open-source phase work is about:
 That means the next step is **not** a big rewrite.
 
 The next step is a disciplined cleanup and packaging pass.
+
+That cleanup now includes repo contribution scaffolding and a documented first-pass public-release audit, but still needs the actual public-safe code and packaging decisions implemented.
