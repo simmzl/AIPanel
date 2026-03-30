@@ -6,7 +6,7 @@ AIPanel currently assumes:
 
 - frontend + API are deployed together on Vercel
 - Feishu Bitable is the source of truth
-- authentication is password-based for private-alpha style access
+- authentication is password-based for simple self-hosted access in the current release-candidate build
 
 ## Before you start
 
@@ -47,7 +47,7 @@ This value is not critical for core API writes, but it is strongly recommended.
 
 It is used so the UI can deep-link back to the real Feishu data source.
 
-### Legacy private-alpha aliases
+### Legacy compatibility aliases
 
 The current API still accepts these aliases for transition safety:
 
@@ -184,7 +184,7 @@ Check:
 
 - `FEISHU_BITABLE_SOURCE_URL`
 
-### Migration confusion from older notes
+### Compatibility confusion from older notes
 
 If you previously used:
 
@@ -210,3 +210,4 @@ npm run dev
 ```
 
 If local build and local runtime are clean, Vercel deployment is usually straightforward.
+yment is usually straightforward.

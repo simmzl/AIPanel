@@ -18,7 +18,7 @@ Render or install this skill with the correct identifiers for your AIPanel deplo
 - table_id: `__AIPANEL_TABLE_ID__`
 - data source URL: `__AIPANEL_SOURCE_URL__`
 
-For the current private-alpha workflow, the installer can fill these from:
+For the current release-candidate workflow, the installer can fill these from:
 
 - `AIPANEL_SKILL_APP_TOKEN` or `FEISHU_BITABLE_APP_TOKEN`
 - `AIPANEL_SKILL_TABLE_ID` or `FEISHU_BITABLE_TABLE_ID`

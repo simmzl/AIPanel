@@ -1,6 +1,6 @@
 # Open-source readiness checklist
 
-This checklist is for moving AIPanel from a working private-alpha repo to a credible public open-source release.
+This checklist is for moving AIPanel from a working internal/experimental repo to a credible public open-source release.
 
 ## Status legend
 
@@ -25,7 +25,7 @@ This checklist is for moving AIPanel from a working private-alpha repo to a cred
 - [ ] Remove or rotate any leaked identifiers if discovered
 - [~] Keep required envs documented in one place
 - [x] Remove the live debug-write endpoint from the deployed API surface and keep any remaining smoke-test flow local-only
-- [ ] Add a short security policy / reporting path if the repo becomes public
+- [x] Add a short security policy / reporting path if the repo becomes public
 - [x] Add a first-pass public release audit doc
 
 ## 3. Environment and configuration validation
@@ -60,7 +60,7 @@ This checklist is for moving AIPanel from a working private-alpha repo to a cred
 - [x] State that the current skill is AIPanel-shaped rather than fully generic
 - [x] Document current install path and installer script
 - [ ] Split AIPanel-specific skill from a broader reusable Feishu-Bitable template
-- [~] Decide packaging format for public release (`integrations/`, `skills/`, package artifact, or both)
+- [x] Decide packaging format for first public release (`integrations/` authoring template + `skills/` rendered distribution folder; optional future artifact from rendered output)
 - [~] Remove fixed identifiers from the canonical skill source and keep rendered/configured copies explicit
 - [ ] Add a short compatibility matrix for supported OpenClaw versions if needed
 - [x] Document and enforce the current `skills/` vs `integrations/openclaw-skill/` boundary (`integrations/` editable template, `skills/` rendered mirror)
@@ -79,15 +79,15 @@ This checklist is for moving AIPanel from a working private-alpha repo to a cred
 - [~] Review hard-coded product text for internal/private-only language and keep trimming where it weakens public presentation
 - [~] Review fixed URLs and example tokens in docs and skill references
 - [x] Decide and document that `integrations/openclaw-skill/` is canonical while `skills/` is rendered/distribution output
-- [ ] Remove stale private-alpha migration notes that do not help public users
+- [ ] Remove stale transition notes that do not help public users
 - [ ] Add architecture notes about why Feishu Bitable is the current source of truth
 
 ## 9. Release packaging
 
 - [ ] Tag a first public milestone
-- [ ] Prepare release notes for `v0.x`
+- [~] Prepare release notes for `v0.x` (template added)
 - [ ] Define support level: experimental / alpha / beta
-- [ ] Publish demo instance or screenshots-only landing page
+- [~] Publish demo instance or screenshots-only landing page (asset plan documented)
 - [x] Verify installation from a clean machine using docs only
 
 ## Suggested release gate
@@ -102,4 +102,4 @@ Before making the repo public, the minimum recommended gate is:
 6. OpenClaw packaging story clarified
 7. screenshots added
 
-Right now, AIPanel has the **documentation baseline plus repo-level contribution infrastructure** for that work, but not the full release gate yet.
+Right now, AIPanel has the documentation baseline plus repo-level contribution infrastructure for that work, but not the full release gate yet.

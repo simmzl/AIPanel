@@ -64,13 +64,15 @@ Default install target:
 
 - `~/.openclaw/skills/aipanel-feishu-bitable`
 
-## Optional packaging step
+## Packaging stance for the first public release
 
-If you want to package the rendered skill with your normal OpenClaw tooling, package the rendered folder rather than the raw template.
+For the first public release, package the rendered skill folder rather than the raw template.
 
 Recommended source to package:
 
 - `skills/aipanel-feishu-bitable/`
+
+The raw template under `integrations/openclaw-skill/` should remain authoring-only.
 
 ## How to use it after installation
 

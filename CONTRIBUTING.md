@@ -69,7 +69,7 @@ Please prefer:
 
 For now, the repo still contains:
 
-- some migration-oriented docs
+- some transition-oriented docs
 - a project-specific OpenClaw skill
 - temporary compatibility aliases for older env names
 
@@ -142,3 +142,4 @@ See `LICENSE` for the full text.
 ## Be practical
 
 If you want to help, the best move is usually to make the repo easier for the next stranger to understand, install, and trust.
+erify.

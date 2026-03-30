@@ -29,7 +29,7 @@ It exists to answer one practical question:
 ### Security / hygiene
 
 - decide whether to rewrite git history before broad public launch to remove old private deployment residue
-- add a short security reporting path (`SECURITY.md` or equivalent)
+- [x] add a short security reporting path (`SECURITY.md`)
 - optionally run a dedicated secret scanner in CI once the public repo shape is stable
 
 ### Docs and onboarding
@@ -40,14 +40,16 @@ It exists to answer one practical question:
 
 ### Integration packaging
 
-- decide whether first public release ships:
-  - rendered folder only
-  - packaged skill artifact
-  - both
+- [x] first public release packaging stance decided:
+  - author in `integrations/openclaw-skill/`
+  - ship/install from `skills/aipanel-feishu-bitable/`
+  - optionally generate future `.skill` artifacts from the rendered folder
 - decide whether to keep legacy env aliases for one more release or remove them
 
 ## Practical release judgment
 
-If screenshots and a light security/reporting note are added, AIPanel is close to a credible **experimental `v0.x` public release candidate**.
+With `SECURITY.md` and the packaging stance now documented, AIPanel is at a credible **experimental `v0.x` public release candidate baseline**.
+
+The biggest remaining gaps are screenshots/demo assets, an architecture visual, and the explicit git-history cleanup decision.
 
 The remaining work is now more about presentation, confidence, and policy than about core repo correctness.

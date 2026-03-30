@@ -1,8 +1,8 @@
 # AIPanel roadmap
 
-This roadmap separates what is already true in the private-alpha product from what still needs to happen before a healthy public open-source release.
+This roadmap separates what is already true in the current experimental product from what still needs to happen before a healthy public open-source release.
 
-## 1. Private-alpha foundation
+## 1. Experimental foundation
 
 This phase is mostly done.
 
@@ -26,7 +26,7 @@ This proves the core concept is real:
 - one practical human UI
 - one agent integration path
 
-That is enough for internal use and controlled alpha rollout.
+That is enough for self-hosted use and an experimental public release candidate.
 
 ## 2. Open-source prep phase
 
@@ -144,3 +144,4 @@ That means the next step is **not** a big rewrite.
 The next step is a disciplined cleanup and packaging pass.
 
 That cleanup now includes repo contribution scaffolding, a documented first-pass public-release audit, a real license choice, and a scratch-clone validation pass, but it still needs stronger public-facing assets and a few final packaging/policy decisions.
+ing/policy decisions.

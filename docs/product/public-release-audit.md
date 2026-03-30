@@ -1,6 +1,6 @@
 # Public release audit — first pass
 
-This document records the first practical audit for moving AIPanel from private alpha to a credible first public release.
+This document records the first practical audit for moving AIPanel from an internal experimental state to a credible first public release.
 
 It is intentionally incremental.
 The goal is not to redesign the whole project at once; the goal is to make the current repo honest, safer, and easier for strangers to evaluate.
@@ -160,12 +160,13 @@ A credible first public release should not ship until:
 2. git history audit is done and its remediation decision is explicit
 3. core docs are validated from a clean machine
 4. skill packaging/install flow is validated end to end
-5. screenshots and basic product visuals are added
+5. security reporting guidance exists
+6. screenshots and basic product visuals are added
 
 ## Practical conclusion
 
 AIPanel is now in a much better documentation and repo-hygiene state than the original private-alpha baseline.
-It is getting close to a credible experimental first public release candidate, but it is not fully polished yet.
+It is now at an experimental first public release candidate baseline, but it is not fully polished yet.
 This pass materially improved the release-candidate shape by:
 
 - removing the live debug-write API surface

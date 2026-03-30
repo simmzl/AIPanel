@@ -34,7 +34,7 @@ This is intentionally a **focused v1 architecture**, not a broad platform yet.
 ## Project status
 
 **Stage:** experimental / early public-release-candidate territory  
-**Open-source status:** usable and now MIT-licensed, but still being polished for broader public adoption  
+**Open-source status:** usable and MIT-licensed, but still being polished for broader public adoption  
 **Architecture status:** stable enough for controlled use, not yet fully generalized for public reuse
 
 What is already true:
@@ -49,7 +49,6 @@ What is not finished yet:
 
 - screenshots / GIFs / deploy button polish
 - optional git-history cleanup for old private deployment residue
-- security/reporting docs and broader release polish
 - more generic skill packaging beyond the current AIPanel-shaped template
 
 ## Tech stack
@@ -135,6 +134,8 @@ Detailed guides:
 - [Open-source readiness checklist](docs/product/open-source-readiness-checklist.md)
 - [Public release audit (first pass)](docs/product/public-release-audit.md)
 - [First public release candidate checklist](docs/product/release-candidate-checklist.md)
+- [First public release plan](docs/product/first-public-release.md)
+- [Release notes template](docs/product/release-notes-template.md)
 - [Roadmap](docs/product/roadmap.md)
 - [Private-alpha execution plan](docs/product/private-alpha-execution-plan.md)
 
@@ -148,11 +149,18 @@ Detailed guides:
 
 AIPanel currently ships with an **AIPanel-shaped OpenClaw skill template**.
 
+For the first public release, the packaging stance is:
+
+- edit only `integrations/openclaw-skill/`
+- treat `skills/aipanel-feishu-bitable/` as the rendered distribution folder
+- install locally via the provided install script
+- if you later package a `.skill` artifact, package the rendered folder rather than the raw template
+
 Canonical editable source:
 
 - `integrations/openclaw-skill/`
 
-Rendered mirror / local package copy:
+Rendered distribution folder / local package copy:
 
 - `skills/aipanel-feishu-bitable/`
 
@@ -168,7 +176,7 @@ Optional local render step:
 node scripts/render-openclaw-skill.mjs
 ```
 
-That installer renders the skill with env-backed values when available, then installs it to:
+That installer renders the skill with env-backed values when available, then installs the rendered distribution copy to:
 
 - `~/.openclaw/skills/aipanel-feishu-bitable`
 
@@ -211,6 +219,7 @@ A credible first public release should include:
 - contribution docs
 - issue templates
 - clear license
+- security reporting guidance
 - validated skill packaging / install story
 
 That work is now documented, but not fully completed yet.
@@ -221,4 +230,4 @@ If you are looking for a fully productized public open-source dashboard today, A
 
 If you want a practical, already-working **agent-first panel architecture** with Feishu Bitable + web UI + OpenClaw integration, this repo is already a strong starting point.
 
-The repo now has baseline open-source contribution scaffolding (`LICENSE`, `CONTRIBUTING.md`, issue templates, PR template), a safer debug story, a clearer OpenClaw packaging boundary, a real MIT license, and a documented scratch-clone validation pass — but it still needs screenshots, security/reporting polish, and optional git-history cleanup before a stronger first public release.
+The repo now has baseline open-source contribution scaffolding (`LICENSE`, `CONTRIBUTING.md`, issue templates, PR template), a safer debug story, a clearer OpenClaw packaging boundary, a real MIT license, a basic `SECURITY.md`, and a documented scratch-clone validation pass — but it still needs screenshots, optional demo assets, and optional git-history cleanup before a stronger first public release.

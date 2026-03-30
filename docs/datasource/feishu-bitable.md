@@ -117,7 +117,7 @@ Why this exists:
 - the current UI derives visible categories from live records
 - a new category needs at least one row to appear immediately
 
-This is acceptable for private alpha. A future public release may choose a cleaner category model.
+This is acceptable for the current experimental release candidate. A future public release may choose a cleaner category model.
 
 ## 6. Minimum permission expectations
 
@@ -154,7 +154,7 @@ Use these canonical names in all new setup:
 - `FEISHU_BITABLE_APP_TOKEN`
 - `FEISHU_BITABLE_TABLE_ID`
 
-The API still accepts legacy aliases for private-alpha transition safety:
+The API still accepts legacy aliases for compatibility during the current transition period:
 
 - `FEISHU_APP_TOKEN`
 - `FEISHU_TABLE_ID`

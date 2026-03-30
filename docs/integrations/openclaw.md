@@ -61,7 +61,7 @@ The canonical skill folder now acts as a template that can be rendered with:
 - table ID
 - source URL
 
-That keeps the current private-alpha workflow intact while making the public packaging story cleaner.
+That keeps the current self-hosted workflow intact while making the public packaging story cleaner.
 
 ## Install the skill
 
@@ -163,14 +163,25 @@ AIPanel itself can still ship a preconfigured skill variant for the product’s 
 
 That would preserve the good user experience while making the architecture more reusable.
 
+## First-release packaging stance
+
+For the first public release, the recommended packaging model is:
+
+- `integrations/openclaw-skill/` is the canonical editable template
+- `skills/aipanel-feishu-bitable/` is the rendered distribution folder
+- `integrations/install-scripts/install-openclaw-skill.sh` is the default install path for operators
+- if a `.skill` artifact is later published, it should be built from the rendered distribution folder rather than the raw template
+
+This keeps contribution and installation simple while leaving room for more formal packaging later.
+
 ## Recommended future cleanup
 
-For open-source release prep, the main integration tasks are:
+For post-release integration cleanup, the main tasks are:
 
 - validate install flow from a clean machine
-- decide whether to ship a packaged `.skill` artifact, rendered folder-only source, or both
 - add a public-safe explanation of required OpenClaw capabilities
 - decide whether the first public release should still ship an AIPanel-specific preset in-tree
+- evolve toward a more generic reusable skill/template after the first public release
 
 ## Related docs
 
