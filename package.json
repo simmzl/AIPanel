@@ -7,7 +7,8 @@
     "clean": "rm -rf dist tsconfig.app.tsbuildinfo tsconfig.node.tsbuildinfo",
     "dev": "vite",
     "build": "npm run clean && tsc -b && vite build",
-    "preview": "vite preview"
+    "preview": "vite preview",
+    "skill:render": "node scripts/render-openclaw-skill.mjs"
   },
   "dependencies": {
     "cheerio": "^1.1.2",

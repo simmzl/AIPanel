@@ -1,22 +1,28 @@
 ---
 name: aipanel-feishu-bitable
-description: Manage the AIPanel Feishu Bitable data source with natural language. Use when a user wants to query, add, edit, delete, reorder, or organize AIPanel bookmarks and categories stored in the specific Feishu Bitable backing the AIPanel project. Also use when the user asks about AIPanel data, category order, placeholder records for new categories, or wants changes reflected in the panel UI.
+description: Manage the AIPanel Feishu Bitable data source with natural language. Use when a user wants to query, add, edit, delete, reorder, or organize AIPanel bookmarks and categories stored in the Feishu Bitable backing the current AIPanel deployment. Also use when the user asks about AIPanel data, category order, placeholder records for new categories, or wants changes reflected in the panel UI.
 ---
 
 # AIPanel Bitable
 
 Operate the AIPanel data source in Feishu Bitable.
 
-This skill is for the specific AIPanel project whose data lives in one Feishu Bitable app/table.
-Use it to read and write bookmark data without opening the panel UI.
+This skill is the **canonical editable template** for the AIPanel OpenClaw integration.
+The checked-in copy under `skills/aipanel-feishu-bitable/` should be treated as a rendered mirror for local browsing or distribution, not as the source of truth.
 
-## Fixed data source
+## Data source configuration
 
-Use these identifiers unless the project is explicitly reconfigured:
+Render or install this skill with the correct identifiers for your AIPanel deployment:
 
-- app_token: `PB5gb73iHaxINIsmbnwcQWSQnSb`
-- table_id: `tblGD9WAXjXhWfsX`
-- data source URL: `https://my.feishu.cn/base/PB5gb73iHaxINIsmbnwcQWSQnSb`
+- app_token: `__AIPANEL_APP_TOKEN__`
+- table_id: `__AIPANEL_TABLE_ID__`
+- data source URL: `__AIPANEL_SOURCE_URL__`
+
+For the current private-alpha workflow, the installer can fill these from:
+
+- `AIPANEL_SKILL_APP_TOKEN` or `FEISHU_BITABLE_APP_TOKEN`
+- `AIPANEL_SKILL_TABLE_ID` or `FEISHU_BITABLE_TABLE_ID`
+- `AIPANEL_SKILL_SOURCE_URL` or `FEISHU_BITABLE_SOURCE_URL`
 
 ## Table schema
 
@@ -41,8 +47,8 @@ Interpretation:
 
 Use `feishu_bitable_app_table_record.list` with:
 
-- `app_token="PB5gb73iHaxINIsmbnwcQWSQnSb"`
-- `table_id="tblGD9WAXjXhWfsX"`
+- `app_token="__AIPANEL_APP_TOKEN__"`
+- `table_id="__AIPANEL_TABLE_ID__"`
 - `field_names=["标题","副标题","链接","图标","分类","排序","分类排序"]`
 
 When summarizing data for the user:

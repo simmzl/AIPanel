@@ -14,12 +14,12 @@ The goal is not to redesign the whole project at once; the goal is to make the c
 - generated build output is gitignored
 - README and deployment docs now explain the repo honestly as pre-public-release
 - OpenClaw integration is documented instead of being hidden tribal knowledge
+- the live debug write path has been moved out of the deployed API surface into a local-only script
+- the OpenClaw skill now has a clearer canonical template source and rendered mirror flow
 
 ### What still blocks a clean public release
 
-- the repo still contains project-specific fixed identifiers inside the OpenClaw skill package
-- the repo still contains a debug write endpoint with project-specific URLs and live-write behavior
-- skill packaging is duplicated between `skills/` and `integrations/openclaw-skill/`
+- the current skill is still AIPanel-shaped rather than fully generic
 - some docs still intentionally reference private-alpha migration behavior and legacy env aliases
 - git history has not yet been audited for past accidental secret leakage
 - the repo still lacks screenshots / demo assets / architecture diagram polish
@@ -47,46 +47,33 @@ Examples checked:
 
 ## 2. Hardcoded project-specific identifiers
 
-### Confirmed project-specific items still present
+### Current status after this pass
 
-#### OpenClaw skill fixed Bitable identifiers
+#### OpenClaw skill packaging
 
 Files:
 
 - `integrations/openclaw-skill/SKILL.md`
 - `skills/aipanel-feishu-bitable/SKILL.md`
+- `scripts/render-openclaw-skill.mjs`
 
-These currently include:
+The canonical skill source now uses placeholders and can be rendered from env-backed configuration.
 
-- fixed `app_token`
-- fixed `table_id`
-- fixed Feishu Bitable source URL
+That is meaningfully better than shipping only one checked-in hardcoded deployment config, even though the skill behavior is still AIPanel-specific.
 
-These are acceptable for a private-alpha configured skill, but **not ideal as the only public packaging story**.
+#### Debug write path
 
-#### Machine-specific documentation path
-
-Files:
-
-- `integrations/openclaw-skill/references/install-and-use.md`
-- `skills/aipanel-feishu-bitable/references/install-and-use.md`
-
-These include an example path under `/Users/simmzl/...` for a local packaging script.
-
-This is fine as an owner note in a private repo, but should be generalized or clearly labeled before public release.
-
-#### Debug endpoint project URLs
-
-File:
+The old deployed endpoint:
 
 - `api/debug-feishu-write.ts`
 
-This includes:
+has been removed from the public API surface.
 
-- `https://panel.simmzl.cn/`
-- `https://panel.simmzl.cn/favicon.ico`
+A local-only replacement now exists at:
 
-The endpoint also performs a real write into the configured Bitable.
+- `scripts/debug/feishu-write.mjs`
+
+That is a safer release-candidate posture because the repo no longer advertises a normal serverless endpoint whose main purpose is to perform a live debug write.
 
 ## 3. Private-alpha-only language and migration notes
 
@@ -104,80 +91,27 @@ These are not inherently unsafe, but they should be tightened before public laun
 
 ### Current state
 
-There are two copies of the same skill content:
+There are still two in-repo skill locations:
 
 - `integrations/openclaw-skill/`
 - `skills/aipanel-feishu-bitable/`
 
-### Recommended interpretation
+### Current interpretation
 
-For now, the cleanest mental model is:
+The boundary is now clearer:
 
-- `integrations/openclaw-skill/` = canonical in-repo source for install/distribution
-- `skills/aipanel-feishu-bitable/` = convenience mirror / local-use copy for OpenClaw-style skill browsing
+- `integrations/openclaw-skill/` = canonical editable template source
+- `skills/aipanel-feishu-bitable/` = rendered mirror / local distribution copy
 
-### Why this is a problem for public release
+This is enforced socially through docs and operationally through:
 
-If both stay editable without clear ownership, they will drift.
-That creates confusion for contributors and makes audits harder.
+- `scripts/render-openclaw-skill.mjs`
+- `integrations/install-scripts/install-openclaw-skill.sh`
 
-### Recommended future split
+### Remaining issue
 
-#### Option A — source + generated mirror
-
-- keep `integrations/openclaw-skill/` as the only editable source
-- generate `skills/aipanel-feishu-bitable/` during packaging or release prep
-- document that `skills/` is distribution output
-
-#### Option B — generic/public skill + product preset
-
-- `skills/feishu-bitable-generic/` → reusable public template
-- `integrations/aipanel-openclaw-skill/` → AIPanel preset/configured distribution
-
-This is likely the better long-term public direction.
-
-### Recommended next step
-
-Do **not** rewrite packaging yet.
-Instead, document the current boundary clearly and pick one canonical source before the first public launch.
-
-## 5. `api/debug-feishu-write.ts` review
-
-### What it does today
-
-- requires auth
-- accepts only POST
-- writes a synthetic debug bookmark row into the configured Feishu Bitable
-- uses project-specific panel URLs in the record payload
-
-### Public-release assessment
-
-This file should **not** remain as a normal public endpoint in the first public release.
-
-### Recommendation
-
-Short-term:
-
-- keep it in the repo only if it is still useful internally
-- exclude it from the normal TypeScript build so it is not treated as part of the standard compiled surface
-- document it as a quarantine/remove-before-public item
-
-Before public release, choose one of:
-
-1. remove it entirely
-2. move it to a non-deployed local script
-3. gate it behind an explicit development-only environment flag and generic payloads
-
-### Preferred option
-
-Move or remove it before public release.
-
-Reason:
-
-- it performs live writes
-- it encodes project-specific URLs
-- it is not part of the core public product story
-- it increases the chance of accidental misuse without providing meaningful user value
+This is better, but still not the final long-term public architecture.
+A future public release may still want a more generic Feishu-Bitable skill plus an AIPanel preset.
 
 ## Release blockers vs non-blockers
 
@@ -185,20 +119,19 @@ Reason:
 
 - choose actual public license text
 - audit git history for leaked secrets
-- parameterize or quarantine fixed identifiers in public-facing skill packaging
-- remove or quarantine `api/debug-feishu-write.ts`
-- clarify one canonical skill source
+- reduce or finish removal of lingering private-alpha migration wording in public docs
+- validate clean-machine install flow end to end
+- decide whether first public release ships only the rendered AIPanel preset or also a generic reusable template
 
 ### Medium-priority cleanup
 
-- reduce owner-machine-specific doc examples
-- trim internal migration language from docs
+- reduce owner-machine-specific / operator-specific doc examples further
 - add screenshots and architecture explanation
 - add security reporting guidance
 
 ### Lower-priority later improvements
 
-- generic skill templating
+- generic skill templating beyond AIPanel
 - more formal package/distribution workflow
 - compatibility matrix for OpenClaw versions
 
@@ -208,11 +141,15 @@ A credible first public release should not ship until:
 
 1. license is finalized
 2. git history audit is done
-3. debug endpoint decision is implemented
-4. skill packaging ownership is clarified
-5. core docs are validated from a clean machine
+3. core docs are validated from a clean machine
+4. skill packaging/install flow is validated end to end
+5. screenshots and basic product visuals are added
 
 ## Practical conclusion
 
 AIPanel is now in a much better documentation and repo-hygiene state than the original private-alpha baseline.
-But it is still best described as **open-source preparation in progress**, not public-release ready.
+It is not public-release ready yet, but this pass materially improved the release-candidate shape by:
+
+- removing the live debug-write API surface
+- making the skill packaging story less ambiguous
+- reducing dependence on one checked-in fixed Feishu deployment in the canonical skill source

@@ -4,6 +4,16 @@
 
 This skill lets an OpenClaw-style agent operate the AIPanel Feishu Bitable with natural language.
 
+The canonical editable source lives in:
+
+- `integrations/openclaw-skill/`
+
+The checked-in copy under:
+
+- `skills/aipanel-feishu-bitable/`
+
+is a rendered mirror for local browsing / distribution and should not be edited by hand.
+
 After installation, you can ask the agent to:
 
 - read AIPanel data
@@ -16,38 +26,51 @@ After installation, you can ask the agent to:
 - reorder bookmarks inside categories
 - inspect placeholder rows and incomplete data
 
-## Package the skill
+## Render a configured copy
 
-Run:
+From the repo root:
 
 ```bash
-python3 /Users/simmzl/.nvm/versions/node/v22.22.1/lib/node_modules/openclaw/skills/skill-creator/scripts/package_skill.py /tmp/AIPanel/integrations/openclaw-skill /tmp/AIPanel/dist-skills
+node scripts/render-openclaw-skill.mjs
 ```
 
-This produces:
+By default, the renderer writes to:
 
-- `/tmp/AIPanel/dist-skills/aipanel-feishu-bitable.skill`
+- `skills/aipanel-feishu-bitable/`
 
-Current packaged file:
+It fills template placeholders from these env vars if present:
 
-- `/tmp/AIPanel/dist-skills/aipanel-feishu-bitable.skill`
+- `AIPANEL_SKILL_APP_TOKEN` or `FEISHU_BITABLE_APP_TOKEN`
+- `AIPANEL_SKILL_TABLE_ID` or `FEISHU_BITABLE_TABLE_ID`
+- `AIPANEL_SKILL_SOURCE_URL` or `FEISHU_BITABLE_SOURCE_URL`
+
+If no values are available, the rendered copy keeps safe placeholders for manual editing.
 
 ## Install into OpenClaw
 
-You can use either approach.
+Fast path from the repo root:
 
-### Option A: copy the unpacked skill folder
+```bash
+bash integrations/install-scripts/install-openclaw-skill.sh
+```
 
-Copy this folder into your local skills directory:
+This script:
 
-- source: `/tmp/AIPanel/integrations/openclaw-skill`
-- target example: `~/.openclaw/skills/aipanel-feishu-bitable`
+1. renders a configured skill copy from the canonical template
+2. installs it into your local OpenClaw skills directory
+3. removes the legacy `homepanel-feishu-bitable` install target if present
 
-### Option B: install from the packaged `.skill` file
+Default install target:
 
-Use the target environment's normal skill installation flow and import:
+- `~/.openclaw/skills/aipanel-feishu-bitable`
 
-- `/tmp/AIPanel/dist-skills/aipanel-feishu-bitable.skill`
+## Optional packaging step
+
+If you want to package the rendered skill with your normal OpenClaw tooling, package the rendered folder rather than the raw template.
+
+Recommended source to package:
+
+- `skills/aipanel-feishu-bitable/`
 
 ## How to use it after installation
 

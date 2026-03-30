@@ -10,24 +10,23 @@ This is one of the core ideas behind the project:
 
 ## Current location
 
-Canonical skill source for now:
+Canonical editable source:
 
 - `integrations/openclaw-skill/`
+
+Rendered mirror / distribution copy:
+
+- `skills/aipanel-feishu-bitable/`
 
 Convenience installer:
 
 - `integrations/install-scripts/install-openclaw-skill.sh`
 
-There is also a mirrored copy under:
-
-- `skills/aipanel-feishu-bitable/`
-
 Current recommended interpretation:
 
-- `integrations/openclaw-skill/` is the editable source-of-truth for packaging/install docs
-- `skills/aipanel-feishu-bitable/` is a convenience mirror for local/OpenClaw-style skill browsing
-
-For public release, this dual-location setup should be simplified so contributors know which copy is authoritative.
+- `integrations/openclaw-skill/` is the only editable source of truth
+- `skills/aipanel-feishu-bitable/` is rendered from that template for local/OpenClaw-style browsing and packaging
+- contributors should not manually edit both copies
 
 ## What the current skill can do
 
@@ -54,16 +53,15 @@ In practice, this means an operator can say things like:
 
 ## How it works today
 
-The current skill is **project-specific**.
+The current skill is still **AIPanel-oriented**, but it is no longer documented as one hardcoded private deployment only.
 
-It is intentionally configured around one fixed AIPanel data source and schema, including:
+The canonical skill folder now acts as a template that can be rendered with:
 
-- fixed Feishu Bitable identifiers
-- expected field names
-- AIPanel-specific category and ordering behavior
-- placeholder-row logic for category visibility
+- Feishu Bitable app token
+- table ID
+- source URL
 
-That makes it convenient and low-friction for private alpha, but it is **not yet the final public open-source shape**.
+That keeps the current private-alpha workflow intact while making the public packaging story cleaner.
 
 ## Install the skill
 
@@ -75,19 +73,31 @@ From the repo root:
 bash integrations/install-scripts/install-openclaw-skill.sh
 ```
 
-This copies the skill into:
+This renders and installs the skill into:
 
 - `~/.openclaw/skills/aipanel-feishu-bitable`
+
+The installer fills template placeholders from these env vars if present:
+
+- `AIPANEL_SKILL_APP_TOKEN` or `FEISHU_BITABLE_APP_TOKEN`
+- `AIPANEL_SKILL_TABLE_ID` or `FEISHU_BITABLE_TABLE_ID`
+- `AIPANEL_SKILL_SOURCE_URL` or `FEISHU_BITABLE_SOURCE_URL`
 
 It also removes the old legacy install target if present:
 
 - `~/.openclaw/skills/homepanel-feishu-bitable`
 
-### Manual install
+### Manual render + install
 
-You can also copy the skill folder manually:
+You can also render the mirror yourself:
 
-- source: `integrations/openclaw-skill/`
+```bash
+node scripts/render-openclaw-skill.mjs
+```
+
+Then copy:
+
+- source: `skills/aipanel-feishu-bitable/`
 - target: `~/.openclaw/skills/aipanel-feishu-bitable`
 
 ## How to use it after install
@@ -101,7 +111,7 @@ Examples:
 - “把 AIPanel 分类顺序改成：效率工具、AI 工作流、开发、网络工具、其他”
 - “找出没有副标题的记录”
 
-The skill docs and references currently live inside the skill package itself.
+The skill docs and references live inside the skill package itself.
 
 ## Why this matters for AIPanel
 
@@ -119,17 +129,19 @@ That agent-first angle is a big part of the product story.
 
 For public open-source readers, the most important limitation is this:
 
-### The current skill is private-alpha oriented
+### The current skill is still product-shaped, not fully generic
 
-It is optimized for the AIPanel project as currently run, not for generic reuse across arbitrary teams.
+It still assumes:
 
-That means it still has:
+- the current AIPanel field names
+- AIPanel-specific category/order semantics
+- placeholder-row logic for category visibility
 
-- fixed identifiers
-- project assumptions
-- docs shaped around one known deployment
+What changed in this pass is the packaging boundary:
 
-This is intentional for now.
+- fixed private identifiers are no longer the only checked-in skill story
+- the editable skill source is now clearly the template under `integrations/openclaw-skill/`
+- the mirrored `skills/` copy is treated as rendered output
 
 ## What should later be generalized
 
@@ -155,18 +167,10 @@ That would preserve the good user experience while making the architecture more 
 
 For open-source release prep, the main integration tasks are:
 
-- parameterize or remove fixed IDs
-- clarify whether `skills/` is source, mirror, or distribution output
-- document install flow from a clean machine
-- decide whether to ship a packaged `.skill` artifact, folder-only source, or both
+- validate install flow from a clean machine
+- decide whether to ship a packaged `.skill` artifact, rendered folder-only source, or both
 - add a public-safe explanation of required OpenClaw capabilities
-
-A practical future split would be:
-
-- generic Feishu-Bitable skill/template for broader reuse
-- AIPanel-specific configured preset layered on top of that generic template
-
-That keeps private-alpha usability intact while making the public packaging story much cleaner.
+- decide whether the first public release should still ship an AIPanel-specific preset in-tree
 
 ## Related docs
 

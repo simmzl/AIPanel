@@ -24,7 +24,7 @@ This checklist is for moving AIPanel from a working private-alpha repo to a cred
 - [ ] Review git history for accidentally committed credentials or fixed internal-only endpoints
 - [ ] Remove or rotate any leaked identifiers if discovered
 - [~] Keep required envs documented in one place
-- [x] Review whether `api/debug-feishu-write.ts` should be removed, gated, or excluded before public launch
+- [x] Remove the live debug-write endpoint from the deployed API surface and keep any remaining smoke-test flow local-only
 - [ ] Add a short security policy / reporting path if the repo becomes public
 - [x] Add a first-pass public release audit doc
 
@@ -57,13 +57,13 @@ This checklist is for moving AIPanel from a working private-alpha repo to a cred
 ## 6. OpenClaw / agent integration packaging
 
 - [x] Document current OpenClaw integration clearly
-- [x] State that the current skill is project-specific / private-alpha oriented
+- [x] State that the current skill is AIPanel-shaped rather than fully generic
 - [x] Document current install path and installer script
-- [ ] Split private-alpha fixed-ID skill from public reusable template
+- [ ] Split AIPanel-specific skill from a broader reusable Feishu-Bitable template
 - [~] Decide packaging format for public release (`integrations/`, `skills/`, package artifact, or both)
-- [ ] Remove or parameterize project-specific fixed identifiers before public launch
+- [~] Remove fixed identifiers from the canonical skill source and keep rendered/configured copies explicit
 - [ ] Add a short compatibility matrix for supported OpenClaw versions if needed
-- [x] Document current `skills/` vs `integrations/openclaw-skill/` boundary and recommended direction
+- [x] Document and enforce the current `skills/` vs `integrations/openclaw-skill/` boundary (`integrations/` editable template, `skills/` rendered mirror)
 
 ## 7. Community / contribution readiness
 
@@ -78,7 +78,7 @@ This checklist is for moving AIPanel from a working private-alpha repo to a cred
 
 - [~] Review hard-coded product text for internal/private-only language
 - [~] Review fixed URLs and example tokens in docs and skill references
-- [~] Decide whether `skills/` and `integrations/openclaw-skill/` should both exist, or whether one should become generated/distribution output
+- [x] Decide and document that `integrations/openclaw-skill/` is canonical while `skills/` is rendered/distribution output
 - [ ] Remove stale private-alpha migration notes that do not help public users
 - [ ] Add architecture notes about why Feishu Bitable is the current source of truth
 

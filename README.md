@@ -4,7 +4,7 @@ Agent-first bookmarks and lightweight ops panel, backed by Feishu Bitable.
 
 AIPanel is built around a simple idea: **agents should be able to operate the same structured data that humans see in the UI**. The web app is the human surface. The real center of the product is the shared data source and the agent workflows around it.
 
-Today, AIPanel is in **private alpha / pre-open-source** stage. The repo is already usable for internal deployment, but it is **not yet packaged as a polished general-purpose public product**.
+Today, AIPanel is in an **early self-hostable / pre-public-release** stage. The repo is already usable for real deployment, but it is **not yet packaged as a polished general-purpose public product**.
 
 ## Why AIPanel
 
@@ -18,7 +18,7 @@ Most bookmark dashboards are UI-first. AIPanel is different:
 
 ## Current product scope
 
-The current AIPanel private-alpha build includes:
+The current AIPanel build includes:
 
 - password-protected web panel
 - bookmark browsing and search
@@ -27,13 +27,13 @@ The current AIPanel private-alpha build includes:
 - create / edit / delete bookmark flows
 - metadata fetching from target URLs
 - Feishu Bitable-backed API layer
-- project-specific OpenClaw skill for agent operations against the same dataset
+- OpenClaw skill for agent operations against the same dataset
 
 This is intentionally a **focused v1 architecture**, not a broad platform yet.
 
 ## Project status
 
-**Stage:** private alpha  
+**Stage:** pre-public-release  
 **Open-source status:** preparation in progress  
 **Architecture status:** stable enough for controlled use, not yet fully generalized for public reuse
 
@@ -47,10 +47,10 @@ What is already true:
 What is not finished yet:
 
 - public-safe repo review and secrets audit
-- contribution docs and issue templates
-- license decision
+- final license decision
 - screenshots / GIFs / deploy button polish
-- generalized skill packaging for non-project-specific reuse
+- broader validation from a clean machine
+- more generic skill packaging beyond the current AIPanel-shaped template
 
 ## Tech stack
 
@@ -145,11 +145,15 @@ Detailed guides:
 
 ## OpenClaw integration
 
-AIPanel currently ships with a **project-specific** OpenClaw skill.
+AIPanel currently ships with an **AIPanel-shaped OpenClaw skill template**.
 
-Canonical source:
+Canonical editable source:
 
 - `integrations/openclaw-skill/`
+
+Rendered mirror / local package copy:
+
+- `skills/aipanel-feishu-bitable/`
 
 Convenience installer:
 
@@ -157,14 +161,17 @@ Convenience installer:
 bash integrations/install-scripts/install-openclaw-skill.sh
 ```
 
-That installer copies the skill to:
+Optional local render step:
+
+```bash
+node scripts/render-openclaw-skill.mjs
+```
+
+That installer renders the skill with env-backed values when available, then installs it to:
 
 - `~/.openclaw/skills/aipanel-feishu-bitable`
 
-This is good enough for private alpha, but not yet the final public packaging shape. The likely public direction is:
-
-- a reusable generic Feishu-Bitable skill/template
-- plus an AIPanel-specific configured variant
+This keeps the current private-alpha workflow usable while making the repo less dependent on one hardcoded private deployment.
 
 ## Environment naming note
 
@@ -173,12 +180,24 @@ Use the canonical env names below in all new setup:
 - `FEISHU_BITABLE_APP_TOKEN`
 - `FEISHU_BITABLE_TABLE_ID`
 
-The API still accepts these temporary legacy aliases for private-alpha compatibility:
+The API still accepts these temporary legacy aliases for compatibility with older setups:
 
 - `FEISHU_APP_TOKEN` → `FEISHU_BITABLE_APP_TOKEN`
 - `FEISHU_TABLE_ID` → `FEISHU_BITABLE_TABLE_ID`
 
 Do not rely on those aliases in future public docs.
+
+## Debug / local maintenance note
+
+A previous live debug write API endpoint has been removed from the deployed API surface.
+
+If you still need an internal write-smoke-test against the configured Feishu Bitable, use the local-only script instead:
+
+```bash
+node scripts/debug/feishu-write.mjs
+```
+
+That keeps release candidates safer while preserving a practical internal debug path.
 
 ## What a future public release should look like
 
@@ -191,7 +210,7 @@ A credible first public release should include:
 - contribution docs
 - issue templates
 - clear license
-- more generic skill packaging
+- validated skill packaging / install story
 
 That work is now documented, but not fully completed yet.
 
@@ -201,4 +220,4 @@ If you are looking for a fully productized public open-source dashboard today, A
 
 If you want a practical, already-working **agent-first panel architecture** with Feishu Bitable + web UI + OpenClaw integration, this repo is already a strong starting point.
 
-The repo now has baseline open-source contribution scaffolding (`LICENSE` status file, `CONTRIBUTING.md`, issue templates, PR template), but it still needs a final license choice, git-history audit, and public-safe cleanup of debug/project-specific integration details before a credible first public release.
+The repo now has baseline open-source contribution scaffolding (`LICENSE` status file, `CONTRIBUTING.md`, issue templates, PR template), a safer debug story, and a clearer OpenClaw packaging boundary — but it still needs a final license choice, git-history audit, and broader clean-machine validation before a credible first public release.
