@@ -48,11 +48,44 @@ export function createVercelProject({ projectName = 'aipanel', cwd = process.cwd
   if (dryRun) {
     return {
       dryRun: true,
-      command: ['vercel', 'project', 'add', projectName, '--yes']
+      command: ['vercel', 'project', 'add', projectName]
     };
   }
 
-  const output = runText('vercel', ['project', 'add', projectName, '--yes'], { cwd });
+  let output = '';
+  try {
+    output = runText('vercel', ['project', 'add', projectName], { cwd });
+    return {
+      dryRun: false,
+      projectName,
+      action: 'created',
+      output
+    };
+  } catch (error) {
+    const stderr = error?.stderr || '';
+    const stdout = error?.stdout || '';
+    const combined = `${stdout}${stderr}`;
+    if (/already exists|Found Project|Project .* already exists/i.test(combined)) {
+      return {
+        dryRun: false,
+        projectName,
+        action: 'reused',
+        output: combined.trim()
+      };
+    }
+    throw error;
+  }
+}
+
+export function linkVercelProject({ projectName = 'aipanel', cwd = process.cwd(), dryRun = false } = {}) {
+  if (dryRun) {
+    return {
+      dryRun: true,
+      command: ['vercel', 'link', '--project', projectName, '--yes']
+    };
+  }
+
+  const output = runText('vercel', ['link', '--project', projectName, '--yes'], { cwd });
   return {
     dryRun: false,
     projectName,
@@ -103,6 +136,7 @@ export function deployVercelProject({ cwd = process.cwd(), dryRun = false } = {}
     dryRun: false,
     output,
     deploymentUrl: output?.url || null,
-    projectId: output?.projectId || null
+    projectId: output?.projectId || null,
+    inspectorUrl: output?.inspectorUrl || null
   };
 }

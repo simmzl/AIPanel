@@ -31,6 +31,7 @@
 - `--execute` 会真实创建/更新资源
 - `create-feishu --repair` 可在已有 base/table 上继续补 schema
 - `create-vercel` 会在真执行前检查关键 env 是否齐全
+- `create-vercel` 现在的正确顺序应该是：project add -> link -> env -> deploy
 - `FEISHU_APP_ID` 会优先尝试从 `lark-cli auth status` 自动推断
 - `run` 会自动推进到“只剩最后人工输入项”为止
 

@@ -5,7 +5,7 @@ import { generateJwtSecret } from './secrets.mjs';
 import { runPreflight } from './preflight.mjs';
 import { createFeishuBitable, hasExistingFeishuState, hasFeishuBaseAndTable, InstallerStepError } from './feishu.mjs';
 import { progress } from './progress.mjs';
-import { planVercelSetup, createVercelProject, upsertVercelEnv, deployVercelProject } from './vercel.mjs';
+import { planVercelSetup, createVercelProject, linkVercelProject, upsertVercelEnv, deployVercelProject } from './vercel.mjs';
 
 const command = process.argv[2] || 'help';
 const statePath = process.env.AIPANEL_INSTALLER_STATE || getDefaultStatePath();
@@ -163,6 +163,7 @@ switch (command) {
         statePath,
         plan,
         project: createVercelProject({ projectName: plan.projectName, cwd: '/tmp/AIPanel', dryRun: true }),
+        link: linkVercelProject({ projectName: plan.projectName, cwd: '/tmp/AIPanel', dryRun: true }),
         env: upsertVercelEnv({ cwd: '/tmp/AIPanel', envMap: plan.env, dryRun: true }),
         deploy: deployVercelProject({ cwd: '/tmp/AIPanel', dryRun: true })
       });
@@ -194,7 +195,7 @@ switch (command) {
       }
     }, statePath);
 
-    print({ ok: true, dryRun: false, statePath, plan, project, env, deploy, state: next });
+    print({ ok: true, dryRun: false, statePath, plan, project, link, env, deploy, state: next });
     break;
   }
 
