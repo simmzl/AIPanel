@@ -72,6 +72,9 @@ placeholder row 逻辑在当前阶段继续保留，不在 Phase 2 中重构。
 
 - `create-feishu` 的 dry-run 已经能生成正确的请求形状
 - AIPanel 当前 schema 的字段请求体已经对上 `lark-cli` 的 base API 形状
+- `标题` / `副标题` / `链接` / `图标` 应映射为 `text`
+- `分类` 应映射为 `select`，并使用顶层 `options`
+- `排序` / `分类排序` 应映射为 `number`
 
 ### 下一步关注点
 

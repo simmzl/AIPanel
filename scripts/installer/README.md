@@ -35,7 +35,8 @@
 当前已经补上的最小保护：
 
 - 真执行前必须显式传 `--execute`
-- state 已有 Feishu 结果时会跳过重复创建
+- `--repair` 可在已有 base/table 上继续补 schema
+- state 已有 Feishu 结果时默认跳过重复创建
 - 如果中途失败，会尽量把已拿到的 `baseToken` / `tableId` / `sourceUrl` 回写到 state，方便恢复
 
 目的不是一次做完，而是把 installer 从文档推进到真正可执行的 repo 结构。

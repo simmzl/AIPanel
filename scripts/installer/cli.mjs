@@ -3,7 +3,7 @@ import process from 'node:process';
 import { readState, updateState, writeState, createInitialState, getDefaultStatePath } from './state.mjs';
 import { generateJwtSecret } from './secrets.mjs';
 import { runPreflight } from './preflight.mjs';
-import { createFeishuBitable, hasExistingFeishuState } from './feishu.mjs';
+import { createFeishuBitable, hasExistingFeishuState, hasFeishuBaseAndTable, InstallerStepError } from './feishu.mjs';
 import { progress } from './progress.mjs';
 
 const command = process.argv[2] || 'help';
@@ -43,12 +43,12 @@ switch (command) {
   case 'create-feishu': {
     const current = readState(statePath);
 
-    if (hasExistingFeishuState(current)) {
+    if (hasExistingFeishuState(current) && !process.argv.includes('--repair')) {
       print({
         ok: true,
         reused: true,
         statePath,
-        message: 'Installer state already contains Feishu Bitable info; skipping duplicate creation.',
+        message: 'Installer state already contains Feishu Bitable info; skipping duplicate creation. Use --repair to continue filling schema.',
         state: current
       });
       break;
@@ -71,7 +71,22 @@ switch (command) {
     }, statePath);
 
     try {
-      const created = createFeishuBitable({ appName: started.appName || 'AIPanel', dryRun });
+      const created = createFeishuBitable({
+        appName: started.appName || 'AIPanel',
+        dryRun,
+        resume: hasFeishuBaseAndTable(started)
+          ? {
+              baseToken: started.feishu.appToken,
+              baseUrl: started.feishu.sourceUrl ? started.feishu.sourceUrl.split('?')[0] : null,
+              tableId: started.feishu.tableId
+            }
+          : started.feishu.appToken
+            ? {
+                baseToken: started.feishu.appToken,
+                baseUrl: started.feishu.sourceUrl ? started.feishu.sourceUrl.split('?')[0] : null
+              }
+            : null
+      });
       if (dryRun) {
         print({ ok: true, dryRun: true, statePath, result: created });
         break;
@@ -97,12 +112,12 @@ switch (command) {
         feishu: {
           appToken: partial.baseToken || current.feishu.appToken,
           tableId: partial.tableId || current.feishu.tableId,
-          sourceUrl: partial.sourceUrl || current.feishu.sourceUrl
+          sourceUrl: partial.sourceUrl || partial.baseUrl || current.feishu.sourceUrl
         },
         env: {
           FEISHU_BITABLE_APP_TOKEN: partial.baseToken || current.env.FEISHU_BITABLE_APP_TOKEN,
           FEISHU_BITABLE_TABLE_ID: partial.tableId || current.env.FEISHU_BITABLE_TABLE_ID,
-          FEISHU_BITABLE_SOURCE_URL: partial.sourceUrl || current.env.FEISHU_BITABLE_SOURCE_URL
+          FEISHU_BITABLE_SOURCE_URL: partial.sourceUrl || partial.baseUrl || current.env.FEISHU_BITABLE_SOURCE_URL
         },
         errors: [...current.errors, error instanceof Error ? error.message : String(error)]
       }, statePath);
