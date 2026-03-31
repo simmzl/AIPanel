@@ -1,6 +1,6 @@
 # AIPanel docs
 
-This folder contains the current setup, architecture, and release-readiness docs for AIPanel.
+This folder contains the current setup, architecture, onboarding, troubleshooting, and release-readiness docs for AIPanel.
 
 ## Start here
 
@@ -8,6 +8,7 @@ This folder contains the current setup, architecture, and release-readiness docs
 - [Deploy on Vercel](./deploy/vercel.md)
 - [Feishu app + Bitable setup](./datasource/feishu-bitable.md)
 - [OpenClaw integration](./integrations/openclaw.md)
+- [Troubleshooting](./troubleshooting.md)
 
 ## Product / release docs
 
@@ -17,6 +18,7 @@ This folder contains the current setup, architecture, and release-readiness docs
 - [Release notes template](./product/release-notes-template.md)
 - [Open-source readiness checklist](./product/open-source-readiness-checklist.md)
 - [Public release audit](./product/public-release-audit.md)
+- [Maintainer expectations](./product/maintainer-expectations.md)
 - [Roadmap](./product/roadmap.md)
 
 ## Assets
@@ -36,4 +38,5 @@ This folder contains the current setup, architecture, and release-readiness docs
 3. Vercel deployment guide
 4. Feishu Bitable setup guide
 5. OpenClaw integration
-6. First public release plan / checklist
+6. Troubleshooting
+7. First public release plan / checklist

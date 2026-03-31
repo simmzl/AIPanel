@@ -143,26 +143,6 @@ What changed in this pass is the packaging boundary:
 - the editable skill source is now clearly the template under `integrations/openclaw-skill/`
 - the mirrored `skills/` copy is treated as rendered output
 
-## What should later be generalized
-
-Before or during a public release, the integration should likely evolve into two layers.
-
-### Layer 1: generic reusable skill/template
-
-A future public package should allow users to configure:
-
-- Feishu app token
-- table ID
-- field names
-- placeholder behavior
-- category/order conventions
-
-### Layer 2: AIPanel-specific configured variant
-
-AIPanel itself can still ship a preconfigured skill variant for the product’s preferred schema and workflow.
-
-That would preserve the good user experience while making the architecture more reusable.
-
 ## First-release packaging stance
 
 For the first public release, the recommended packaging model is:
@@ -173,6 +153,14 @@ For the first public release, the recommended packaging model is:
 - if a `.skill` artifact is later published, it should be built from the rendered distribution folder rather than the raw template
 
 This keeps contribution and installation simple while leaving room for more formal packaging later.
+
+## Compatibility note
+
+For the current release, the intended support surface is the in-repo install-script + rendered-skill workflow documented here.
+
+See also:
+
+- [OpenClaw compatibility note](./openclaw-compatibility.md)
 
 ## Recommended future cleanup
 
