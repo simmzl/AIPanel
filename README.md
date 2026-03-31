@@ -21,19 +21,6 @@ More assets:
 - [Edit bookmark view](docs/assets/screenshots/desktop-edit-bookmark.png)
 - [Architecture diagram](docs/assets/diagrams/aipanel-architecture.svg)
 
-## Who it’s for
-
-AIPanel is a good fit if:
-
-- you already use Feishu Bitable and want a web panel on top of it
-- you want humans and agents to operate the same bookmark dataset
-- you are comfortable deploying on Vercel and configuring environment variables
-
-AIPanel is probably **not** the right fit if:
-
-- you want a zero-config bookmark dashboard with no Feishu dependency
-- you want a generic bookmark product with local-only storage out of the box
-
 ## Why AIPanel
 
 Most bookmark dashboards are UI-first. AIPanel is different:

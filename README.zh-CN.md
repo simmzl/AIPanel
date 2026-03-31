@@ -21,19 +21,6 @@ OpenClaw 是可选的 Agent / 运维层。
 - [编辑书签视图](docs/assets/screenshots/desktop-edit-bookmark.png)
 - [架构图](docs/assets/diagrams/aipanel-architecture.svg)
 
-## 适合谁 / 不适合谁
-
-AIPanel 比较适合你，如果：
-
-- 你已经在用飞书多维表格，并希望在上面加一个 Web 面板
-- 你希望让人和 Agent 操作同一份书签数据
-- 你可以接受在 Vercel 上部署并配置环境变量
-
-AIPanel 可能**不太适合**你，如果：
-
-- 你想要一个零配置、完全不依赖 Feishu 的书签面板
-- 你想要一个开箱即用、本地存储优先的通用书签产品
-
 ## 为什么是 AIPanel
 
 大多数书签面板是 UI-first 的，但 AIPanel 不一样：
