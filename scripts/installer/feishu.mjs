@@ -2,6 +2,14 @@ import { execFileSync } from 'node:child_process';
 
 const DEFAULT_TABLE_NAME = 'Bookmarks';
 
+export class InstallerStepError extends Error {
+  constructor(message, partial = {}) {
+    super(message);
+    this.name = 'InstallerStepError';
+    this.partial = partial;
+  }
+}
+
 const DEFAULT_FIELDS = [
   { field_name: '标题', type: 1 },
   { field_name: '副标题', type: 1 },

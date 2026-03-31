@@ -65,8 +65,13 @@ switch (command) {
 
     progress('开始创建 Feishu 数据源', { dryRun, execute });
 
+    const started = updateState({
+      stage: 'create-feishu',
+      errors: current.errors
+    }, statePath);
+
     try {
-      const created = createFeishuBitable({ appName: 'AIPanel', dryRun });
+      const created = createFeishuBitable({ appName: started.appName || 'AIPanel', dryRun });
       if (dryRun) {
         print({ ok: true, dryRun: true, statePath, result: created });
         break;
@@ -82,11 +87,23 @@ switch (command) {
           FEISHU_BITABLE_APP_TOKEN: created.baseToken,
           FEISHU_BITABLE_TABLE_ID: created.tableId,
           FEISHU_BITABLE_SOURCE_URL: created.sourceUrl
-        }
+        },
+        errors: current.errors
       }, statePath);
       print({ ok: true, dryRun: false, statePath, result: created, state: next });
     } catch (error) {
+      const partial = error instanceof InstallerStepError ? error.partial || {} : {};
       const next = updateState({
+        feishu: {
+          appToken: partial.baseToken || current.feishu.appToken,
+          tableId: partial.tableId || current.feishu.tableId,
+          sourceUrl: partial.sourceUrl || current.feishu.sourceUrl
+        },
+        env: {
+          FEISHU_BITABLE_APP_TOKEN: partial.baseToken || current.env.FEISHU_BITABLE_APP_TOKEN,
+          FEISHU_BITABLE_TABLE_ID: partial.tableId || current.env.FEISHU_BITABLE_TABLE_ID,
+          FEISHU_BITABLE_SOURCE_URL: partial.sourceUrl || current.env.FEISHU_BITABLE_SOURCE_URL
+        },
         errors: [...current.errors, error instanceof Error ? error.message : String(error)]
       }, statePath);
       print({
@@ -94,6 +111,7 @@ switch (command) {
         dryRun,
         statePath,
         error: error instanceof Error ? error.message : String(error),
+        partial,
         state: next
       });
     }

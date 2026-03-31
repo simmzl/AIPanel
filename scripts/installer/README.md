@@ -30,6 +30,12 @@
 
 - 真实 Vercel 部署实现
 - 密码交互与完整恢复流
-- create-feishu 的幂等与资源命名策略
+- 完整的 create-feishu 幂等与资源命名策略
+
+当前已经补上的最小保护：
+
+- 真执行前必须显式传 `--execute`
+- state 已有 Feishu 结果时会跳过重复创建
+- 如果中途失败，会尽量把已拿到的 `baseToken` / `tableId` / `sourceUrl` 回写到 state，方便恢复
 
 目的不是一次做完，而是把 installer 从文档推进到真正可执行的 repo 结构。
