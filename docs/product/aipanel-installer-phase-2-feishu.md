@@ -82,6 +82,12 @@ placeholder row 逻辑在当前阶段继续保留，不在 Phase 2 中重构。
 - 幂等策略（重复运行时怎么避免重复造资源）
 - 失败后 state 如何恢复
 
+当前已经有的最小保护：
+
+- `create-feishu --dry-run` 用于先看请求形状
+- `create-feishu --execute` 才会真实写入 Feishu
+- 如果 installer state 里已经有 Feishu 创建结果，当前实现会先跳过重复创建
+
 ### 如果 Feishu CLI 不能完整覆盖后续需要的动作
 
 再明确哪些动作由：

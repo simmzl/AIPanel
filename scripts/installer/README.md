@@ -18,6 +18,13 @@
 - `npm run installer:jwt`
 - `npm run installer:show`
 - `node scripts/installer/cli.mjs create-feishu --dry-run`
+- `node scripts/installer/cli.mjs create-feishu --execute`
+
+说明：
+
+- `--dry-run` 只展示将要发出的 Feishu 请求，不会真正创建资源
+- `--execute` 会真实创建 Feishu Bitable 资源
+- 如果 state 里已经有创建结果，当前实现会先避免重复创建
 
 当前还没有：
 

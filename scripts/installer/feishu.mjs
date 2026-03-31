@@ -39,6 +39,14 @@ export function getAipanelFieldSchema() {
   return DEFAULT_FIELDS;
 }
 
+export function hasExistingFeishuState(state) {
+  return Boolean(
+    state?.feishu?.appToken &&
+      state?.feishu?.tableId &&
+      state?.feishu?.sourceUrl
+  );
+}
+
 export function createFeishuBitable({ appName = 'AIPanel', dryRun = false } = {}) {
   const baseName = `${appName}`;
   const baseCreate = runJson('lark-cli', [

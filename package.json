@@ -14,7 +14,8 @@
     "installer:preflight": "node scripts/installer/cli.mjs preflight",
     "installer:jwt": "node scripts/installer/cli.mjs generate-jwt",
     "installer:show": "node scripts/installer/cli.mjs show",
-    "installer:create-feishu:dry": "node scripts/installer/cli.mjs create-feishu --dry-run"
+    "installer:create-feishu:dry": "node scripts/installer/cli.mjs create-feishu --dry-run",
+    "installer:create-feishu": "node scripts/installer/cli.mjs create-feishu --execute"
   },
   "dependencies": {
     "cheerio": "^1.1.2",
