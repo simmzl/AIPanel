@@ -5,6 +5,7 @@ import { generateJwtSecret } from './secrets.mjs';
 import { runPreflight } from './preflight.mjs';
 import { createFeishuBitable, hasExistingFeishuState, hasFeishuBaseAndTable, InstallerStepError } from './feishu.mjs';
 import { progress } from './progress.mjs';
+import { planVercelSetup, createVercelProject, upsertVercelEnv, deployVercelProject } from './vercel.mjs';
 
 const command = process.argv[2] || 'help';
 const statePath = process.env.AIPANEL_INSTALLER_STATE || getDefaultStatePath();
@@ -133,6 +134,51 @@ switch (command) {
     break;
   }
 
+  case 'create-vercel': {
+    const current = readState(statePath);
+
+    if (!dryRun && !execute) {
+      print({
+        ok: false,
+        statePath,
+        error: 'create-vercel will create/update real Vercel resources. Re-run with --execute to continue, or use --dry-run first.'
+      });
+      break;
+    }
+
+    progress('开始创建 Vercel 项目与部署', { dryRun, execute });
+    const plan = planVercelSetup(current);
+
+    if (dryRun) {
+      print({
+        ok: true,
+        dryRun: true,
+        statePath,
+        plan,
+        project: createVercelProject({ projectName: plan.projectName, cwd: '/tmp/AIPanel', dryRun: true }),
+        env: upsertVercelEnv({ cwd: '/tmp/AIPanel', envMap: plan.env, dryRun: true }),
+        deploy: deployVercelProject({ cwd: '/tmp/AIPanel', dryRun: true })
+      });
+      break;
+    }
+
+    const project = createVercelProject({ projectName: plan.projectName, cwd: '/tmp/AIPanel', dryRun: false });
+    const env = upsertVercelEnv({ cwd: '/tmp/AIPanel', envMap: plan.env, dryRun: false });
+    const deploy = deployVercelProject({ cwd: '/tmp/AIPanel', dryRun: false });
+
+    const next = updateState({
+      stage: 'create-vercel',
+      vercel: {
+        projectName: plan.projectName,
+        projectId: deploy.projectId || current.vercel.projectId,
+        deploymentUrl: deploy.deploymentUrl || current.vercel.deploymentUrl
+      }
+    }, statePath);
+
+    print({ ok: true, dryRun: false, statePath, plan, project, env, deploy, state: next });
+    break;
+  }
+
   case 'show': {
     print({ ok: true, statePath, state: readState(statePath) });
     break;
@@ -147,6 +193,8 @@ switch (command) {
         'node scripts/installer/cli.mjs generate-jwt',
         'node scripts/installer/cli.mjs create-feishu --dry-run',
         'node scripts/installer/cli.mjs create-feishu --execute',
+        'node scripts/installer/cli.mjs create-vercel --dry-run',
+        'node scripts/installer/cli.mjs create-vercel --execute',
         'node scripts/installer/cli.mjs show'
       ]
     });

@@ -29,6 +29,7 @@ export function createInitialState() {
       FEISHU_BITABLE_SOURCE_URL: null
     },
     vercel: {
+      projectName: 'aipanel',
       projectId: null,
       deploymentUrl: null
     },
