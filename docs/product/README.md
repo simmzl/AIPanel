@@ -17,13 +17,13 @@
 - [维护者预期](./maintainer-expectations.md)
 - [Release Notes 模板](./release-notes-template.md)
 
-## 计划清理 / 降权的历史文档
+## 已归档的历史文档
 
-以下文档主要是阶段性产物，后续会继续清理、合并或降权：
+以下文档已经归档到 `archive/`：
 
 - `private-alpha-execution-plan.md`
 - `public-release-audit.md`
 - `release-announcement-v0-experimental.md`
 - `release-candidate-checklist.md`
 
-如果当前工作围绕“一句话创建 AIPanel”，优先看安装器两份文档即可。
+如果当前工作围绕“一句话创建 AIPanel”，优先看安装器相关文档即可。
