@@ -2,6 +2,10 @@
 
 Agent-first bookmarks and lightweight ops panel, backed by Feishu Bitable.
 
+[![Deploy with Vercel](https://vercel.com/button)](https://vercel.com/new/clone?repository-url=https://github.com/simmzl/AIPanel)
+
+[中文说明](./README.zh-CN.md)
+
 AIPanel is built around a simple idea: **agents and humans should be able to operate the same structured data source**.
 The browser is the human surface.
 Feishu Bitable is the source of truth.
@@ -117,7 +121,9 @@ npm run build
 
 The build script cleans local generated output first so the repo stays tidy between runs.
 
-## Deployment summary
+## Deploy
+
+The fastest path for the first release is the **Deploy with Vercel** button above.
 
 The current intended deployment path is:
 
