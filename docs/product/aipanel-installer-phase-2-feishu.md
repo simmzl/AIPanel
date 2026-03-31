@@ -50,32 +50,41 @@ placeholder row 逻辑在当前阶段继续保留，不在 Phase 2 中重构。
 
 ---
 
-## 待确认能力边界
+## 当前已确认的能力边界
 
 这一阶段最大的真实问题不是“要不要做”，而是“具体通过什么能力做”。
 
-当前已经出现了第一个真实阻塞信号：
+当前已经确认：
 
-- installer 最小 preflight 已经可以运行
+- installer 最小 preflight 可以运行
 - 当前运行环境里能检测到 `vercel`
-- 但还没有检测到可直接调用的 Feishu / Lark CLI 命令
+- Feishu CLI 的实际命令名是：`lark-cli`
+- `lark-cli base` 已经提供了这些关键能力：
+  - `+base-create`
+  - `+table-create`
+  - `+field-create`
+  - `+base-get`
+  - `+table-list`
+  - `+table-get`
+  - `+field-list`
 
-因此接下来的首要任务是：
+当前还已经验证：
 
-### 确认 Feishu CLI 在本机上的实际命令名和安装方式
+- `create-feishu` 的 dry-run 已经能生成正确的请求形状
+- AIPanel 当前 schema 的字段请求体已经对上 `lark-cli` 的 base API 形状
 
-需要确认：
+### 下一步关注点
 
-- 命令名到底是 `lark`、`feishu`、`lark-cli`，还是别的
-- 安装后是否能直接完成：
-  - 创建 Bitable app
-  - 创建 table
-  - 创建字段
-  - 获取 source URL / token / id
+接下来要继续确认和实现：
 
-### 如果 Feishu CLI 不能完整覆盖
+- 真实创建时的返回结构稳定性
+- source URL 的最终正确构造方式
+- 幂等策略（重复运行时怎么避免重复造资源）
+- 失败后 state 如何恢复
 
-需要明确哪些动作由：
+### 如果 Feishu CLI 不能完整覆盖后续需要的动作
+
+再明确哪些动作由：
 
 - Feishu CLI 完成
 - OpenClaw 现有 Feishu 工具完成

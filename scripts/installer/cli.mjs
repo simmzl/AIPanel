@@ -3,9 +3,12 @@ import process from 'node:process';
 import { readState, updateState, writeState, createInitialState, getDefaultStatePath } from './state.mjs';
 import { generateJwtSecret } from './secrets.mjs';
 import { runPreflight } from './preflight.mjs';
+import { createFeishuBitable } from './feishu.mjs';
+import { progress } from './progress.mjs';
 
 const command = process.argv[2] || 'help';
 const statePath = process.env.AIPANEL_INSTALLER_STATE || getDefaultStatePath();
+const dryRun = process.argv.includes('--dry-run');
 
 function print(obj) {
   process.stdout.write(JSON.stringify(obj, null, 2) + '\n');
@@ -36,6 +39,30 @@ switch (command) {
     break;
   }
 
+  case 'create-feishu': {
+    progress('开始创建 Feishu 数据源', { dryRun });
+    const created = createFeishuBitable({ appName: 'AIPanel', dryRun });
+    if (dryRun) {
+      print({ ok: true, dryRun: true, statePath, result: created });
+      break;
+    }
+    const next = updateState({
+      stage: 'create-feishu',
+      feishu: {
+        appToken: created.baseToken,
+        tableId: created.tableId,
+        sourceUrl: created.sourceUrl
+      },
+      env: {
+        FEISHU_BITABLE_APP_TOKEN: created.baseToken,
+        FEISHU_BITABLE_TABLE_ID: created.tableId,
+        FEISHU_BITABLE_SOURCE_URL: created.sourceUrl
+      }
+    }, statePath);
+    print({ ok: true, dryRun: false, statePath, result: created, state: next });
+    break;
+  }
+
   case 'show': {
     print({ ok: true, statePath, state: readState(statePath) });
     break;
@@ -48,6 +75,7 @@ switch (command) {
         'node scripts/installer/cli.mjs init',
         'node scripts/installer/cli.mjs preflight',
         'node scripts/installer/cli.mjs generate-jwt',
+        'node scripts/installer/cli.mjs create-feishu --dry-run',
         'node scripts/installer/cli.mjs show'
       ]
     });
