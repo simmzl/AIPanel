@@ -12,6 +12,13 @@ const statePath = process.env.AIPANEL_INSTALLER_STATE || getDefaultStatePath();
 const dryRun = process.argv.includes('--dry-run');
 const execute = process.argv.includes('--execute');
 
+function inferFinalQuestions(state) {
+  const missing = [];
+  if (!state.env.ACCESS_PASSWORD) missing.push('ACCESS_PASSWORD');
+  if (!state.env.FEISHU_APP_SECRET) missing.push('FEISHU_APP_SECRET');
+  return missing;
+}
+
 function print(obj) {
   process.stdout.write(JSON.stringify(obj, null, 2) + '\n');
 }
@@ -162,6 +169,18 @@ switch (command) {
       break;
     }
 
+    if (!plan.ready) {
+      print({
+        ok: false,
+        dryRun: false,
+        statePath,
+        error: 'create-vercel blocked: required environment variables are still missing.',
+        missing: plan.missing,
+        plan
+      });
+      break;
+    }
+
     const project = createVercelProject({ projectName: plan.projectName, cwd: '/tmp/AIPanel', dryRun: false });
     const env = upsertVercelEnv({ cwd: '/tmp/AIPanel', envMap: plan.env, dryRun: false });
     const deploy = deployVercelProject({ cwd: '/tmp/AIPanel', dryRun: false });
@@ -176,6 +195,42 @@ switch (command) {
     }, statePath);
 
     print({ ok: true, dryRun: false, statePath, plan, project, env, deploy, state: next });
+    break;
+  }
+
+  case 'run': {
+    const current = readState(statePath);
+    let next = current;
+
+    if (!next.env.JWT_SECRET) {
+      next = updateState({
+        stage: 'configure',
+        env: { JWT_SECRET: generateJwtSecret() }
+      }, statePath);
+    }
+
+    const plan = planVercelSetup(next);
+    next = updateState({
+      env: {
+        FEISHU_APP_ID: plan.env.FEISHU_APP_ID || next.env.FEISHU_APP_ID
+      },
+      vercel: {
+        projectName: plan.projectName
+      }
+    }, statePath);
+
+    const pendingQuestions = inferFinalQuestions(next);
+
+    print({
+      ok: true,
+      statePath,
+      stage: next.stage,
+      state: next,
+      pendingQuestions,
+      message: pendingQuestions.length
+        ? 'Installer progressed automatically. Final user input still required for the listed fields before Vercel production deploy.'
+        : 'Installer has all required final inputs and can proceed to create-vercel --execute.'
+    });
     break;
   }
 
@@ -195,6 +250,7 @@ switch (command) {
         'node scripts/installer/cli.mjs create-feishu --execute',
         'node scripts/installer/cli.mjs create-vercel --dry-run',
         'node scripts/installer/cli.mjs create-vercel --execute',
+        'node scripts/installer/cli.mjs run',
         'node scripts/installer/cli.mjs show'
       ]
     });

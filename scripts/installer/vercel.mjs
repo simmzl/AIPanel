@@ -1,4 +1,5 @@
 import { execFileSync } from 'node:child_process';
+import { inferFeishuAppEnv } from './lark-auth.mjs';
 
 function runText(command, args, options = {}) {
   return execFileSync(command, args, { encoding: 'utf8', ...options }).trim();
@@ -10,23 +11,36 @@ function runJson(command, args, options = {}) {
 }
 
 function ensureEnvEntries(state) {
+  const inferred = inferFeishuAppEnv();
   return {
     APP_NAME: state.env.APP_NAME || 'AIPanel',
-    ACCESS_PASSWORD: state.env.ACCESS_PASSWORD || 'change-this-to-a-real-password',
-    JWT_SECRET: state.env.JWT_SECRET || 'change-this-to-a-long-random-secret',
-    FEISHU_APP_ID: state.env.FEISHU_APP_ID || '',
-    FEISHU_APP_SECRET: state.env.FEISHU_APP_SECRET || '',
-    FEISHU_BITABLE_APP_TOKEN: state.env.FEISHU_BITABLE_APP_TOKEN || '',
-    FEISHU_BITABLE_TABLE_ID: state.env.FEISHU_BITABLE_TABLE_ID || '',
-    FEISHU_BITABLE_SOURCE_URL: state.env.FEISHU_BITABLE_SOURCE_URL || ''
+    ACCESS_PASSWORD: state.env.ACCESS_PASSWORD || null,
+    JWT_SECRET: state.env.JWT_SECRET || null,
+    FEISHU_APP_ID: state.env.FEISHU_APP_ID || inferred.FEISHU_APP_ID || null,
+    FEISHU_APP_SECRET: state.env.FEISHU_APP_SECRET || null,
+    FEISHU_BITABLE_APP_TOKEN: state.env.FEISHU_BITABLE_APP_TOKEN || null,
+    FEISHU_BITABLE_TABLE_ID: state.env.FEISHU_BITABLE_TABLE_ID || null,
+    FEISHU_BITABLE_SOURCE_URL: state.env.FEISHU_BITABLE_SOURCE_URL || null
   };
 }
 
 export function planVercelSetup(state) {
   const env = ensureEnvEntries(state);
+  const requiredForDeploy = [
+    'ACCESS_PASSWORD',
+    'JWT_SECRET',
+    'FEISHU_APP_ID',
+    'FEISHU_APP_SECRET',
+    'FEISHU_BITABLE_APP_TOKEN',
+    'FEISHU_BITABLE_TABLE_ID',
+    'FEISHU_BITABLE_SOURCE_URL'
+  ];
+  const missing = requiredForDeploy.filter((key) => !env[key]);
   return {
-    projectName: 'aipanel',
-    env
+    projectName: state.vercel?.projectName || 'aipanel',
+    env,
+    missing,
+    ready: missing.length === 0
   };
 }
 
@@ -47,7 +61,7 @@ export function createVercelProject({ projectName = 'aipanel', cwd = process.cwd
 }
 
 export function upsertVercelEnv({ cwd = process.cwd(), envMap, dryRun = false }) {
-  const entries = Object.entries(envMap);
+  const entries = Object.entries(envMap).filter(([, value]) => value !== null && value !== undefined && value !== '');
 
   if (dryRun) {
     return {

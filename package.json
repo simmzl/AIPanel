@@ -17,7 +17,8 @@
     "installer:create-feishu:dry": "node scripts/installer/cli.mjs create-feishu --dry-run",
     "installer:create-feishu": "node scripts/installer/cli.mjs create-feishu --execute",
     "installer:vercel:dry": "node scripts/installer/cli.mjs create-vercel --dry-run",
-    "installer:vercel": "node scripts/installer/cli.mjs create-vercel --execute"
+    "installer:vercel": "node scripts/installer/cli.mjs create-vercel --execute",
+    "installer:run": "node scripts/installer/cli.mjs run"
   },
   "dependencies": {
     "cheerio": "^1.1.2",
