@@ -369,7 +369,8 @@ preflight
 1. repo 中已经有明确 installer 状态机文档
 2. 每个阶段的输入 / 输出 / 阻塞条件都清楚
 3. 可以明确知道下一步编码应该先从哪一阶段开始
-4. 可以开始用真实 Feishu CLI / Vercel 能力去映射实现
+4. repo 中已经有 installer 的最小代码/脚本骨架（state / preflight / secret generation）
+5. 可以开始用真实 Feishu CLI / Vercel 能力去映射实现
 
 ---
 

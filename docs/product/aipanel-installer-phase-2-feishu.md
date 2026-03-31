@@ -54,14 +54,24 @@ placeholder row 逻辑在当前阶段继续保留，不在 Phase 2 中重构。
 
 这一阶段最大的真实问题不是“要不要做”，而是“具体通过什么能力做”。
 
-需要尽快确认：
+当前已经出现了第一个真实阻塞信号：
 
-### Feishu CLI 能否直接完成以下动作
+- installer 最小 preflight 已经可以运行
+- 当前运行环境里能检测到 `vercel`
+- 但还没有检测到可直接调用的 Feishu / Lark CLI 命令
 
-- 创建 Bitable app
-- 创建 table
-- 创建字段
-- 获取 source URL / token / id
+因此接下来的首要任务是：
+
+### 确认 Feishu CLI 在本机上的实际命令名和安装方式
+
+需要确认：
+
+- 命令名到底是 `lark`、`feishu`、`lark-cli`，还是别的
+- 安装后是否能直接完成：
+  - 创建 Bitable app
+  - 创建 table
+  - 创建字段
+  - 获取 source URL / token / id
 
 ### 如果 Feishu CLI 不能完整覆盖
 
