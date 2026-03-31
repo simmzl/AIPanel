@@ -63,9 +63,8 @@ Please prefer:
 
 ### Respect current product boundaries
 
-The repo still contains a few compatibility-oriented pieces, including:
+The repo still contains a few product-specific pieces, including:
 
-- older env aliases still accepted by the API
 - an OpenClaw skill tailored to the current AIPanel schema
 - some docs that describe release planning and cleanup work
 
@@ -78,7 +77,7 @@ Use canonical env names in new code and docs:
 - `FEISHU_BITABLE_APP_TOKEN`
 - `FEISHU_BITABLE_TABLE_ID`
 
-Do not introduce new references to the older aliases unless compatibility is the point of the change.
+Use the canonical env names consistently in new code and docs.
 
 ### Secrets and identifiers
 

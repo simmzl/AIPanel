@@ -33,27 +33,14 @@ export function sendJsonError(res: ApiResponse, status: number, message: string)
   res.status(status).json({ message });
 }
 
-const LEGACY_ENV_ALIASES: Record<string, string[]> = {
-  FEISHU_BITABLE_APP_TOKEN: ['FEISHU_APP_TOKEN'],
-  FEISHU_BITABLE_TABLE_ID: ['FEISHU_TABLE_ID']
-};
-
 export function getEnv(name: string): string {
-  const candidates = [name, ...(LEGACY_ENV_ALIASES[name] ?? [])];
+  const value = process.env[name];
 
-  for (const candidate of candidates) {
-    const value = process.env[candidate];
-
-    if (value) {
-      return value;
-    }
+  if (value) {
+    return value;
   }
 
-  const aliasMessage = LEGACY_ENV_ALIASES[name]?.length
-    ? ` (legacy aliases also checked: ${LEGACY_ENV_ALIASES[name].join(', ')})`
-    : '';
-
-  throw new Error(`Missing environment variable: ${name}${aliasMessage}`);
+  throw new Error(`Missing environment variable: ${name}`);
 }
 
 export function getFeishuConfig() {

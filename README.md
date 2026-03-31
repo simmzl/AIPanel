@@ -156,12 +156,7 @@ Use these canonical env names in new setup:
 - `FEISHU_BITABLE_APP_TOKEN`
 - `FEISHU_BITABLE_TABLE_ID`
 
-The API still accepts these older aliases for compatibility:
-
-- `FEISHU_APP_TOKEN` → `FEISHU_BITABLE_APP_TOKEN`
-- `FEISHU_TABLE_ID` → `FEISHU_BITABLE_TABLE_ID`
-
-Public docs and new deployments should use only the canonical `FEISHU_BITABLE_*` names.
+Public docs and deployments should use only these names.
 
 ## Summary
 

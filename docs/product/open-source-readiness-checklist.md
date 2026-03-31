@@ -31,10 +31,9 @@ This checklist tracks what still matters before AIPanel feels clean, credible, a
 ## 3. Environment and configuration
 
 - [x] Normalize canonical env names around `FEISHU_BITABLE_*`
-- [x] Keep older aliases documented clearly
+- [x] Remove older env alias compatibility from code and docs
 - [ ] Add runtime env validation helper with clearer startup diagnostics if needed
 - [x] Confirm docs, examples, and deploy guides use canonical env names
-- [~] Decide whether future releases keep or remove the older aliases
 
 ## 4. Feishu setup clarity
 

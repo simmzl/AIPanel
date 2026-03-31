@@ -179,7 +179,6 @@ They do **not** need polished marketing treatment yet.
 
 - current skill is still AIPanel-shaped, not fully generic
 - placeholder rows are still part of category visibility behavior
-- legacy env aliases still exist for compatibility
 - screenshots/demo assets may lag behind code briefly
 - history cleanup decision may still be pending
 

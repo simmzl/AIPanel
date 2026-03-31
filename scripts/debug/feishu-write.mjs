@@ -23,16 +23,9 @@ const repoRoot = path.resolve(path.dirname(new URL(import.meta.url).pathname), '
 loadEnvFile(path.join(repoRoot, '.env.local'));
 loadEnvFile(path.join(repoRoot, '.env.vercel.local'));
 
-const legacyAliases = {
-  FEISHU_BITABLE_APP_TOKEN: ['FEISHU_APP_TOKEN'],
-  FEISHU_BITABLE_TABLE_ID: ['FEISHU_TABLE_ID']
-};
-
 function getEnv(name) {
-  for (const candidate of [name, ...(legacyAliases[name] ?? [])]) {
-    const value = process.env[candidate];
-    if (value) return value;
-  }
+  const value = process.env[name];
+  if (value) return value;
   throw new Error(`Missing environment variable: ${name}`);
 }
 

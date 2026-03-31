@@ -156,12 +156,7 @@ node scripts/render-openclaw-skill.mjs
 - `FEISHU_BITABLE_APP_TOKEN`
 - `FEISHU_BITABLE_TABLE_ID`
 
-API 目前仍兼容较早的变量名：
-
-- `FEISHU_APP_TOKEN` → `FEISHU_BITABLE_APP_TOKEN`
-- `FEISHU_TABLE_ID` → `FEISHU_BITABLE_TABLE_ID`
-
-但公开文档和新的部署流程里，只建议使用 `FEISHU_BITABLE_*`。
+公开文档和部署流程里，只使用这两个名字。
 
 ## 总结
 

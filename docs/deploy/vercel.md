@@ -163,15 +163,6 @@ After successful login:
 This value is not critical for core API writes, but it is strongly recommended.
 It is used so the UI can deep-link back to the real Feishu data source.
 
-### Older aliases still accepted by the API
-
-The API also accepts:
-
-- `FEISHU_APP_TOKEN` → `FEISHU_BITABLE_APP_TOKEN`
-- `FEISHU_TABLE_ID` → `FEISHU_BITABLE_TABLE_ID`
-
-For any fresh deployment, use only the canonical `FEISHU_BITABLE_*` names.
-
 ## Quick failure map
 
 If you want the fastest debug path:

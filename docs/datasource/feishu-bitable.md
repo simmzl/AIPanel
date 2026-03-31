@@ -145,17 +145,10 @@ This is mainly used for UI deep-linking back to the underlying Feishu data sourc
 
 ## 8. Env naming
 
-Use these canonical names in all new setup:
+Use these canonical names in all setup:
 
 - `FEISHU_BITABLE_APP_TOKEN`
 - `FEISHU_BITABLE_TABLE_ID`
-
-The API also accepts these older aliases:
-
-- `FEISHU_APP_TOKEN`
-- `FEISHU_TABLE_ID`
-
-For new setup and docs, use only the canonical `FEISHU_BITABLE_*` names.
 
 ## 9. What users need before deploy
 

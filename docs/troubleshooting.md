@@ -142,19 +142,7 @@ Check:
 
 Set it to the real browser URL of the target Bitable page.
 
-## 8. Older env names cause confusion
-
-The API also accepts:
-
-- `FEISHU_APP_TOKEN` → `FEISHU_BITABLE_APP_TOKEN`
-- `FEISHU_TABLE_ID` → `FEISHU_BITABLE_TABLE_ID`
-
-For any fresh deployment, use only:
-
-- `FEISHU_BITABLE_APP_TOKEN`
-- `FEISHU_BITABLE_TABLE_ID`
-
-## 9. OpenClaw skill installs, but feels misconfigured
+## 8. OpenClaw skill installs, but feels misconfigured
 
 Check:
 
@@ -170,13 +158,13 @@ bash integrations/install-scripts/install-openclaw-skill.sh
 
 If you changed env values, re-render/reinstall the skill before testing again.
 
-## 10. Placeholder screenshots or demo assets look generic
+## 9. Placeholder screenshots or demo assets look generic
 
 That is expected for now.
 
 The repo can temporarily ship public-safe placeholder assets before final screenshots are replaced.
 
-## 11. Still stuck?
+## 10. Still stuck?
 
 Work through this order:
 
