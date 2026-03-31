@@ -1,6 +1,6 @@
 # AIPanel docs
 
-This folder contains the current setup, architecture, onboarding, troubleshooting, and release-readiness docs for AIPanel.
+This folder contains setup, architecture, onboarding, troubleshooting, and release-planning docs for AIPanel.
 
 ## Start here
 
@@ -10,16 +10,16 @@ This folder contains the current setup, architecture, onboarding, troubleshootin
 - [OpenClaw integration](./integrations/openclaw.md)
 - [Troubleshooting](./troubleshooting.md)
 
-## Product / release docs
+## Product / planning docs
 
+- [Open-source readiness checklist](./product/open-source-readiness-checklist.md)
+- [Roadmap](./product/roadmap.md)
+- [Maintainer expectations](./product/maintainer-expectations.md)
+- [Release notes template](./product/release-notes-template.md)
 - [First public release plan](./product/first-public-release.md)
 - [First public release candidate checklist](./product/release-candidate-checklist.md)
-- [Release announcement draft](./product/release-announcement-v0-experimental.md)
-- [Release notes template](./product/release-notes-template.md)
-- [Open-source readiness checklist](./product/open-source-readiness-checklist.md)
 - [Public release audit](./product/public-release-audit.md)
-- [Maintainer expectations](./product/maintainer-expectations.md)
-- [Roadmap](./product/roadmap.md)
+- [Release announcement draft](./product/release-announcement-v0-experimental.md)
 
 ## Assets
 
@@ -31,7 +31,7 @@ This folder contains the current setup, architecture, onboarding, troubleshootin
 - [Mobile home screenshot](./assets/screenshots/mobile-home.png)
 - [Demo capture runbook](./assets/demo/README.md)
 
-## Suggested reading order for a new public reader
+## Suggested reading order for a new reader
 
 1. README
 2. Architecture overview
@@ -39,4 +39,3 @@ This folder contains the current setup, architecture, onboarding, troubleshootin
 4. Feishu Bitable setup guide
 5. OpenClaw integration
 6. Troubleshooting
-7. First public release plan / checklist

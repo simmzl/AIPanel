@@ -2,19 +2,17 @@
 
 Thanks for taking a look.
 
-AIPanel is currently in an **experimental early-release** stage, so contributions are welcome in a pragmatic, low-drama way, but the repo is not fully productized for broad external collaboration yet.
+AIPanel is an experimental project, so the best contributions right now are the ones that make the repo easier to understand, deploy, and trust.
 
-## Current contribution posture
-
-Right now, the most useful contributions are:
+## What helps most right now
 
 - bug reports with reproduction steps
 - docs fixes and clarity improvements
 - small, reviewable cleanup PRs
 - deployment validation notes
-- public-release prep work that reduces project-specific coupling
+- low-risk packaging and onboarding improvements
 
-Please avoid large unsolicited rewrites during this phase.
+Please avoid large unsolicited rewrites.
 
 ## Before opening a PR
 
@@ -56,24 +54,22 @@ npm run build
 
 ### Keep changes incremental
 
-AIPanel is in an early public-release hardening phase, not a giant architecture rewrite phase.
-
 Please prefer:
 
 - small PRs
 - explicit docs updates
 - minimal surprise changes
-- preserving current self-hosted usability for existing operators
+- preserving current deployability and operator usability
 
 ### Respect current product boundaries
 
-For now, the repo still contains:
+The repo still contains a few compatibility-oriented pieces, including:
 
-- some transition-oriented docs
-- a project-specific OpenClaw skill
-- temporary compatibility aliases for older env names
+- older env aliases still accepted by the API
+- an OpenClaw skill tailored to the current AIPanel schema
+- some docs that describe release planning and cleanup work
 
-Those are being cleaned up gradually. Do not remove them casually without replacing the operational value they currently provide.
+Do not remove those casually without preserving the operational value they provide.
 
 ### Environment naming
 
@@ -82,7 +78,7 @@ Use canonical env names in new code and docs:
 - `FEISHU_BITABLE_APP_TOKEN`
 - `FEISHU_BITABLE_TABLE_ID`
 
-Do not introduce new references to legacy aliases except where transitional compatibility is explicitly being documented.
+Do not introduce new references to the older aliases unless compatibility is the point of the change.
 
 ### Secrets and identifiers
 
@@ -95,7 +91,7 @@ Never commit:
 - tenant secrets
 - local machine-specific paths in user-facing docs unless clearly marked as examples
 
-If you spot a potentially sensitive identifier or fixed production-style value, document it in the PR and treat it as release-prep work.
+If you spot a potentially sensitive identifier or fixed production-style value, mention it in the PR and treat it as cleanup work.
 
 ## Pull request guidelines
 
@@ -117,17 +113,15 @@ Useful reports include:
 - environment details when relevant
 - screenshots or logs if they help
 
-## Scope notes for early contributors
-
-The following areas are especially useful right now:
+## Areas that are especially useful right now
 
 - deployment and setup docs
-- public-safe packaging cleanup
+- troubleshooting docs
 - repo hygiene
 - UI polish with low regression risk
 - integration packaging clarification
 
-The following areas should generally start with discussion first:
+## Areas that should usually start with discussion
 
 - major data-model changes
 - replacing Feishu Bitable as the main source of truth
@@ -142,4 +136,3 @@ See `LICENSE` for the full text.
 ## Be practical
 
 If you want to help, the best move is usually to make the repo easier for the next stranger to understand, install, and trust.
-erify.

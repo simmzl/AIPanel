@@ -1,6 +1,6 @@
 # OpenClaw integration
 
-AIPanel currently includes an OpenClaw skill so an agent can operate the same Feishu Bitable data that the web UI reads and writes.
+AIPanel includes an OpenClaw skill so an agent can operate the same Feishu Bitable data that the web UI reads and writes.
 
 This is one of the core ideas behind the project:
 
@@ -22,13 +22,13 @@ Convenience installer:
 
 - `integrations/install-scripts/install-openclaw-skill.sh`
 
-Current recommended interpretation:
+Recommended interpretation:
 
-- `integrations/openclaw-skill/` is the only editable source of truth
-- `skills/aipanel-feishu-bitable/` is rendered from that template for local/OpenClaw-style browsing and packaging
+- `integrations/openclaw-skill/` is the editable source of truth
+- `skills/aipanel-feishu-bitable/` is rendered from that template for local browsing and packaging
 - contributors should not manually edit both copies
 
-## What the current skill can do
+## What the skill can do
 
 The current AIPanel skill can help an agent:
 
@@ -44,24 +44,12 @@ The current AIPanel skill can help an agent:
 - reorder bookmarks inside a category
 - inspect placeholder rows and incomplete records
 
-In practice, this means an operator can say things like:
+Examples:
 
 - “列出 AIPanel 现在所有分类”
 - “给 AI 工作流 加一个 OpenRouter”
 - “把 ChatGPT 挪到 效率工具 第一位”
 - “找出所有占位记录”
-
-## How it works today
-
-The current skill is still **AIPanel-oriented**, but it is no longer documented as one hardcoded private deployment only.
-
-The canonical skill folder now acts as a template that can be rendered with:
-
-- Feishu Bitable app token
-- table ID
-- source URL
-
-That keeps the current self-hosted workflow intact while making the public packaging story cleaner.
 
 ## Install the skill
 
@@ -100,76 +88,37 @@ Then copy:
 - source: `skills/aipanel-feishu-bitable/`
 - target: `~/.openclaw/skills/aipanel-feishu-bitable`
 
-## How to use it after install
-
-Once installed into OpenClaw, use natural-language requests against AIPanel data.
-
-Examples:
-
-- “帮我看看 AIPanel 里 网络工具 分类有哪些书签”
-- “新增一个书签到 开发，标题是 Vercel，链接是 https://vercel.com”
-- “把 AIPanel 分类顺序改成：效率工具、AI 工作流、开发、网络工具、其他”
-- “找出没有副标题的记录”
-
-The skill docs and references live inside the skill package itself.
-
 ## Why this matters for AIPanel
 
 Without the skill, AIPanel is mostly a small web panel on top of a Bitable.
 
-With the skill, AIPanel becomes more interesting:
+With the skill:
 
 - the panel becomes the human control surface
 - the Bitable becomes the shared operational data model
 - the agent becomes a real operator, not just a read-only observer
 
-That agent-first angle is a big part of the product story.
+## Current scope
 
-## Current limitations
+The current skill follows the AIPanel field names, ordering model, and placeholder-row behavior.
+That makes it straightforward to install and useful immediately, even though it is not a generic schema-mapping layer.
 
-For public open-source readers, the most important limitation is this:
+## Packaging model
 
-### The current skill is still product-shaped, not fully generic
-
-It still assumes:
-
-- the current AIPanel field names
-- AIPanel-specific category/order semantics
-- placeholder-row logic for category visibility
-
-What changed in this pass is the packaging boundary:
-
-- fixed private identifiers are no longer the only checked-in skill story
-- the editable skill source is now clearly the template under `integrations/openclaw-skill/`
-- the mirrored `skills/` copy is treated as rendered output
-
-## First-release packaging stance
-
-For the first public release, the recommended packaging model is:
+For the current release, the packaging model is:
 
 - `integrations/openclaw-skill/` is the canonical editable template
 - `skills/aipanel-feishu-bitable/` is the rendered distribution folder
 - `integrations/install-scripts/install-openclaw-skill.sh` is the default install path for operators
 - if a `.skill` artifact is later published, it should be built from the rendered distribution folder rather than the raw template
 
-This keeps contribution and installation simple while leaving room for more formal packaging later.
-
 ## Compatibility note
 
-For the current release, the intended support surface is the in-repo install-script + rendered-skill workflow documented here.
+For the current release, the supported path is the in-repo install-script + rendered-skill workflow documented here.
 
 See also:
 
 - [OpenClaw compatibility note](./openclaw-compatibility.md)
-
-## Recommended future cleanup
-
-For post-release integration cleanup, the main tasks are:
-
-- validate install flow from a clean machine
-- add a public-safe explanation of required OpenClaw capabilities
-- decide whether the first public release should still ship an AIPanel-specific preset in-tree
-- evolve toward a more generic reusable skill/template after the first public release
 
 ## Related docs
 

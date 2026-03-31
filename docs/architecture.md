@@ -2,7 +2,7 @@
 
 AIPanel is intentionally small.
 
-The current system is a **Feishu-first, web-plus-agent architecture**:
+The system is a **Feishu-first, web-plus-agent architecture**:
 
 - **Feishu Bitable** is the canonical data store
 - **Vercel** hosts the web UI and serverless API
@@ -59,7 +59,7 @@ Feishu Bitable is the single source of truth for:
 - bookmark records
 - category assignment
 - ordering metadata
-- any operational conventions used by the panel and the OpenClaw skill
+- operational conventions used by the panel and the OpenClaw skill
 
 This is the most important architectural choice in the repo.
 The UI is not the database.
@@ -73,12 +73,12 @@ OpenClaw integration is optional but central to the product direction.
 The current skill lets an agent operate the same bookmark dataset that humans see in the panel.
 That means the product is not just a dashboard — it is a shared human/agent operations surface over structured data.
 
-## Current design principles
+## Design principles
 
 ### Feishu-first
 
-The repo is currently optimized for Feishu Bitable rather than for pluggable backends.
-That is a feature of the current release, not an accident.
+The repo is optimized for Feishu Bitable rather than for pluggable backends.
+That is a deliberate product choice.
 
 ### Agent-first data model
 
@@ -87,14 +87,12 @@ The human UI is important, but it is intentionally not the whole story.
 
 ### Small deployment surface
 
-The current intended deployment shape is:
+The intended deployment shape is:
 
 - one Vercel project
 - one Feishu app
 - one Feishu Bitable app + table
 - optional OpenClaw skill install
-
-This keeps the first experimental public release understandable and operable.
 
 ## Trust boundaries
 
@@ -117,24 +115,19 @@ Feishu controls the underlying data and permission model for the canonical datas
 
 ### OpenClaw skill
 
-The OpenClaw skill is a convenience/operator surface.
-It should be treated as an integration layer, not as the canonical business logic store.
+The OpenClaw skill is an integration layer, not the canonical business logic store.
 
 ## Current limitations
 
-These are acceptable in the first experimental public release:
-
-- Feishu Bitable is the only real backend target
-- the OpenClaw skill is still AIPanel-shaped rather than fully generic
+- Feishu Bitable is the only backend target
+- the OpenClaw skill still follows the current AIPanel schema and ordering model
 - password auth is intentionally simple for self-hosted/operator use
 - some data behavior still reflects the current bookmark/category operating model
 
 ## Repo packaging note
 
-For the OpenClaw integration, the current packaging model is:
+For the OpenClaw integration, the packaging model is:
 
 - author in `integrations/openclaw-skill/`
 - render/package into `skills/aipanel-feishu-bitable/`
 - install from the rendered distribution copy
-
-That packaging boundary keeps the repo easier to understand during the first public release phase.

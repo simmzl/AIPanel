@@ -1,12 +1,12 @@
 # Deploy AIPanel on Vercel
 
-This guide covers the current recommended deployment path for AIPanel.
+This guide covers the recommended deployment path for AIPanel.
 
-AIPanel currently assumes:
+AIPanel uses:
 
-- frontend + API are deployed together on Vercel
-- Feishu Bitable is the source of truth
-- authentication is password-based for simple self-hosted access in the current release-candidate build
+- Vercel for the web app and API
+- Feishu Bitable as the source of truth
+- password-based access for the current deployment model
 
 ## Fast happy-path: Vercel + Feishu in one pass
 
@@ -51,15 +51,15 @@ FEISHU_BITABLE_TABLE_ID=tblxxxxxx
 FEISHU_BITABLE_SOURCE_URL=https://your-domain.feishu.cn/base/xxxxxxxx?table=tblxxxxxx
 ```
 
-### What each value is
+## What each value is
 
-#### Application
+### Application
 
 - `APP_NAME` — display name shown in the panel UI
 - `ACCESS_PASSWORD` — password used to enter the panel
 - `JWT_SECRET` — long random string used to sign auth tokens
 
-#### Feishu
+### Feishu
 
 - `FEISHU_APP_ID` — from your Feishu app credentials page
 - `FEISHU_APP_SECRET` — from your Feishu app credentials page
@@ -77,8 +77,6 @@ Use these values if you want to confirm everything explicitly:
 - **Install Command:** `npm install`
 - **Build Command:** `npm run build`
 - **Output Directory:** `dist`
-
-No monorepo config is required for the current repo layout.
 
 ## Exact deploy flow
 
@@ -109,8 +107,6 @@ Minimum recommendation:
 
 Trigger the first deployment.
 
-If envs are correct, the build should complete without code changes.
-
 ### 5. Open the deployed site
 
 After deploy, visit the Vercel production URL.
@@ -128,8 +124,6 @@ After successful login:
 - footer can link back to Feishu if `FEISHU_BITABLE_SOURCE_URL` is set
 
 ## First production verification checklist
-
-After the first successful deploy, test these in order.
 
 ### Authentication
 
@@ -159,26 +153,24 @@ After the first successful deploy, test these in order.
 ### Basic UX sanity
 
 - desktop view is usable
-- mobile view is readable enough for alpha use
+- mobile view is readable enough for normal use
 - theme switching is acceptable
 
-## Optional / transitional environment notes
+## Environment notes
 
 ### `FEISHU_BITABLE_SOURCE_URL`
 
 This value is not critical for core API writes, but it is strongly recommended.
-
 It is used so the UI can deep-link back to the real Feishu data source.
 
-### Legacy compatibility aliases
+### Older aliases still accepted by the API
 
-The current API still accepts these aliases for transition safety during the first experimental public `v0.x` release window:
+The API also accepts:
 
 - `FEISHU_APP_TOKEN` → `FEISHU_BITABLE_APP_TOKEN`
 - `FEISHU_TABLE_ID` → `FEISHU_BITABLE_TABLE_ID`
 
-For any new deployment, use only the canonical `FEISHU_BITABLE_*` names.
-Plan to remove the aliases in the next cleanup-oriented release after users have migration time.
+For any fresh deployment, use only the canonical `FEISHU_BITABLE_*` names.
 
 ## Quick failure map
 
