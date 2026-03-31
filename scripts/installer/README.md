@@ -24,6 +24,8 @@
 - `npm run installer:vercel:dry`
 - `npm run installer:vercel`
 - `npm run installer:run`
+- `npm run installer:clear-errors`
+- `node scripts/installer/cli.mjs set-final-inputs --access-password <password> --feishu-app-secret <secret>`
 
 说明：
 
@@ -42,3 +44,4 @@
 - 完整的 create-feishu 命名 / 清理策略
 
 目的不是一次做完，而是把 installer 从文档推进到真正可执行的 repo 结构。
+执行的 repo 结构。

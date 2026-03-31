@@ -11,16 +11,17 @@ const command = process.argv[2] || 'help';
 const statePath = process.env.AIPANEL_INSTALLER_STATE || getDefaultStatePath();
 const dryRun = process.argv.includes('--dry-run');
 const execute = process.argv.includes('--execute');
+const repair = process.argv.includes('--repair');
+
+function print(obj) {
+  process.stdout.write(JSON.stringify(obj, null, 2) + '\n');
+}
 
 function inferFinalQuestions(state) {
   const missing = [];
   if (!state.env.ACCESS_PASSWORD) missing.push('ACCESS_PASSWORD');
   if (!state.env.FEISHU_APP_SECRET) missing.push('FEISHU_APP_SECRET');
   return missing;
-}
-
-function print(obj) {
-  process.stdout.write(JSON.stringify(obj, null, 2) + '\n');
 }
 
 switch (command) {
@@ -48,10 +49,42 @@ switch (command) {
     break;
   }
 
+  case 'set-final-inputs': {
+    const passwordIndex = process.argv.indexOf('--access-password');
+    const secretIndex = process.argv.indexOf('--feishu-app-secret');
+    const accessPassword = passwordIndex !== -1 ? process.argv[passwordIndex + 1] : null;
+    const feishuAppSecret = secretIndex !== -1 ? process.argv[secretIndex + 1] : null;
+
+    if (!accessPassword && !feishuAppSecret) {
+      print({
+        ok: false,
+        statePath,
+        error: 'Provide at least one of --access-password or --feishu-app-secret.'
+      });
+      break;
+    }
+
+    const next = updateState({
+      stage: 'configure',
+      env: {
+        ACCESS_PASSWORD: accessPassword || undefined,
+        FEISHU_APP_SECRET: feishuAppSecret || undefined
+      }
+    }, statePath);
+    print({ ok: true, statePath, state: next });
+    break;
+  }
+
+  case 'clear-errors': {
+    const next = updateState({ errors: [] }, statePath);
+    print({ ok: true, statePath, state: next });
+    break;
+  }
+
   case 'create-feishu': {
     const current = readState(statePath);
 
-    if (hasExistingFeishuState(current) && !process.argv.includes('--repair')) {
+    if (hasExistingFeishuState(current) && !repair) {
       print({
         ok: true,
         reused: true,
@@ -71,7 +104,7 @@ switch (command) {
       break;
     }
 
-    progress('开始创建 Feishu 数据源', { dryRun, execute });
+    progress('开始创建 Feishu 数据源', { dryRun, execute, repair });
 
     const started = updateState({
       stage: 'create-feishu',
@@ -95,10 +128,12 @@ switch (command) {
               }
             : null
       });
+
       if (dryRun) {
         print({ ok: true, dryRun: true, statePath, result: created });
         break;
       }
+
       const next = updateState({
         stage: 'create-feishu',
         feishu: {
@@ -183,6 +218,7 @@ switch (command) {
     }
 
     const project = createVercelProject({ projectName: plan.projectName, cwd: '/tmp/AIPanel', dryRun: false });
+    const link = linkVercelProject({ projectName: plan.projectName, cwd: '/tmp/AIPanel', dryRun: false });
     const env = upsertVercelEnv({ cwd: '/tmp/AIPanel', envMap: plan.env, dryRun: false });
     const deploy = deployVercelProject({ cwd: '/tmp/AIPanel', dryRun: false });
 
@@ -212,12 +248,14 @@ switch (command) {
 
     const plan = planVercelSetup(next);
     next = updateState({
+      stage: 'configure',
       env: {
         FEISHU_APP_ID: plan.env.FEISHU_APP_ID || next.env.FEISHU_APP_ID
       },
       vercel: {
         projectName: plan.projectName
-      }
+      },
+      errors: []
     }, statePath);
 
     const pendingQuestions = inferFinalQuestions(next);
@@ -247,6 +285,8 @@ switch (command) {
         'node scripts/installer/cli.mjs init',
         'node scripts/installer/cli.mjs preflight',
         'node scripts/installer/cli.mjs generate-jwt',
+        'node scripts/installer/cli.mjs set-final-inputs --access-password <password> --feishu-app-secret <secret>',
+        'node scripts/installer/cli.mjs clear-errors',
         'node scripts/installer/cli.mjs create-feishu --dry-run',
         'node scripts/installer/cli.mjs create-feishu --execute',
         'node scripts/installer/cli.mjs create-vercel --dry-run',
