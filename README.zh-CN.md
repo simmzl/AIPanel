@@ -107,31 +107,11 @@ node scripts/render-openclaw-skill.mjs
 - [OpenClaw 集成](docs/integrations/openclaw.md)
 - [OpenClaw 兼容性说明](docs/integrations/openclaw-compatibility.md)
 
-## 本地开发快速开始
+## 给贡献者
 
-### 1. 安装依赖
+开发环境、本地运行方式和贡献说明统一放在：
 
-```bash
-npm install
-```
-
-### 2. 创建本地环境变量文件
-
-```bash
-cp .env.example .env.local
-```
-
-### 3. 本地启动
-
-```bash
-npm run dev
-```
-
-### 4. 构建验证
-
-```bash
-npm run build
-```
+- [Contributing](./CONTRIBUTING.md)
 
 ## 项目状态
 

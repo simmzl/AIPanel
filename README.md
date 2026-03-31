@@ -107,31 +107,11 @@ More details:
 - [OpenClaw integration](docs/integrations/openclaw.md)
 - [OpenClaw compatibility note](docs/integrations/openclaw-compatibility.md)
 
-## Quick start for local development
+## For contributors
 
-### 1. Install dependencies
+Development setup, local run instructions, and contribution guidelines live in:
 
-```bash
-npm install
-```
-
-### 2. Create local env file
-
-```bash
-cp .env.example .env.local
-```
-
-### 3. Run locally
-
-```bash
-npm run dev
-```
-
-### 4. Build for verification
-
-```bash
-npm run build
-```
+- [Contributing](./CONTRIBUTING.md)
 
 ## Project status
 
