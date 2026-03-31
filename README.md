@@ -11,6 +11,18 @@ The browser is the human surface.
 Feishu Bitable is the source of truth.
 OpenClaw is the optional agent/operator layer.
 
+## Preview
+
+| Desktop | Mobile |
+| --- | --- |
+| ![AIPanel desktop home](docs/assets/screenshots/desktop-home.png) | ![AIPanel mobile home](docs/assets/screenshots/mobile-home.png) |
+
+More assets:
+
+- [Login view](docs/assets/screenshots/login-screen.png)
+- [Edit bookmark view](docs/assets/screenshots/desktop-edit-bookmark.png)
+- [Architecture diagram](docs/assets/diagrams/aipanel-architecture.svg)
+
 ## Why AIPanel
 
 Most bookmark dashboards are UI-first. AIPanel is different:
@@ -21,9 +33,7 @@ Most bookmark dashboards are UI-first. AIPanel is different:
 - **Natural-language operations**: the OpenClaw integration can add, edit, delete, reorder, and audit panel records
 - **Small deployment surface**: one Vercel project + one Feishu app + one Bitable table is enough for the current architecture
 
-## What’s included
-
-AIPanel currently includes:
+## Core capabilities
 
 - password-protected web panel
 - bookmark browsing and search
@@ -33,7 +43,95 @@ AIPanel currently includes:
 - metadata fetching from target URLs
 - Feishu Bitable-backed API layer
 - OpenClaw skill for agent operations against the same dataset
-- deployment and setup docs for Vercel + Feishu + OpenClaw
+
+## Architecture at a glance
+
+![AIPanel architecture](docs/assets/diagrams/aipanel-architecture.svg)
+
+AIPanel uses a Feishu-first architecture:
+
+- **Vercel** hosts the web app and API
+- **Feishu Bitable** is the canonical data source
+- **OpenClaw** can operate the same dataset through a skill
+- **Browser UI** is the human-facing control surface
+
+## Quick deploy
+
+The fastest path is the **Deploy with Vercel** button above.
+
+Recommended deployment flow:
+
+1. create a Feishu app
+2. prepare the Bitable table and permissions
+3. configure env vars in Vercel
+4. deploy the web app
+5. optionally install the OpenClaw skill for agent-side operations
+
+Required envs:
+
+```env
+APP_NAME=AIPanel
+ACCESS_PASSWORD=change-this-to-a-real-password
+JWT_SECRET=change-this-to-a-long-random-secret
+FEISHU_APP_ID=cli_xxx
+FEISHU_APP_SECRET=xxx
+FEISHU_BITABLE_APP_TOKEN=bascn_xxx
+FEISHU_BITABLE_TABLE_ID=tblxxxxxx
+FEISHU_BITABLE_SOURCE_URL=https://your-domain.feishu.cn/base/xxxxxxxx?table=tblxxxxxx
+```
+
+Deployment docs:
+
+- [Vercel deployment](docs/deploy/vercel.md)
+- [Feishu app + Bitable setup](docs/datasource/feishu-bitable.md)
+- [Troubleshooting](docs/troubleshooting.md)
+
+## OpenClaw integration
+
+AIPanel ships with an OpenClaw skill template and a rendered distribution copy.
+
+Packaging model:
+
+- edit `integrations/openclaw-skill/`
+- treat `skills/aipanel-feishu-bitable/` as the rendered distribution folder
+- install via `integrations/install-scripts/install-openclaw-skill.sh`
+
+Optional local render step:
+
+```bash
+node scripts/render-openclaw-skill.mjs
+```
+
+More details:
+
+- [OpenClaw integration](docs/integrations/openclaw.md)
+- [OpenClaw compatibility note](docs/integrations/openclaw-compatibility.md)
+
+## Quick start for local development
+
+### 1. Install dependencies
+
+```bash
+npm install
+```
+
+### 2. Create local env file
+
+```bash
+cp .env.example .env.local
+```
+
+### 3. Run locally
+
+```bash
+npm run dev
+```
+
+### 4. Build for verification
+
+```bash
+npm run build
+```
 
 ## Project status
 
@@ -54,83 +152,6 @@ What is still evolving:
 - broader skill generalization beyond the current AIPanel schema
 - some release-policy cleanup around historical project context
 
-## Tech stack
-
-### Frontend
-
-- React 18
-- TypeScript
-- Vite
-- Tailwind CSS
-
-### Backend / API
-
-- Vercel serverless functions
-- JSON Web Token auth
-- Feishu Open Platform APIs
-- Cheerio for metadata extraction
-
-### Data + agent layer
-
-- Feishu Bitable as source of truth
-- OpenClaw skill for natural-language bookmark operations
-
-## Quick start
-
-### 1. Install dependencies
-
-```bash
-npm install
-```
-
-### 2. Create local env file
-
-```bash
-cp .env.example .env.local
-```
-
-Fill in the required values:
-
-- `APP_NAME`
-- `ACCESS_PASSWORD`
-- `JWT_SECRET`
-- `FEISHU_APP_ID`
-- `FEISHU_APP_SECRET`
-- `FEISHU_BITABLE_APP_TOKEN`
-- `FEISHU_BITABLE_TABLE_ID`
-- `FEISHU_BITABLE_SOURCE_URL`
-
-### 3. Run locally
-
-```bash
-npm run dev
-```
-
-### 4. Build for verification
-
-```bash
-npm run build
-```
-
-## Deploy
-
-The fastest path is the **Deploy with Vercel** button above.
-
-Recommended deployment flow:
-
-1. create a Feishu app
-2. prepare the Bitable table and permissions
-3. configure env vars in Vercel
-4. deploy the web app
-5. optionally install the OpenClaw skill for agent-side operations
-
-Detailed guides:
-
-- [Vercel deployment](docs/deploy/vercel.md)
-- [Feishu app + Bitable setup](docs/datasource/feishu-bitable.md)
-- [OpenClaw integration](docs/integrations/openclaw.md)
-- [Troubleshooting](docs/troubleshooting.md)
-
 ## Documentation map
 
 Start here:
@@ -148,22 +169,6 @@ Deeper project notes:
 - [Roadmap](docs/product/roadmap.md)
 - [Release notes template](docs/product/release-notes-template.md)
 
-## OpenClaw integration
-
-AIPanel ships with an OpenClaw skill template and a rendered distribution copy.
-
-Packaging model:
-
-- edit `integrations/openclaw-skill/`
-- treat `skills/aipanel-feishu-bitable/` as the rendered distribution folder
-- install via `integrations/install-scripts/install-openclaw-skill.sh`
-
-Optional local render step:
-
-```bash
-node scripts/render-openclaw-skill.mjs
-```
-
 ## Environment naming
 
 Use these canonical env names in new setup:
@@ -177,14 +182,6 @@ The API still accepts these older aliases for compatibility:
 - `FEISHU_TABLE_ID` → `FEISHU_BITABLE_TABLE_ID`
 
 Public docs and new deployments should use only the canonical `FEISHU_BITABLE_*` names.
-
-## Local maintenance note
-
-If you need an internal write-smoke-test against the configured Feishu Bitable, use:
-
-```bash
-node scripts/debug/feishu-write.mjs
-```
 
 ## Summary
 
