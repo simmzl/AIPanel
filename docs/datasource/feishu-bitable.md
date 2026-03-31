@@ -1,6 +1,6 @@
 # Feishu app + Bitable setup for AIPanel
 
-AIPanel currently uses **one shared Feishu Bitable** as its source of truth.
+AIPanel uses **one shared Feishu Bitable** as its source of truth.
 
 This guide explains what you need before deployment:
 
@@ -10,9 +10,9 @@ This guide explains what you need before deployment:
 - correct field schema
 - sufficient permissions for read/write access
 
-## What AIPanel expects
+## Runtime configuration
 
-At runtime, the current app expects these canonical env values:
+AIPanel expects these env values:
 
 - `FEISHU_APP_ID`
 - `FEISHU_APP_SECRET`
@@ -47,9 +47,9 @@ Inside Feishu Bitable:
 
 You will use:
 
-- `FEISHU_BITABLE_APP_TOKEN` → the Bitable app token
-- `FEISHU_BITABLE_TABLE_ID` → the specific table ID
-- `FEISHU_BITABLE_SOURCE_URL` → the full Bitable URL for deep links
+- `FEISHU_BITABLE_APP_TOKEN` — the Bitable app token
+- `FEISHU_BITABLE_TABLE_ID` — the specific table ID
+- `FEISHU_BITABLE_SOURCE_URL` — the full Bitable URL for deep links
 
 ## 3. Required table fields
 
@@ -67,7 +67,7 @@ The current AIPanel API expects these field names exactly.
 
 If the field names or field types do not match, the app may read or write incorrectly.
 
-## 4. Field behavior and semantics
+## 4. Field behavior
 
 ### `标题`
 
@@ -114,10 +114,8 @@ Current placeholder values are:
 
 Why this exists:
 
-- the current UI derives visible categories from live records
+- the UI derives visible categories from live records
 - a new category needs at least one row to appear immediately
-
-This is acceptable for the current experimental release candidate. A future public release may choose a cleaner category model.
 
 ## 6. Minimum permission expectations
 
@@ -145,25 +143,23 @@ Set:
 
 This is mainly used for UI deep-linking back to the underlying Feishu data source.
 
-It is not the primary credential, but it is very helpful operationally.
-
-## 8. Canonical env names vs temporary aliases
+## 8. Env naming
 
 Use these canonical names in all new setup:
 
 - `FEISHU_BITABLE_APP_TOKEN`
 - `FEISHU_BITABLE_TABLE_ID`
 
-The API still accepts legacy aliases for compatibility during the current transition period:
+The API also accepts these older aliases:
 
 - `FEISHU_APP_TOKEN`
 - `FEISHU_TABLE_ID`
 
-Those aliases should be treated as temporary only.
+For new setup and docs, use only the canonical `FEISHU_BITABLE_*` names.
 
 ## 9. What users need before deploy
 
-Before someone can deploy AIPanel successfully, they need all of the following:
+Before deploying AIPanel successfully, you need all of the following:
 
 - a Feishu account with access to Open Platform
 - a Feishu app with usable credentials
@@ -188,13 +184,13 @@ Before deploying to Vercel, verify:
 
 ## 11. OpenClaw relationship
 
-The current OpenClaw skill operates against the same Feishu Bitable data source.
+The OpenClaw skill operates against the same Feishu Bitable data source.
 
 That means:
 
 - agent-side operations and UI-side operations affect the same records
 - the Bitable schema is part of the product contract
-- future public open-source work should clarify which parts are product-specific and which are reusable templates
+- the web UI and the agent layer should stay aligned on the same dataset
 
 For that integration story, see:
 

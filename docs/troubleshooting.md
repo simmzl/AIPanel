@@ -1,11 +1,11 @@
 # AIPanel troubleshooting
 
-This page collects the most likely failure modes for the current AIPanel release shape.
+This page collects the most likely failure modes for AIPanel.
 
-The current deployment model assumes:
+The deployment model is simple:
 
 - Vercel hosts the web app and API
-- Feishu Bitable is the canonical data source
+- Feishu Bitable is the data source
 - OpenClaw is optional
 
 If something breaks, narrow it down in this order:
@@ -32,15 +32,17 @@ If something breaks, narrow it down in this order:
 
 ### Typical fixes
 
-- re-run locally first:
+Run locally first:
 
 ```bash
 npm install
 npm run build
 ```
 
-- make sure the repo root is the project root in Vercel
-- confirm no required env variables were mistyped during manual setup
+Then make sure:
+
+- the repo root is the project root in Vercel
+- required env variables were entered correctly
 
 ## 2. Site opens, but login does not work
 
@@ -78,8 +80,8 @@ npm run build
 ### Typical fixes
 
 - verify the app credentials are copied exactly from Feishu Open Platform
-- verify the app token starts with the expected Bitable token format
-- verify the table ID points to the correct table, not just the correct base
+- verify the app token format looks correct
+- verify the table ID points to the correct table
 - re-check the Feishu permission grant path
 
 ## 4. Reads work, but writes fail
@@ -114,66 +116,53 @@ npm run build
 
 ## 5. Category order or bookmark order looks wrong
 
-### Symptoms
-
-- categories show up in the wrong sequence
-- bookmarks inside one category appear out of order
-
 ### Check
 
 - `分类排序` controls category order
 - `排序` controls item order inside the same category
 
-### Notes
-
-AIPanel currently relies on the stored numeric ordering model in Feishu Bitable. If those values drift, the UI will reflect that drift.
+AIPanel relies on the stored numeric ordering model in Feishu Bitable. If those values drift, the UI will reflect that drift.
 
 ## 6. New category does not appear immediately
 
-### Why this happens
+AIPanel currently uses a placeholder-row approach for category visibility.
 
-The current AIPanel model still uses a placeholder-row approach for category visibility.
-
-### Check
+Check:
 
 - whether the category option was added to the `分类` field
 - whether a placeholder row or real row exists for that category
-
-### Note
 
 This is current product behavior, not necessarily a deploy bug.
 
 ## 7. Footer “数据源” / source link is missing or wrong
 
-### Check
+Check:
 
 - `FEISHU_BITABLE_SOURCE_URL`
-
-### Fix
 
 Set it to the real browser URL of the target Bitable page.
 
 ## 8. Older env names cause confusion
 
-AIPanel currently accepts these legacy aliases for one compatibility window:
+The API also accepts:
 
 - `FEISHU_APP_TOKEN` → `FEISHU_BITABLE_APP_TOKEN`
 - `FEISHU_TABLE_ID` → `FEISHU_BITABLE_TABLE_ID`
 
-For any fresh deployment, only use:
+For any fresh deployment, use only:
 
 - `FEISHU_BITABLE_APP_TOKEN`
 - `FEISHU_BITABLE_TABLE_ID`
 
 ## 9. OpenClaw skill installs, but feels misconfigured
 
-### Check
+Check:
 
 - rendered/install target is `~/.openclaw/skills/aipanel-feishu-bitable`
 - installer env vars point to the same Bitable as the web app
 - canonical source is `integrations/openclaw-skill/`
 
-### Recommended reinstall flow
+Recommended reinstall flow:
 
 ```bash
 bash integrations/install-scripts/install-openclaw-skill.sh
@@ -183,19 +172,13 @@ If you changed env values, re-render/reinstall the skill before testing again.
 
 ## 10. Placeholder screenshots or demo assets look generic
 
-That is expected for the current public-prep phase.
+That is expected for now.
 
-The repo can temporarily ship public-safe placeholder/stand-in assets before final polished screenshots are replaced.
-
-See:
-
-- `docs/assets/screenshots/`
-- `docs/assets/demo/`
-- `docs/product/first-public-release.md`
+The repo can temporarily ship public-safe placeholder assets before final screenshots are replaced.
 
 ## 11. Still stuck?
 
-Work through this exact order:
+Work through this order:
 
 1. `npm install`
 2. `npm run build`
