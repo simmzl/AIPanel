@@ -22,40 +22,6 @@ function absoluteUrl(baseUrl: URL, candidate?: string | null) {
   }
 }
 
-function hasHan(text: string) {
-  return /[\u3400-\u4DBF\u4E00-\u9FFF\uF900-\uFAFF]/.test(text);
-}
-
-async function translateToChinese(text: string) {
-  const value = text.trim();
-  if (!value || hasHan(value)) return value;
-
-  try {
-    const response = await fetch(
-      `https://translate.googleapis.com/translate_a/single?client=gtx&sl=auto&tl=zh-CN&dt=t&q=${encodeURIComponent(value)}`,
-      {
-        headers: {
-          'user-agent': USER_AGENT,
-          'accept-language': 'zh-CN,zh;q=0.9,en;q=0.8'
-        }
-      }
-    );
-
-    if (!response.ok) return value;
-    const data = (await response.json()) as unknown;
-    if (!Array.isArray(data) || !Array.isArray(data[0])) return value;
-
-    const translated = (data[0] as unknown[])
-      .map((chunk) => (Array.isArray(chunk) && typeof chunk[0] === 'string' ? chunk[0] : ''))
-      .join('')
-      .trim();
-
-    return translated || value;
-  } catch {
-    return value;
-  }
-}
-
 export default async function handler(req: ApiRequest, res: ApiResponse) {
   if (req.method !== 'POST') {
     sendMethodNotAllowed(res, ['POST']);
@@ -96,12 +62,12 @@ export default async function handler(req: ApiRequest, res: ApiResponse) {
 
     const html = await response.text();
     const $ = load(html);
-    const rawTitle =
+    const title =
       $('meta[property="og:title"]').attr('content')?.trim() ||
       $('meta[name="twitter:title"]').attr('content')?.trim() ||
       $('title').text().trim() ||
       targetUrl.hostname;
-    const rawDescription =
+    const description =
       $('meta[property="og:description"]').attr('content')?.trim() ||
       $('meta[name="twitter:description"]').attr('content')?.trim() ||
       $('meta[name="description"]').attr('content')?.trim() ||
@@ -111,11 +77,6 @@ export default async function handler(req: ApiRequest, res: ApiResponse) {
       $('link[rel="shortcut icon"]').attr('href') ||
       $('link[rel="apple-touch-icon"]').attr('href') ||
       null;
-
-    const [title, description] = await Promise.all([
-      translateToChinese(rawTitle),
-      translateToChinese(rawDescription)
-    ]);
 
     res.status(200).json({
       title,
