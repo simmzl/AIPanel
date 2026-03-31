@@ -590,6 +590,10 @@ FEISHU_BITABLE_SOURCE_URL=...
 - 恢复行为
 - 成功判定条件
 
+这一阶段的执行拆解见：
+
+- [AIPanel 安装器 Phase 1：规格与状态机](./aipanel-installer-phase-1.md)
+
 ## Phase 2 — 先打通 Feishu 创建路径
 
 因为如果数据源创建本身不稳定，后面都没有意义。
