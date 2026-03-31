@@ -2,8 +2,6 @@
 
 Agent-first bookmarks and lightweight ops panel, backed by Feishu Bitable.
 
-[![Deploy with Vercel](https://vercel.com/button)](https://vercel.com/new/clone?repository-url=https://github.com/simmzl/AIPanel)
-
 [中文说明](./README.zh-CN.md)
 
 AIPanel is built around a simple idea: **agents and humans should be able to operate the same structured data source**.
@@ -22,6 +20,19 @@ More assets:
 - [Login view](docs/assets/screenshots/login-screen.png)
 - [Edit bookmark view](docs/assets/screenshots/desktop-edit-bookmark.png)
 - [Architecture diagram](docs/assets/diagrams/aipanel-architecture.svg)
+
+## Who it’s for
+
+AIPanel is a good fit if:
+
+- you already use Feishu Bitable and want a web panel on top of it
+- you want humans and agents to operate the same bookmark dataset
+- you are comfortable deploying on Vercel and configuring environment variables
+
+AIPanel is probably **not** the right fit if:
+
+- you want a zero-config bookmark dashboard with no Feishu dependency
+- you want a generic bookmark product with local-only storage out of the box
 
 ## Why AIPanel
 
@@ -57,7 +68,14 @@ AIPanel uses a Feishu-first architecture:
 
 ## Quick deploy
 
-The fastest path is the **Deploy with Vercel** button above.
+Before deploying, make sure you already have:
+
+- a Feishu app
+- a Bitable table with the expected schema
+
+The Deploy with Vercel button does **not** create the Feishu app or Bitable schema for you.
+
+[![Deploy with Vercel](https://vercel.com/button)](https://vercel.com/new/clone?repository-url=https://github.com/simmzl/AIPanel)
 
 Recommended deployment flow:
 
@@ -87,6 +105,9 @@ Deployment docs:
 - [Troubleshooting](docs/troubleshooting.md)
 
 ## OpenClaw integration
+
+**You can use AIPanel without OpenClaw.**
+OpenClaw is optional and only needed if you want agent-side operations.
 
 AIPanel ships with an OpenClaw skill template and a rendered distribution copy.
 

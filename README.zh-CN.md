@@ -2,8 +2,6 @@
 
 一个以 Agent 为优先、由飞书多维表格驱动的轻量书签与运营面板。
 
-[![Deploy with Vercel](https://vercel.com/button)](https://vercel.com/new/clone?repository-url=https://github.com/simmzl/AIPanel)
-
 [English README](./README.md)
 
 AIPanel 的核心思路很简单：**Agent 和人都应该操作同一份结构化数据源**。
@@ -22,6 +20,19 @@ OpenClaw 是可选的 Agent / 运维层。
 - [登录页](docs/assets/screenshots/login-screen.png)
 - [编辑书签视图](docs/assets/screenshots/desktop-edit-bookmark.png)
 - [架构图](docs/assets/diagrams/aipanel-architecture.svg)
+
+## 适合谁 / 不适合谁
+
+AIPanel 比较适合你，如果：
+
+- 你已经在用飞书多维表格，并希望在上面加一个 Web 面板
+- 你希望让人和 Agent 操作同一份书签数据
+- 你可以接受在 Vercel 上部署并配置环境变量
+
+AIPanel 可能**不太适合**你，如果：
+
+- 你想要一个零配置、完全不依赖 Feishu 的书签面板
+- 你想要一个开箱即用、本地存储优先的通用书签产品
 
 ## 为什么是 AIPanel
 
@@ -57,7 +68,14 @@ AIPanel 使用一套 Feishu-first 的架构：
 
 ## 快速部署
 
-最快的方式就是直接点击上面的 **Deploy with Vercel** 按钮。
+在部署前，请先确认你已经准备好：
+
+- 一个飞书应用
+- 一张符合要求 schema 的多维表格
+
+下面这个 Deploy with Vercel 按钮**不会**帮你自动创建飞书应用或多维表格 schema。
+
+[![Deploy with Vercel](https://vercel.com/button)](https://vercel.com/new/clone?repository-url=https://github.com/simmzl/AIPanel)
 
 推荐的部署流程：
 
@@ -87,6 +105,9 @@ FEISHU_BITABLE_SOURCE_URL=https://your-domain.feishu.cn/base/xxxxxxxx?table=tblx
 - [故障排查](docs/troubleshooting.md)
 
 ## OpenClaw 集成
+
+**不用 OpenClaw，也可以直接使用 AIPanel。**
+OpenClaw 是可选项，只有当你想让 Agent 参与操作时才需要它。
 
 AIPanel 附带 OpenClaw skill 模板和 render 后的分发目录。
 
