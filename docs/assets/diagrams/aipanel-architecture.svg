@@ -1,39 +1,53 @@
-<svg width="1200" height="760" viewBox="0 0 1200 760" fill="none" xmlns="http://www.w3.org/2000/svg" role="img" aria-labelledby="title desc">
+<svg width="1200" height="780" viewBox="0 0 1200 780" fill="none" xmlns="http://www.w3.org/2000/svg" role="img" aria-labelledby="title desc">
   <title id="title">AIPanel architecture</title>
-  <desc id="desc">Diagram showing browser and OpenClaw flows converging on Feishu Bitable, with Vercel hosting the web app and API layer.</desc>
-  <rect width="1200" height="760" fill="#0B1020"/>
-  <rect x="40" y="36" width="1120" height="688" rx="24" fill="#11182B" stroke="#24304D" stroke-width="2"/>
-  <text x="80" y="92" fill="#F8FAFC" font-family="Arial, Helvetica, sans-serif" font-size="36" font-weight="700">AIPanel architecture</text>
-  <text x="80" y="126" fill="#A7B1C7" font-family="Arial, Helvetica, sans-serif" font-size="20">Feishu-first shared data model for browser UI + agent workflows</text>
+  <desc id="desc">Diagram showing browser and agent flows converging on Feishu Bitable, with Vercel hosting the web app and API layer.</desc>
 
-  <rect x="90" y="190" width="250" height="120" rx="20" fill="#1A2440" stroke="#4868B7" stroke-width="2"/>
-  <text x="125" y="236" fill="#F8FAFC" font-family="Arial, Helvetica, sans-serif" font-size="28" font-weight="700">Human browser</text>
-  <text x="125" y="270" fill="#CBD5E1" font-family="Arial, Helvetica, sans-serif" font-size="18">Desktop / mobile UI</text>
+  <rect width="1200" height="780" fill="#0B1020"/>
+  <rect x="40" y="32" width="1120" height="716" rx="28" fill="#11182B" stroke="#24304D" stroke-width="2"/>
 
-  <rect x="395" y="120" width="360" height="260" rx="24" fill="#162235" stroke="#4F7FE8" stroke-width="3"/>
-  <text x="430" y="170" fill="#F8FAFC" font-family="Arial, Helvetica, sans-serif" font-size="30" font-weight="700">Vercel deployment</text>
+  <text x="80" y="92" fill="#F8FAFC" font-family="Arial, Helvetica, sans-serif" font-size="38" font-weight="700">AIPanel architecture</text>
+  <text x="80" y="128" fill="#A7B1C7" font-family="Arial, Helvetica, sans-serif" font-size="20">Feishu-first shared data model for browser UI and agent workflows</text>
 
-  <rect x="430" y="205" width="290" height="68" rx="14" fill="#223252" stroke="#5E88EA" stroke-width="2"/>
-  <text x="455" y="248" fill="#F8FAFC" font-family="Arial, Helvetica, sans-serif" font-size="24" font-weight="700">React / Vite frontend</text>
+  <!-- Human browser -->
+  <rect x="88" y="188" width="250" height="122" rx="22" fill="#1A2440" stroke="#5B7ED6" stroke-width="2.5"/>
+  <text x="122" y="236" fill="#F8FAFC" font-family="Arial, Helvetica, sans-serif" font-size="28" font-weight="700">Human browser</text>
+  <text x="122" y="271" fill="#CBD5E1" font-family="Arial, Helvetica, sans-serif" font-size="18">Desktop / mobile UI</text>
 
-  <rect x="430" y="290" width="290" height="68" rx="14" fill="#223252" stroke="#5E88EA" stroke-width="2"/>
-  <text x="455" y="333" fill="#F8FAFC" font-family="Arial, Helvetica, sans-serif" font-size="24" font-weight="700">Serverless API routes</text>
+  <!-- Vercel deployment -->
+  <rect x="400" y="120" width="358" height="270" rx="26" fill="#162235" stroke="#4F7FE8" stroke-width="3"/>
+  <text x="434" y="172" fill="#F8FAFC" font-family="Arial, Helvetica, sans-serif" font-size="30" font-weight="700">Vercel deployment</text>
 
-  <rect x="860" y="180" width="250" height="160" rx="20" fill="#1C2B20" stroke="#47B36B" stroke-width="2"/>
-  <text x="900" y="230" fill="#F8FAFC" font-family="Arial, Helvetica, sans-serif" font-size="28" font-weight="700">Feishu</text>
-  <text x="900" y="264" fill="#D1FAE5" font-family="Arial, Helvetica, sans-serif" font-size="20">Open Platform APIs</text>
-  <text x="900" y="296" fill="#D1FAE5" font-family="Arial, Helvetica, sans-serif" font-size="20">Auth + Bitable access</text>
+  <rect x="434" y="206" width="290" height="70" rx="16" fill="#223252" stroke="#6E96F0" stroke-width="2"/>
+  <text x="458" y="250" fill="#F8FAFC" font-family="Arial, Helvetica, sans-serif" font-size="24" font-weight="700">React / Vite frontend</text>
 
-  <rect x="840" y="440" width="290" height="170" rx="24" fill="#152A1E" stroke="#41C06E" stroke-width="3"/>
-  <text x="885" y="492" fill="#F8FAFC" font-family="Arial, Helvetica, sans-serif" font-size="30" font-weight="700">Feishu Bitable</text>
-  <text x="885" y="528" fill="#D1FAE5" font-family="Arial, Helvetica, sans-serif" font-size="20">Canonical data source</text>
-  <text x="885" y="560" fill="#D1FAE5" font-family="Arial, Helvetica, sans-serif" font-size="20">Bookmarks</text>
-  <text x="885" y="590" fill="#D1FAE5" font-family="Arial, Helvetica, sans-serif" font-size="20">Categories / ordering</text>
+  <rect x="434" y="294" width="290" height="70" rx="16" fill="#223252" stroke="#6E96F0" stroke-width="2"/>
+  <text x="458" y="338" fill="#F8FAFC" font-family="Arial, Helvetica, sans-serif" font-size="24" font-weight="700">Serverless API routes</text>
 
-  <rect x="90" y="470" width="250" height="130" rx="20" fill="#2A1E34" stroke="#C07BFF" stroke-width="2"/>
-  <text x="130" y="518" fill="#F8FAFC" font-family="Arial, Helvetica, sans-serif" font-size="28" font-weight="700">OpenClaw</text>
-  <text x="130" y="552" fill="#E9D5FF" font-family="Arial, Helvetica, sans-serif" font-size="18">Optional agent / operator</text>
-  <text x="130" y="578" fill="#E9D5FF" font-family="Arial, Helvetica, sans-serif" font-size="18">skill integration layer</text>
+  <!-- Feishu platform -->
+  <rect x="858" y="176" width="256" height="170" rx="22" fill="#1C2B20" stroke="#47B36B" stroke-width="2.5"/>
+  <text x="897" y="228" fill="#F8FAFC" font-family="Arial, Helvetica, sans-serif" font-size="28" font-weight="700">Feishu</text>
+  <text x="897" y="264" fill="#D1FAE5" font-family="Arial, Helvetica, sans-serif" font-size="20">Open Platform APIs</text>
+  <text x="897" y="298" fill="#D1FAE5" font-family="Arial, Helvetica, sans-serif" font-size="20">Auth + Bitable access</text>
+
+  <!-- OpenClaw -->
+  <rect x="88" y="506" width="252" height="132" rx="22" fill="#2A1E34" stroke="#C07BFF" stroke-width="2.5"/>
+  <text x="126" y="555" fill="#F8FAFC" font-family="Arial, Helvetica, sans-serif" font-size="28" font-weight="700">OpenClaw</text>
+  <text x="126" y="590" fill="#E9D5FF" font-family="Arial, Helvetica, sans-serif" font-size="18">Optional agent / operator</text>
+  <text x="126" y="616" fill="#E9D5FF" font-family="Arial, Helvetica, sans-serif" font-size="18">skill integration layer</text>
+
+  <!-- Feishu Bitable -->
+  <rect x="836" y="468" width="292" height="176" rx="24" fill="#152A1E" stroke="#41C06E" stroke-width="3"/>
+  <text x="878" y="522" fill="#F8FAFC" font-family="Arial, Helvetica, sans-serif" font-size="30" font-weight="700">Feishu Bitable</text>
+  <text x="878" y="560" fill="#D1FAE5" font-family="Arial, Helvetica, sans-serif" font-size="20">Canonical data source</text>
+  <text x="878" y="592" fill="#D1FAE5" font-family="Arial, Helvetica, sans-serif" font-size="20">Bookmarks</text>
+  <text x="878" y="624" fill="#D1FAE5" font-family="Arial, Helvetica, sans-serif" font-size="20">Categories / ordering</text>
+
+  <!-- Notes card -->
+  <rect x="402" y="458" width="316" height="144" rx="20" fill="#101A2C" stroke="#30415F" stroke-width="2"/>
+  <text x="432" y="504" fill="#F8FAFC" font-family="Arial, Helvetica, sans-serif" font-size="24" font-weight="700">Deployment shape</text>
+  <text x="432" y="540" fill="#CBD5E1" font-family="Arial, Helvetica, sans-serif" font-size="18">• one Vercel project</text>
+  <text x="432" y="570" fill="#CBD5E1" font-family="Arial, Helvetica, sans-serif" font-size="18">• one Feishu app</text>
+  <text x="432" y="600" fill="#CBD5E1" font-family="Arial, Helvetica, sans-serif" font-size="18">• one Bitable app + table</text>
 
   <defs>
     <marker id="arrowBlue" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="8" markerHeight="8" orient="auto-start-reverse">
@@ -47,19 +61,15 @@
     </marker>
   </defs>
 
-  <path d="M340 250 H395" stroke="#79A6FF" stroke-width="6" marker-end="url(#arrowBlue)"/>
-  <path d="M755 250 H860" stroke="#79A6FF" stroke-width="6" marker-end="url(#arrowBlue)"/>
-  <path d="M985 340 V440" stroke="#5EDD8A" stroke-width="6" marker-end="url(#arrowGreen)"/>
-  <path d="M340 535 C450 535, 520 615, 840 535" stroke="#D29BFF" stroke-width="6" marker-end="url(#arrowPurple)"/>
+  <!-- Flows -->
+  <path d="M338 249 C360 249, 378 249, 400 249" stroke="#79A6FF" stroke-width="6" marker-end="url(#arrowBlue)"/>
+  <path d="M758 249 C792 249, 820 249, 858 249" stroke="#79A6FF" stroke-width="6" marker-end="url(#arrowBlue)"/>
+  <path d="M986 346 C986 386, 986 420, 982 468" stroke="#5EDD8A" stroke-width="6" marker-end="url(#arrowGreen)"/>
+  <path d="M340 572 C438 572, 532 650, 836 556" stroke="#D29BFF" stroke-width="6" marker-end="url(#arrowPurple)"/>
 
-  <text x="360" y="235" fill="#A7B1C7" font-family="Arial, Helvetica, sans-serif" font-size="18">HTTPS</text>
-  <text x="775" y="235" fill="#A7B1C7" font-family="Arial, Helvetica, sans-serif" font-size="18">Feishu API calls</text>
-  <text x="1005" y="400" fill="#B7F3C9" font-family="Arial, Helvetica, sans-serif" font-size="18">read/write</text>
-  <text x="445" y="658" fill="#E9D5FF" font-family="Arial, Helvetica, sans-serif" font-size="18">agent reads and updates the same record model</text>
-
-  <rect x="392" y="430" width="330" height="138" rx="18" fill="#101A2C" stroke="#30415F" stroke-width="2"/>
-  <text x="424" y="474" fill="#F8FAFC" font-family="Arial, Helvetica, sans-serif" font-size="24" font-weight="700">Current deployment shape</text>
-  <text x="424" y="508" fill="#CBD5E1" font-family="Arial, Helvetica, sans-serif" font-size="18">• one Vercel project</text>
-  <text x="424" y="536" fill="#CBD5E1" font-family="Arial, Helvetica, sans-serif" font-size="18">• one Feishu app</text>
-  <text x="424" y="564" fill="#CBD5E1" font-family="Arial, Helvetica, sans-serif" font-size="18">• one Bitable app + table</text>
+  <!-- Labels -->
+  <text x="352" y="232" fill="#A7B1C7" font-family="Arial, Helvetica, sans-serif" font-size="17">HTTPS</text>
+  <text x="782" y="232" fill="#A7B1C7" font-family="Arial, Helvetica, sans-serif" font-size="17">Feishu API calls</text>
+  <text x="1004" y="410" fill="#B7F3C9" font-family="Arial, Helvetica, sans-serif" font-size="17">read / write</text>
+  <text x="438" y="684" fill="#E9D5FF" font-family="Arial, Helvetica, sans-serif" font-size="18">Agent reads and updates the same record model</text>
 </svg>
