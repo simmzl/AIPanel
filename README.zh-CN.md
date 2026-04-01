@@ -49,13 +49,38 @@ AIPanel 使用一套 Feishu-first 的架构：
 
 ## 快速部署
 
-AIPanel 现在已经提供通过 OpenClaw 触发的一句话安装路径。
+AIPanel 现在已经提供一句话安装路径，这条路径可以由 OpenClaw、Claude Code、Cursor 或类似的 AI 编码代理来驱动。
 
 推荐流程：
 
-1. 安装 AIPanel installer skill
+1. 先在本地安装 AIPanel installer skill
+   - 先 clone 本仓库
+   - 再把 installer skill 安装到本地 agent skill 目录：
+
+   ```bash
+   git clone https://github.com/simmzl/AIPanel.git
+   cd AIPanel
+   bash integrations/install-scripts/install-openclaw-installer-skill.sh
+   ```
+
+   默认安装路径：
+
+   ```bash
+   ~/.openclaw/skills/aipanel-installer
+   ```
+
+   如果你的 AI agent 使用的是别的 skill 目录，也可以直接复制渲染后的目录：
+
+   ```bash
+   skills/aipanel-installer/
+   ```
+
 2. 确保 Feishu / Lark 与 Vercel 能力已经授权
-3. 对 OpenClaw 说：`开始创建 AIPanel`
+   - 建议安装并完成 Feishu CLI 授权：<https://github.com/larksuite/cli>
+   - 确保 Vercel CLI 或相应部署能力已经登录可用
+3. 告诉你的 agent 开始安装 AIPanel
+   - OpenClaw 示例：`开始创建 AIPanel`
+   - 对 Claude Code / Cursor / 类似 agent，可让它们直接从 `scripts/installer/cli.mjs continue` 这条主路径继续安装
 4. 在需要时只提供最后两个输入项：
    - `ACCESS_PASSWORD`
    - 与自动识别到的 `FEISHU_APP_ID` 对应的 `FEISHU_APP_SECRET`

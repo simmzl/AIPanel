@@ -7,7 +7,7 @@ Agent-first bookmarks and lightweight ops panel, backed by Feishu Bitable.
 AIPanel is built around a simple idea: **agents and humans should be able to operate the same structured data source**.
 The browser is the human surface.
 Feishu Bitable is the source of truth.
-OpenClaw is the optional agent/operator layer.
+OpenClaw is the default installer/operator layer, while Claude Code, Cursor, and similar AI coding agents can also drive the same workflow when pointed at this repo and skill layout.
 
 ## Preview
 
@@ -49,13 +49,38 @@ AIPanel uses a Feishu-first architecture:
 
 ## Quick deploy
 
-AIPanel now includes a one-command installer path through OpenClaw.
+AIPanel now includes a one-command installer path that can be driven by OpenClaw, Claude Code, Cursor, or similar repo-aware AI coding agents.
 
 Recommended flow:
 
-1. install the AIPanel installer skill
-2. make sure your Feishu / Lark and Vercel capabilities are already authorized
-3. tell OpenClaw: `开始创建 AIPanel`
+1. install the AIPanel installer skill locally
+   - clone this repo locally
+   - install the skill into your agent skill directory:
+
+   ```bash
+   git clone https://github.com/simmzl/AIPanel.git
+   cd AIPanel
+   bash integrations/install-scripts/install-openclaw-installer-skill.sh
+   ```
+
+   default target path:
+
+   ```bash
+   ~/.openclaw/skills/aipanel-installer
+   ```
+
+   if your AI agent uses a different skill directory, copy the rendered skill from:
+
+   ```bash
+   skills/aipanel-installer/
+   ```
+
+2. make sure Feishu / Lark and Vercel capabilities are already authorized
+   - install and authorize the Feishu CLI when needed: <https://github.com/larksuite/cli>
+   - make sure your Vercel CLI or deployment capability is already logged in
+3. tell your agent to start the install flow
+   - OpenClaw example: `开始创建 AIPanel`
+   - for Claude Code / Cursor / similar agents, point them at this repo and ask them to continue the installer flow from `scripts/installer/cli.mjs continue`
 4. provide only the final required inputs when asked:
    - `ACCESS_PASSWORD`
    - the `FEISHU_APP_SECRET` matching the auto-detected `FEISHU_APP_ID`
@@ -93,7 +118,7 @@ Deployment docs:
 ## OpenClaw integration
 
 **You can use AIPanel without OpenClaw.**
-OpenClaw is optional and only needed if you want agent-side installation or operations.
+OpenClaw is the default agent integration documented in this repo, but the same installer flow can also be driven by Claude Code, Cursor, and similar AI coding agents.
 
 AIPanel now ships with two OpenClaw skills:
 
