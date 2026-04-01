@@ -90,6 +90,166 @@ function buildStatusSummary(state) {
   };
 }
 
+
+async function runContinueFlow({ statePath, execute = false }) {
+  let state = readState(statePath);
+  const steps = [];
+
+  const preflight = runPreflight();
+  steps.push({ step: 'preflight', ok: preflight.status === 'ready', result: preflight });
+  state = updateState({ stage: 'preflight' }, statePath);
+  if (preflight.status !== 'ready') {
+    return {
+      ok: false,
+      blocked: true,
+      stage: state.stage,
+      nextAction: 'fix-preflight',
+      steps,
+      state,
+      finalInputPrompt: buildFinalInputPrompt(state)
+    };
+  }
+
+  if (!state.env.JWT_SECRET) {
+    state = updateState({ stage: 'configure', env: { JWT_SECRET: generateJwtSecret() } }, statePath);
+    steps.push({ step: 'generate-jwt', ok: true });
+  }
+
+  const inferredPlan = planVercelSetup(state);
+  if (inferredPlan.env.FEISHU_APP_ID && state.env.FEISHU_APP_ID !== inferredPlan.env.FEISHU_APP_ID) {
+    state = updateState({ stage: 'configure', env: { FEISHU_APP_ID: inferredPlan.env.FEISHU_APP_ID } }, statePath);
+    steps.push({ step: 'infer-feishu-app-id', ok: true, detectedFeishuAppId: inferredPlan.env.FEISHU_APP_ID });
+  }
+
+  if (!hasExistingFeishuState(state)) {
+    if (!execute) {
+      state = updateState({ stage: 'create-feishu' }, statePath);
+      return {
+        ok: true,
+        blocked: false,
+        requiresExecute: true,
+        stage: state.stage,
+        nextAction: 'create-feishu',
+        message: 'Feishu data source has not been created yet. Re-run continue with --execute to create it.',
+        steps,
+        state,
+        finalInputPrompt: buildFinalInputPrompt(state)
+      };
+    }
+
+    try {
+      const created = createFeishuBitable({
+        appName: state.appName || 'AIPanel',
+        dryRun: false,
+        resume: null
+      });
+      state = updateState({
+        stage: 'configure',
+        feishu: {
+          appToken: created.baseToken,
+          tableId: created.tableId,
+          sourceUrl: created.sourceUrl
+        },
+        env: {
+          FEISHU_BITABLE_APP_TOKEN: created.baseToken,
+          FEISHU_BITABLE_TABLE_ID: created.tableId,
+          FEISHU_BITABLE_SOURCE_URL: created.sourceUrl
+        }
+      }, statePath);
+      steps.push({ step: 'create-feishu', ok: true, result: created });
+    } catch (error) {
+      state = readState(statePath);
+      return {
+        ok: false,
+        blocked: true,
+        stage: state.stage,
+        nextAction: 'inspect-create-feishu-error',
+        error: error instanceof Error ? error.message : String(error),
+        steps,
+        state,
+        finalInputPrompt: buildFinalInputPrompt(state)
+      };
+    }
+  }
+
+  const pendingQuestions = inferFinalQuestions(state);
+  if (pendingQuestions.length) {
+    state = updateState({ stage: 'ask-final-inputs' }, statePath);
+    return {
+      ok: true,
+      blocked: true,
+      stage: state.stage,
+      nextAction: 'collect-final-inputs',
+      pendingQuestions,
+      steps,
+      state,
+      finalInputPrompt: buildFinalInputPrompt(state)
+    };
+  }
+
+  const plan = planVercelSetup(state);
+  steps.push({ step: 'plan-vercel', ok: plan.ready, result: plan });
+  if (!plan.ready) {
+    state = updateState({ stage: 'configure' }, statePath);
+    return {
+      ok: false,
+      blocked: true,
+      stage: state.stage,
+      nextAction: 'fix-missing-env',
+      missing: plan.missing,
+      steps,
+      state,
+      finalInputPrompt: buildFinalInputPrompt(state)
+    };
+  }
+
+  if (!state.vercel?.deploymentUrl) {
+    if (!execute) {
+      state = updateState({ stage: 'deploy-vercel', vercel: { projectName: plan.projectName } }, statePath);
+      return {
+        ok: true,
+        blocked: false,
+        requiresExecute: true,
+        stage: state.stage,
+        nextAction: 'create-vercel',
+        message: 'Deployment has not been created yet. Re-run continue with --execute to create/update Vercel resources.',
+        steps,
+        state,
+        finalInputPrompt: buildFinalInputPrompt(state)
+      };
+    }
+
+    const project = createVercelProject({ projectName: plan.projectName, cwd: '/tmp/AIPanel', dryRun: false });
+    const link = linkVercelProject({ projectName: plan.projectName, cwd: '/tmp/AIPanel', dryRun: false });
+    const env = upsertVercelEnv({ cwd: '/tmp/AIPanel', envMap: plan.env, dryRun: false });
+    const deploy = deployVercelProject({ cwd: '/tmp/AIPanel', dryRun: false });
+    state = updateState({
+      stage: 'deploy-vercel',
+      vercel: {
+        projectName: plan.projectName,
+        projectId: deploy.projectId || state.vercel?.projectId,
+        deploymentUrl: deploy.deploymentUrl || state.vercel?.deploymentUrl
+      }
+    }, statePath);
+    steps.push({ step: 'create-vercel', ok: true, result: { project, link, env, deploy } });
+  }
+
+  const verify = await verifyDeployment(readState(statePath));
+  state = updateState({ stage: verify.ok ? 'done' : 'verify' }, statePath);
+  steps.push({ step: 'verify', ok: verify.ok, result: verify });
+
+  return {
+    ok: verify.ok,
+    blocked: false,
+    stage: state.stage,
+    nextAction: verify.ok ? 'done' : 'inspect-verify',
+    steps,
+    state,
+    verification: verify,
+    finalInputPrompt: buildFinalInputPrompt(state)
+  };
+}
+
 switch (command) {
   case 'init': {
     const state = createInitialState();
@@ -367,6 +527,12 @@ switch (command) {
     break;
   }
 
+  case 'continue': {
+    const result = await runContinueFlow({ statePath, execute });
+    print({ statePath, ...result });
+    break;
+  }
+
   default: {
     print({
       ok: false,
@@ -383,7 +549,9 @@ switch (command) {
         'node scripts/installer/cli.mjs run',
         'node scripts/installer/cli.mjs show',
         'node scripts/installer/cli.mjs status',
-        'node scripts/installer/cli.mjs verify'
+        'node scripts/installer/cli.mjs verify',
+        'node scripts/installer/cli.mjs continue',
+        'node scripts/installer/cli.mjs continue --execute'
       ]
     });
   }

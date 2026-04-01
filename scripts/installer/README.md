@@ -28,6 +28,8 @@
 - `node scripts/installer/cli.mjs set-final-inputs --access-password <password> --feishu-app-id <appId> --feishu-app-secret <secret>`
 - `node scripts/installer/cli.mjs status`
 - `node scripts/installer/cli.mjs verify`
+- `node scripts/installer/cli.mjs continue`
+- `node scripts/installer/cli.mjs continue --execute`
 
 说明：
 
@@ -40,6 +42,7 @@
 - `run` 会自动推进到“只剩最后人工输入项”为止，并在需要用户输入时把阶段落到 `ask-final-inputs`
 - `status` 会输出更适合对话层使用的人话摘要字段
 - `verify` 会对最终 deployment URL 做最小可达性检查，并把 `401 Authentication Required` 识别为“部署在线但受保护”
+- `continue` 会把 preflight / 自动补配置 / create-feishu / 收口最终输入 / deploy / verify 串起来，在需要用户输入或需要显式 `--execute` 时停下
 - 最终人工输入项当前默认为：`ACCESS_PASSWORD` 与 `FEISHU_APP_SECRET`
 - 当索要 `FEISHU_APP_SECRET` 时，对话层必须明确提示：它需要对应自动识别到的 `FEISHU_APP_ID`
 

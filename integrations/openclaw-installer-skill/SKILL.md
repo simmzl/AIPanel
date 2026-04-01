@@ -31,16 +31,10 @@ When a user says things like:
 
 follow this sequence:
 
-1. Read current installer summary with `node scripts/installer/cli.mjs status`
-2. If no state exists yet, initialize with `node scripts/installer/cli.mjs init`
-3. Run preflight with `node scripts/installer/cli.mjs preflight`
-4. Run `node scripts/installer/cli.mjs run` to auto-advance configuration
-5. If Feishu data source is still missing, run `node scripts/installer/cli.mjs create-feishu --execute`
-6. Re-check state
-7. If final user inputs are missing, ask only for the missing ones
-8. Once ready, run `node scripts/installer/cli.mjs create-vercel --dry-run`
-9. If dry-run is ready, run `node scripts/installer/cli.mjs create-vercel --execute`
-10. Verify the deployment result with `node scripts/installer/cli.mjs verify` before declaring success
+1. Prefer `node scripts/installer/cli.mjs continue` as the single orchestration entrypoint
+2. Use `node scripts/installer/cli.mjs continue --execute` when the flow needs to create real Feishu or Vercel resources
+3. Use `node scripts/installer/cli.mjs status` when you only need a conversational progress summary
+4. Use `node scripts/installer/cli.mjs verify` when you need to re-check the final deployment result
 
 ## Final user inputs
 
