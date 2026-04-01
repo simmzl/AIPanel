@@ -12,7 +12,7 @@ This document turns the current release-candidate work into a concrete first pub
 
 ## Packaging stance for the first public release
 
-The first public release should ship the OpenClaw integration in **two repo-visible forms, but one canonical source of truth**:
+The first public release should ship the OpenClaw integration in **two repo-visible forms, but one canonical canonical data source**:
 
 ### Canonical editable source
 

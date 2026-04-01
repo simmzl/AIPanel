@@ -1,6 +1,6 @@
 # Feishu app + Bitable setup for AIPanel
 
-AIPanel uses **one shared Feishu Bitable** as its source of truth.
+AIPanel uses **one shared Feishu Bitable** as its canonical data source.
 
 This guide explains what you need before deployment:
 

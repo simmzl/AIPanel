@@ -54,7 +54,7 @@ Its job is to:
 
 ### 3. Canonical data source
 
-Feishu Bitable is the single source of truth for:
+Feishu Bitable is the single canonical data source for:
 
 - bookmark records
 - category assignment

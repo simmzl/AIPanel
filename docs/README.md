@@ -38,7 +38,7 @@ The current deployment shape is simple:
 - category ordering
 - create / edit / delete flows
 - shared data model between web UI and OpenClaw
-- Feishu Bitable-backed source of truth
+- Feishu Bitable-backed canonical data source
 
 ## Suggested reading order
 

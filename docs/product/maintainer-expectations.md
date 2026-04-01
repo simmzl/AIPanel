@@ -23,7 +23,7 @@ At this stage, maintainers will usually prefer:
 ## What usually needs discussion first
 
 - auth model changes
-- switching away from Feishu Bitable as the canonical source of truth
+- switching away from Feishu Bitable as the canonical canonical data source
 - large repo restructures
 - big abstractions that are not needed for the current release
 - changes that remove current compatibility bridges without a migration story

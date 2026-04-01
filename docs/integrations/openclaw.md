@@ -6,7 +6,7 @@ This is one of the core ideas behind the project:
 
 - humans use the panel UI
 - agents use natural language plus the skill
-- both touch the same structured source of truth
+- both touch the same structured canonical data source
 
 ## Current location
 
@@ -27,7 +27,7 @@ Convenience installers:
 
 Recommended interpretation:
 
-- `integrations/openclaw-skill/` is the editable source of truth
+- `integrations/openclaw-skill/` is the editable canonical data source
 - `skills/aipanel-feishu-bitable/` is rendered from that template for local browsing and packaging
 - contributors should not manually edit both copies
 

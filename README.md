@@ -9,7 +9,7 @@ AIPanel is a lightweight bookmark and ops panel backed by **Feishu Bitable**, de
 AIPanel combines three pieces into one practical workflow:
 
 - **a lightweight web panel** for browsing and maintaining bookmarks
-- **a Feishu Bitable-backed data model** as the source of truth
+- **a Feishu Bitable-backed data model** as the canonical data source
 - **an AI-driven installer / operator path** for setup and day-to-day maintenance
 
 The browser is the human interface.
@@ -22,7 +22,7 @@ Claude Code, Cursor, and similar repo-aware AI coding agents can also drive the 
 Most bookmark dashboards are UI-first.
 AIPanel is different:
 
-- **Shared source of truth** — bookmarks, categories, and ordering live in Feishu Bitable
+- **Shared canonical data source** — bookmarks, categories, and ordering live in Feishu Bitable
 - **Agent-first workflow** — the same dataset can be operated by a person in the browser or by an AI agent
 - **Practical UI** — fast browsing, search, pinning, editing, and category maintenance without heavy admin overhead
 - **Small deployment surface** — one Vercel project, one Feishu app, one Bitable table
@@ -228,7 +228,7 @@ Operational docs:
 Current state:
 
 - the web panel is deployable and usable as a real product
-- Feishu Bitable is the source of truth
+- Feishu Bitable is the canonical data source
 - the OpenClaw skill path is available
 - the installer skill and installer CLI flow are implemented for AI-assisted setup
 

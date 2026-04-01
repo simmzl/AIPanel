@@ -10,7 +10,7 @@ The current in-repo OpenClaw integration is designed for:
 
 - self-hosted/operator-led use
 - the current AIPanel data model
-- Feishu Bitable as the shared source of truth
+- Feishu Bitable as the shared canonical data source
 - install from the rendered in-repo skill distribution
 
 ## Current expected install path

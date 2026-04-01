@@ -78,7 +78,7 @@ This checklist tracks what still matters before AIPanel feels clean, credible, a
 - [~] Review fixed URLs and example tokens in docs and skill references
 - [x] Document that `integrations/openclaw-skill/` is canonical while `skills/` is rendered output
 - [~] Remove stale transition notes that do not help public users
-- [x] Explain why Feishu Bitable is the current source of truth
+- [x] Explain why Feishu Bitable is the current canonical data source
 
 ## 9. Release packaging
 

@@ -5,7 +5,7 @@ This guide covers the recommended deployment path for AIPanel.
 AIPanel uses:
 
 - Vercel for the web app and API
-- Feishu Bitable as the source of truth
+- Feishu Bitable as the canonical data source
 - password-based access for the current deployment model
 
 ## Fast happy-path: Vercel + Feishu in one pass
