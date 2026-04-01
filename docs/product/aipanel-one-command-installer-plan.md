@@ -1,7 +1,7 @@
 # AIPanel 一句话安装器实施方案
 
-状态：草案  
-写作目的：把 AIPanel 从“仓库 + 文档”的体验，升级成由 OpenClaw + Feishu + Vercel 驱动的 **一句话创建流程**。
+状态：已完成核心实现（v1）  
+写作目的：记录 AIPanel 一句话安装器的目标、实现结构与交付边界，作为当前安装主线文档。
 
 ---
 
@@ -13,9 +13,9 @@
 - 一份可读的 README
 - 一条手动安装流程
 
-真正的目标是：
+当前已经实现的目标是：
 
-> 用户安装好所需的 Feishu 工具和 AIPanel skill 之后，只要对 OpenClaw 说一句：**“开始创建 AIPanel”**，OpenClaw 就能用最少的提问完成整个创建流程。
+> 用户安装好所需的 Feishu 工具和 AIPanel skills 之后，只要对 OpenClaw 说一句：**“开始创建 AIPanel”**，OpenClaw 就能沿着安装器主路径推进创建流程，并在必要时只收口最后少量输入。
 
 这意味着最终要交付的产品其实包括三部分：
 
@@ -86,11 +86,24 @@ FEISHU_BITABLE_SOURCE_URL=https://your-domain.feishu.cn/base/xxxxxxxx?table=tblx
 - 手动生成 JWT secret
 - 先去读一大段部署教程
 
-文档依然有价值，但它应该降级成参考材料和兜底方案，而不再是主安装入口。
+文档依然有价值，但现在的主安装入口已经是 installer skill，而不是手动阅读长文档。
 
 ---
 
-## 3. 安装器哲学
+## 3. 当前实现状态
+
+当前仓库已经具备：
+
+- `aipanel-installer` skill
+- `aipanel-feishu-bitable` skill
+- installer CLI 的 `continue / status / verify` 主路径
+- final inputs 收口逻辑
+- Feishu scope 授权错误的结构化提示
+- Vercel 部署后的最小 verify
+
+因此，这份文档现在更偏向“已实现能力说明 + 后续演进边界”，而不是纯方案草稿。
+
+## 4. 安装器哲学
 
 ## 核心原则
 
@@ -123,7 +136,7 @@ FEISHU_BITABLE_SOURCE_URL=https://your-domain.feishu.cn/base/xxxxxxxx?table=tblx
 
 ---
 
-## 4. 用 Superpowers 拆解任务
+## 5. 用 Superpowers 拆解任务
 
 这一节用 “Superpowers” 的方式来拆解目标：
 
@@ -137,7 +150,7 @@ FEISHU_BITABLE_SOURCE_URL=https://your-domain.feishu.cn/base/xxxxxxxx?table=tblx
 
 ---
 
-## 5. Superpower 1 — Observe（观察）
+## 6. Superpower 1 — Observe（观察）
 
 目标：判断当前环境是否已经具备运行一句话创建流程的条件。
 
@@ -198,7 +211,7 @@ FEISHU_BITABLE_SOURCE_URL=https://your-domain.feishu.cn/base/xxxxxxxx?table=tblx
 
 ---
 
-## 6. Superpower 2 — Create（创建）
+## 7. Superpower 2 — Create（创建）
 
 目标：自动完成 Feishu 侧数据源的创建。
 
@@ -249,7 +262,7 @@ Create 阶段应该返回：
 
 ---
 
-## 7. Superpower 3 — Configure（配置）
+## 8. Superpower 3 — Configure（配置）
 
 目标：收集并规范化部署所需的全部环境变量输入。
 
@@ -674,3 +687,18 @@ AIPanel 的长期产品形态，不应该只是“一个 AIPanel 仓库”。
 > **一个可以通过一句话创建出来的 AIPanel 体验**
 
 这意味着安装器流程要被当作一等产品面来设计，而不是附属于 repo 文档的次要功能。
+
+
+---
+
+## 当前结论
+
+AIPanel 一句话安装器的 v1 核心实现已经完成。
+
+当前推荐入口：
+
+- 在 OpenClaw 中说：`开始创建 AIPanel`
+- 安装器主编排命令：`node scripts/installer/cli.mjs continue`
+- 需要真实创建资源时使用：`node scripts/installer/cli.mjs continue --execute`
+
+剩余工作主要属于 polish、扩展校验和更深层产品化，而不再是核心能力缺失。

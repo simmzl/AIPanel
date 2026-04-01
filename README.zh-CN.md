@@ -15,12 +15,6 @@ OpenClaw 是可选的 Agent / 运维层。
 | --- | --- |
 | ![AIPanel desktop home](docs/assets/screenshots/desktop-home.png) | ![AIPanel mobile home](docs/assets/screenshots/mobile-home.png) |
 
-更多素材：
-
-- [登录页](docs/assets/screenshots/login-screen.png)
-- [编辑书签视图](docs/assets/screenshots/desktop-edit-bookmark.png)
-- [架构图](docs/assets/diagrams/aipanel-architecture.svg)
-
 ## 为什么是 AIPanel
 
 大多数书签面板是 UI-first 的，但 AIPanel 不一样：
@@ -55,24 +49,28 @@ AIPanel 使用一套 Feishu-first 的架构：
 
 ## 快速部署
 
-在部署前，请先确认你已经准备好：
+AIPanel 现在已经提供通过 OpenClaw 触发的一句话安装路径。
 
-- 一个飞书应用
-- 一张符合要求 schema 的多维表格
+推荐流程：
 
-下面这个 Deploy with Vercel 按钮**不会**帮你自动创建飞书应用或多维表格 schema。
+1. 安装 AIPanel installer skill
+2. 确保 Feishu / Lark 与 Vercel 能力已经授权
+3. 对 OpenClaw 说：`开始创建 AIPanel`
+4. 在需要时只提供最后两个输入项：
+   - `ACCESS_PASSWORD`
+   - 与自动识别到的 `FEISHU_APP_ID` 对应的 `FEISHU_APP_SECRET`
+5. 让安装器继续完成：
+   - preflight
+   - Feishu Bitable 创建
+   - env 组装
+   - Vercel 部署
+   - 最终 verify
+
+如果你更偏好手动部署，项目依然支持直接通过 Vercel + 手动 env 配置完成安装。
 
 [![Deploy with Vercel](https://vercel.com/button)](https://vercel.com/new/clone?repository-url=https://github.com/simmzl/AIPanel)
 
-推荐的部署流程：
-
-1. 创建飞书应用
-2. 准备好多维表格及权限
-3. 在 Vercel 中配置环境变量
-4. 部署 Web 应用
-5. 如有需要，再安装 OpenClaw skill，让 Agent 操作同一份数据
-
-必填环境变量：
+规范 env：
 
 ```env
 APP_NAME=AIPanel
@@ -87,8 +85,9 @@ FEISHU_BITABLE_SOURCE_URL=https://your-domain.feishu.cn/base/xxxxxxxx?table=tblx
 
 部署文档：
 
+- [一句话安装器方案](docs/product/aipanel-one-command-installer-plan.md)
 - [Vercel 部署](docs/deploy/vercel.md)
-- [飞书应用 + 多维表格配置](docs/datasource/feishu-bitable.md)
+- [Feishu app + Bitable 配置](docs/datasource/feishu-bitable.md)
 - [故障排查](docs/troubleshooting.md)
 
 ## OpenClaw 集成

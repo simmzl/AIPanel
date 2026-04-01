@@ -15,12 +15,6 @@ OpenClaw is the optional agent/operator layer.
 | --- | --- |
 | ![AIPanel desktop home](docs/assets/screenshots/desktop-home.png) | ![AIPanel mobile home](docs/assets/screenshots/mobile-home.png) |
 
-More assets:
-
-- [Login view](docs/assets/screenshots/login-screen.png)
-- [Edit bookmark view](docs/assets/screenshots/desktop-edit-bookmark.png)
-- [Architecture diagram](docs/assets/diagrams/aipanel-architecture.svg)
-
 ## Why AIPanel
 
 Most bookmark dashboards are UI-first. AIPanel is different:
@@ -55,24 +49,28 @@ AIPanel uses a Feishu-first architecture:
 
 ## Quick deploy
 
-Before deploying, make sure you already have:
+AIPanel now includes a one-command installer path through OpenClaw.
 
-- a Feishu app
-- a Bitable table with the expected schema
+Recommended flow:
 
-The Deploy with Vercel button does **not** create the Feishu app or Bitable schema for you.
+1. install the AIPanel installer skill
+2. make sure your Feishu / Lark and Vercel capabilities are already authorized
+3. tell OpenClaw: `开始创建 AIPanel`
+4. provide only the final required inputs when asked:
+   - `ACCESS_PASSWORD`
+   - the `FEISHU_APP_SECRET` matching the auto-detected `FEISHU_APP_ID`
+5. let the installer continue the rest of the flow:
+   - preflight
+   - Feishu Bitable creation
+   - env assembly
+   - Vercel deployment
+   - final verify
+
+If you prefer the manual path, the web app still supports direct Vercel deployment and explicit env configuration.
 
 [![Deploy with Vercel](https://vercel.com/button)](https://vercel.com/new/clone?repository-url=https://github.com/simmzl/AIPanel)
 
-Recommended deployment flow:
-
-1. create a Feishu app
-2. prepare the Bitable table and permissions
-3. configure env vars in Vercel
-4. deploy the web app
-5. optionally install the OpenClaw skill for agent-side operations
-
-Required envs:
+Canonical envs:
 
 ```env
 APP_NAME=AIPanel
@@ -87,6 +85,7 @@ FEISHU_BITABLE_SOURCE_URL=https://your-domain.feishu.cn/base/xxxxxxxx?table=tblx
 
 Deployment docs:
 
+- [One-command installer plan](docs/product/aipanel-one-command-installer-plan.md)
 - [Vercel deployment](docs/deploy/vercel.md)
 - [Feishu app + Bitable setup](docs/datasource/feishu-bitable.md)
 - [Troubleshooting](docs/troubleshooting.md)
@@ -94,19 +93,24 @@ Deployment docs:
 ## OpenClaw integration
 
 **You can use AIPanel without OpenClaw.**
-OpenClaw is optional and only needed if you want agent-side operations.
+OpenClaw is optional and only needed if you want agent-side installation or operations.
 
-AIPanel ships with an OpenClaw skill template and a rendered distribution copy.
+AIPanel now ships with two OpenClaw skills:
 
-Packaging model:
+- `aipanel-installer` — start, continue, recover, and verify AIPanel installation
+- `aipanel-feishu-bitable` — operate the Feishu Bitable data source after deployment
 
-- edit `integrations/openclaw-skill/`
-- treat `skills/aipanel-feishu-bitable/` as the rendered distribution folder
-- install via `integrations/install-scripts/install-openclaw-skill.sh`
-
-Optional local render step:
+Install both locally from the repo root:
 
 ```bash
+bash integrations/install-scripts/install-openclaw-installer-skill.sh
+bash integrations/install-scripts/install-openclaw-skill.sh
+```
+
+Optional render steps:
+
+```bash
+node scripts/render-openclaw-installer-skill.mjs
 node scripts/render-openclaw-skill.mjs
 ```
 
