@@ -35,3 +35,8 @@
 AIPanel 已创建完成。
 面板地址：<URL>
 我已经完成了 Feishu 数据源创建、配置组装和 Vercel 部署。
+
+## Verify protected
+
+AIPanel 已部署上线，地址是：<URL>
+不过当前访问返回 401，说明站点在线，但前面还有一层访问保护。

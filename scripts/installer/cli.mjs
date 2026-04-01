@@ -30,6 +30,46 @@ function inferFeishuAppId(state, plan = null) {
 }
 
 
+
+function buildFinalInputPrompt(state) {
+  const missing = inferFinalQuestions(state);
+  const appId = inferFeishuAppId(state);
+
+  if (missing.length === 0) {
+    return {
+      missing,
+      mode: 'none',
+      message: 'All final user inputs are already present.'
+    };
+  }
+
+  if (missing.length === 2) {
+    return {
+      missing,
+      mode: 'both',
+      message: appId
+        ? `现在还差最后两项信息，我就可以继续部署：\n1. AIPanel 访问密码\n2. Feishu App Secret\n\n注意：这里的 App Secret 需要对应我自动识别到的 Feishu App ID：${appId}`
+        : '现在还差最后两项信息，我就可以继续部署：\n1. AIPanel 访问密码\n2. Feishu App Secret\n\n但我当前还没有自动识别到 Feishu App ID，所以还不能准确说明这个 App Secret 应该对应哪个应用。'
+    };
+  }
+
+  if (missing.includes('ACCESS_PASSWORD')) {
+    return {
+      missing,
+      mode: 'password-only',
+      message: '现在只差 AIPanel 访问密码。你发我密码后，我就继续完成部署。'
+    };
+  }
+
+  return {
+    missing,
+    mode: appId ? 'app-secret-only' : 'app-secret-blocked',
+    message: appId
+      ? `现在只差 Feishu App Secret。请提供 Feishu App ID ${appId} 对应的 App Secret。`
+      : '现在只差 Feishu App Secret，但我当前没有自动识别到 Feishu App ID，所以还不能准确提示你该提供哪个应用的密钥。请先检查本地 Feishu/Lark 登录上下文。'
+  };
+}
+
 function buildStatusSummary(state) {
   const missing = inferFinalQuestions(state);
   const done = [];
@@ -290,6 +330,8 @@ switch (command) {
     const pendingQuestions = inferFinalQuestions(next);
     next = updateState({ stage: pendingQuestions.length ? 'ask-final-inputs' : 'configure' }, statePath);
 
+    const finalInputPrompt = buildFinalInputPrompt(next);
+
     print({
       ok: true,
       statePath,
@@ -298,9 +340,9 @@ switch (command) {
       pendingQuestions,
       message: pendingQuestions.length
         ? 'Installer progressed automatically. Final user input still required for the listed fields before Vercel production deploy.'
-        : 'Installer has all required final inputs and can proceed to create-vercel --execute.'
-    ,
-      detectedFeishuAppId: inferFeishuAppId(next, plan)
+        : 'Installer has all required final inputs and can proceed to create-vercel --execute.',
+      detectedFeishuAppId: inferFeishuAppId(next, plan),
+      finalInputPrompt
     });
     break;
   }
@@ -313,7 +355,7 @@ switch (command) {
 
   case 'status': {
     const state = readState(statePath);
-    print({ ok: true, statePath, summary: buildStatusSummary(state), state });
+    print({ ok: true, statePath, summary: buildStatusSummary(state), finalInputPrompt: buildFinalInputPrompt(state), state });
     break;
   }
 
