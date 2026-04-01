@@ -572,18 +572,6 @@ export default function App() {
         </div>
       ) : null}
 
-      <button
-        type="button"
-        onClick={() => {
-          setEditingBookmark(null);
-          setModalOpen(true);
-        }}
-        className={`fixed right-5 z-30 hidden h-14 w-14 items-center justify-center rounded-full bg-[var(--accent-soft)] text-3xl text-[var(--text-main)] shadow-[0_18px_50px_rgba(0,0,0,0.18)] backdrop-blur-xl transition duration-200 hover:scale-[1.03] hover:opacity-90 md:flex ${(refreshing || mutating) ? 'bottom-20' : 'bottom-5'}`}
-        aria-label="添加书签"
-      >
-        +
-      </button>
-
       {showBackToTop ? (
         <button
           type="button"
@@ -651,6 +639,7 @@ export default function App() {
             {feishuScopeAuthPrompt.requestId ? (
               <p className="mt-4 text-xs text-[var(--text-soft)]">Request ID: {feishuScopeAuthPrompt.requestId}</p>
             ) : null}
+            <p className="mt-4 text-xs leading-5 text-[var(--text-soft)]">授权成功后，刷新本页面即可继续使用。</p>
             <div className="mt-5 flex justify-end">
               <button
                 type="button"

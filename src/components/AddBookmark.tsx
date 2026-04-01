@@ -170,7 +170,7 @@ export function AddBookmark({
               <select
                 value={form.category}
                 onChange={(event) => updateField('category', event.target.value)}
-                className="mt-1.5 w-full rounded-[10px] bg-[var(--surface-input)] px-4 py-2.5 text-[var(--text-main)] outline-none transition duration-200 focus:bg-[var(--surface-input-focus)] focus:ring-2 focus:ring-[var(--accent-soft)]"
+                className="mt-1.5 w-full rounded-[10px] bg-[var(--surface-input)] px-4 pr-12 py-2.5 text-[var(--text-main)] outline-none transition duration-200 focus:bg-[var(--surface-input-focus)] focus:ring-2 focus:ring-[var(--accent-soft)]"
               >
                 {categories.map((cat) => (
                   <option key={cat} value={cat}>
