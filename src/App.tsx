@@ -473,18 +473,20 @@ export default function App() {
         </section>
 
         <footer className="mt-10 border-t border-[var(--border-subtle)] px-2 pt-6 pb-2 md:mt-14 md:px-4 md:pt-8" style={{ borderTopWidth: '0.5px' }}>
-          <div className="flex flex-col gap-3 text-sm text-[var(--text-muted)] md:flex-row md:items-center md:justify-between">
-            <div>
-              <p className="text-[var(--text-strong)]">AIPanel</p>
-              <p className="mt-1 text-xs md:text-sm">你的 AIPanel 入口面板，支持分类整理、搜索、拖拽排序与快速维护。</p>
+          <div className="flex flex-col gap-4 text-sm text-[var(--text-muted)] md:flex-row md:items-end md:justify-between">
+            <div className="space-y-1.5">
+              <p className="text-sm font-medium tracking-[0.02em] text-[var(--text-strong)] md:text-[15px]">AIPanel</p>
+              <p className="max-w-[42rem] text-xs leading-5 text-[var(--text-soft)] md:text-sm">
+                你的个人工作流入口面板，支持分类整理、搜索、拖拽排序与快速维护。
+              </p>
             </div>
-            <div className="flex flex-wrap items-center gap-x-4 gap-y-2 text-xs md:text-sm">
+            <div className="flex flex-wrap items-center gap-2.5 text-xs md:justify-end md:text-sm">
               {DATA_SOURCE_URL ? (
                 <a
                   href={DATA_SOURCE_URL}
                   target="_blank"
                   rel="noreferrer"
-                  className="underline underline-offset-4 transition duration-200 hover:text-[var(--text-main)]"
+                  className="inline-flex items-center rounded-full bg-[var(--surface-subtle)] px-3 py-1.5 text-[var(--text-strong)] transition duration-200 hover:bg-[var(--surface-subtle-hover)] hover:text-[var(--text-main)]"
                 >
                   数据源
                 </a>
@@ -493,9 +495,12 @@ export default function App() {
                 href="https://github.com/simmzl/AIPanel"
                 target="_blank"
                 rel="noreferrer"
-                className="underline underline-offset-4 transition duration-200 hover:text-[var(--text-main)]"
+                className="inline-flex items-center gap-1.5 rounded-full bg-[var(--surface-subtle)] px-3 py-1.5 text-[var(--text-strong)] transition duration-200 hover:bg-[var(--surface-subtle-hover)] hover:text-[var(--text-main)]"
               >
-                GitHub
+                <svg viewBox="0 0 20 20" className="h-3.5 w-3.5" fill="currentColor" aria-hidden="true">
+                  <path d="M10 1.7a8.3 8.3 0 0 0-2.62 16.18c.42.08.57-.18.57-.4l-.01-1.55c-2.33.5-2.82-.99-2.82-.99-.38-.95-.93-1.2-.93-1.2-.76-.52.06-.51.06-.51.84.06 1.29.86 1.29.86.75 1.28 1.96.91 2.44.69.08-.54.29-.91.53-1.12-1.86-.21-3.81-.93-3.81-4.14 0-.91.33-1.65.86-2.23-.08-.21-.37-1.05.08-2.18 0 0 .7-.22 2.3.85A7.92 7.92 0 0 1 10 5.73c.71 0 1.43.1 2.1.3 1.6-1.07 2.3-.85 2.3-.85.45 1.13.16 1.97.08 2.18.54.58.86 1.32.86 2.23 0 3.22-1.95 3.92-3.82 4.13.3.26.57.78.57 1.57l-.01 2.32c0 .22.15.48.58.4A8.3 8.3 0 0 0 10 1.7Z" />
+                </svg>
+                <span>GitHub</span>
               </a>
               <span className="text-[var(--text-soft)]">Powered by AIPanel</span>
             </div>
