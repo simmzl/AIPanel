@@ -29,7 +29,7 @@
 - `node scripts/installer/cli.mjs status`
 - `node scripts/installer/cli.mjs verify`
 - `node scripts/installer/cli.mjs continue`
-- `node scripts/installer/cli.mjs continue --execute`
+- `AIPANEL_REPO_DIR=/path/to/AIPanel node scripts/installer/cli.mjs continue --execute`
 
 说明：
 

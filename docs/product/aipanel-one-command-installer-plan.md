@@ -230,7 +230,7 @@ FEISHU_BITABLE_SOURCE_URL=https://your-domain.feishu.cn/base/xxxxxxxx?table=tblx
 
 - `标题`
 - `副标题`
-- `链接`
+- `链接`（超链接字段）
 - `图标`
 - `分类`
 - `排序`
@@ -699,6 +699,6 @@ AIPanel 一句话安装器的 v1 核心实现已经完成。
 
 - 在 OpenClaw 中说：`开始创建 AIPanel`
 - 安装器主编排命令：`node scripts/installer/cli.mjs continue`
-- 需要真实创建资源时使用：`node scripts/installer/cli.mjs continue --execute`
+- 需要真实创建资源时使用：`AIPANEL_REPO_DIR=/path/to/AIPanel node scripts/installer/cli.mjs continue --execute`
 
 剩余工作主要属于 polish、扩展校验和更深层产品化，而不再是核心能力缺失。

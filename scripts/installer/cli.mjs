@@ -18,6 +18,14 @@ function print(obj) {
   process.stdout.write(JSON.stringify(obj, null, 2) + '\n');
 }
 
+
+function resolveRepoRoot(state) {
+  const fromEnv = process.env.AIPANEL_REPO_DIR;
+  if (fromEnv) return fromEnv;
+  if (state?.repoRoot) return state.repoRoot;
+  return process.cwd();
+}
+
 function inferFinalQuestions(state) {
   const missing = [];
   if (!state.env.ACCESS_PASSWORD) missing.push('ACCESS_PASSWORD');
@@ -93,6 +101,8 @@ function buildStatusSummary(state) {
 
 async function runContinueFlow({ statePath, execute = false }) {
   let state = readState(statePath);
+  const repoRoot = resolveRepoRoot(state);
+  state = updateState({ repoRoot }, statePath);
   const steps = [];
 
   const preflight = runPreflight();
@@ -123,7 +133,7 @@ async function runContinueFlow({ statePath, execute = false }) {
 
   if (!hasExistingFeishuState(state)) {
     if (!execute) {
-      state = updateState({ stage: 'create-feishu' }, statePath);
+      state = updateState({ stage: 'create-feishu', repoRoot }, statePath);
       return {
         ok: true,
         blocked: false,
@@ -145,6 +155,7 @@ async function runContinueFlow({ statePath, execute = false }) {
       });
       state = updateState({
         stage: 'configure',
+        repoRoot,
         feishu: {
           appToken: created.baseToken,
           tableId: created.tableId,
@@ -174,7 +185,7 @@ async function runContinueFlow({ statePath, execute = false }) {
 
   const pendingQuestions = inferFinalQuestions(state);
   if (pendingQuestions.length) {
-    state = updateState({ stage: 'ask-final-inputs' }, statePath);
+    state = updateState({ stage: 'ask-final-inputs', repoRoot }, statePath);
     return {
       ok: true,
       blocked: true,
@@ -190,7 +201,7 @@ async function runContinueFlow({ statePath, execute = false }) {
   const plan = planVercelSetup(state);
   steps.push({ step: 'plan-vercel', ok: plan.ready, result: plan });
   if (!plan.ready) {
-    state = updateState({ stage: 'configure' }, statePath);
+    state = updateState({ stage: 'configure', repoRoot }, statePath);
     return {
       ok: false,
       blocked: true,
@@ -205,7 +216,7 @@ async function runContinueFlow({ statePath, execute = false }) {
 
   if (!state.vercel?.deploymentUrl) {
     if (!execute) {
-      state = updateState({ stage: 'deploy-vercel', vercel: { projectName: plan.projectName } }, statePath);
+      state = updateState({ stage: 'deploy-vercel', repoRoot, vercel: { projectName: plan.projectName } }, statePath);
       return {
         ok: true,
         blocked: false,
@@ -219,12 +230,13 @@ async function runContinueFlow({ statePath, execute = false }) {
       };
     }
 
-    const project = createVercelProject({ projectName: plan.projectName, cwd: '/tmp/AIPanel', dryRun: false });
-    const link = linkVercelProject({ projectName: plan.projectName, cwd: '/tmp/AIPanel', dryRun: false });
-    const env = upsertVercelEnv({ cwd: '/tmp/AIPanel', envMap: plan.env, dryRun: false });
-    const deploy = deployVercelProject({ cwd: '/tmp/AIPanel', dryRun: false });
+    const project = createVercelProject({ projectName: plan.projectName, cwd: repoRoot, dryRun: false });
+    const link = linkVercelProject({ projectName: plan.projectName, cwd: repoRoot, dryRun: false });
+    const env = upsertVercelEnv({ cwd: repoRoot, envMap: plan.env, dryRun: false });
+    const deploy = deployVercelProject({ cwd: repoRoot, dryRun: false });
     state = updateState({
       stage: 'deploy-vercel',
+      repoRoot,
       vercel: {
         projectName: plan.projectName,
         projectId: deploy.projectId || state.vercel?.projectId,
@@ -446,13 +458,14 @@ switch (command) {
       break;
     }
 
-    const project = createVercelProject({ projectName: plan.projectName, cwd: '/tmp/AIPanel', dryRun: false });
-    const link = linkVercelProject({ projectName: plan.projectName, cwd: '/tmp/AIPanel', dryRun: false });
-    const env = upsertVercelEnv({ cwd: '/tmp/AIPanel', envMap: plan.env, dryRun: false });
-    const deploy = deployVercelProject({ cwd: '/tmp/AIPanel', dryRun: false });
+    const project = createVercelProject({ projectName: plan.projectName, cwd: repoRoot, dryRun: false });
+    const link = linkVercelProject({ projectName: plan.projectName, cwd: repoRoot, dryRun: false });
+    const env = upsertVercelEnv({ cwd: repoRoot, envMap: plan.env, dryRun: false });
+    const deploy = deployVercelProject({ cwd: repoRoot, dryRun: false });
 
     const next = updateState({
       stage: 'deploy-vercel',
+      repoRoot,
       vercel: {
         projectName: plan.projectName,
         projectId: deploy.projectId || current.vercel.projectId,
@@ -471,6 +484,7 @@ switch (command) {
     if (!next.env.JWT_SECRET) {
       next = updateState({
         stage: 'configure',
+        repoRoot,
         env: { JWT_SECRET: generateJwtSecret() }
       }, statePath);
     }
@@ -551,6 +565,7 @@ switch (command) {
         'node scripts/installer/cli.mjs status',
         'node scripts/installer/cli.mjs verify',
         'node scripts/installer/cli.mjs continue',
+        'AIPANEL_REPO_DIR=/path/to/AIPanel node scripts/installer/cli.mjs continue --execute',
         'node scripts/installer/cli.mjs continue --execute'
       ]
     });

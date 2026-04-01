@@ -82,10 +82,7 @@ const payload = {
   fields: {
     标题: `DEBUG ${now}`,
     副标题: 'Local AIPanel debug write test',
-    链接: {
-      link: sourceUrl,
-      text: 'AIPanel Debug'
-    },
+    链接: sourceUrl,
     图标: `${sourceUrl.replace(/\/$/, '')}/favicon.ico`,
     分类: '其他',
     排序: 999999

@@ -13,6 +13,7 @@ export function createInitialState() {
     version: INSTALLER_STATE_VERSION,
     stage: 'preflight',
     appName: 'AIPanel',
+    repoRoot: process.cwd(),
     feishu: {
       appToken: null,
       tableId: null,

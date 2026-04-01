@@ -225,10 +225,7 @@ export default async function handler(req: ApiRequest, res: ApiResponse) {
           fields: {
             标题: payload.title,
             副标题: payload.subtitle,
-            链接: {
-              link: payload.url,
-              text: payload.title
-            },
+            链接: payload.url,
             图标: payload.favicon,
             分类: payload.category,
             排序: payload.order
@@ -254,10 +251,7 @@ export default async function handler(req: ApiRequest, res: ApiResponse) {
           fields: {
             标题: payload.title,
             副标题: payload.subtitle,
-            链接: {
-              link: payload.url,
-              text: payload.title
-            },
+            链接: payload.url,
             图标: payload.favicon,
             分类: payload.category,
             排序: payload.order
@@ -318,10 +312,7 @@ export default async function handler(req: ApiRequest, res: ApiResponse) {
             fields: {
               标题: CATEGORY_PLACEHOLDER_TITLE,
               副标题: CATEGORY_PLACEHOLDER_SUBTITLE,
-              链接: {
-                link: CATEGORY_PLACEHOLDER_URL,
-                text: CATEGORY_PLACEHOLDER_TITLE
-              },
+              链接: CATEGORY_PLACEHOLDER_URL,
               图标: '',
               分类: name,
               排序: 0,
