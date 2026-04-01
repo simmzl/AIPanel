@@ -68,6 +68,9 @@ function shouldUseProvidedIcon(bookmark: Bookmark) {
   if (!bookmark.favicon.startsWith('http')) return false;
   if (isGoogleFallbackIcon(bookmark.favicon)) return false;
 
+  const faviconHostname = getHostname(bookmark.favicon);
+  if (!faviconHostname || isPrivateHostname(faviconHostname)) return false;
+
   return true;
 }
 
