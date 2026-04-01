@@ -605,7 +605,7 @@ export default function App() {
             <h2 className="mt-2 text-[28px] leading-none text-[var(--text-main)]" style={{ fontFamily: 'Instrument Serif, serif' }}>
               需要补充飞书权限
             </h2>
-            <p className="mt-4 text-sm leading-6 text-[var(--text-muted)] whitespace-pre-wrap">
+            <p className="mt-4 text-sm leading-6 text-[var(--text-muted)] whitespace-pre-wrap break-words">
               {feishuScopeAuthPrompt.rawMessage || feishuScopeAuthPrompt.message}
             </p>
             {feishuScopeAuthPrompt.permissionViolations && feishuScopeAuthPrompt.permissionViolations.length > 0 ? (
