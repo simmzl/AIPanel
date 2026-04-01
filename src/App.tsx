@@ -476,7 +476,7 @@ export default function App() {
           <div className="flex flex-col gap-3 text-sm text-[var(--text-muted)] md:flex-row md:items-center md:justify-between">
             <div>
               <p className="text-[var(--text-strong)]">AIPanel</p>
-              <p className="mt-1 text-xs md:text-sm">你的 agent-first 入口面板，支持分类整理、搜索、拖拽排序与快速维护。</p>
+              <p className="mt-1 text-xs md:text-sm">你的 AIPanel 入口面板，支持分类整理、搜索、拖拽排序与快速维护。</p>
             </div>
             <div className="flex flex-wrap items-center gap-x-4 gap-y-2 text-xs md:text-sm">
               {DATA_SOURCE_URL ? (
@@ -489,7 +489,7 @@ export default function App() {
                   数据源
                 </a>
               ) : null}
-              <span className="text-[var(--text-soft)]">Powered by Feishu Bitable · Vercel</span>
+              <span className="text-[var(--text-soft)]">面向个人工作流的轻量书签面板</span>
             </div>
           </div>
         </footer>

@@ -41,25 +41,16 @@ Interpretation:
 - `排序`: order inside the same category
 - `分类排序`: category order across the whole panel
 
-## Current role
+## Scope
 
-当前 skill 的主职责仍然是：
+这个 skill 负责 AIPanel 已有数据源的日常操作：
 
 - 读取 AIPanel 数据
 - 新增 / 编辑 / 删除书签
 - 调整分类和排序
 - 维护当前 AIPanel 数据源
 
-接下来会新增一条更高层的职责方向：
-
-- 触发并承载 `开始创建 AIPanel` 这一句话安装流程
-
-这意味着未来 skill 会从“数据操作 skill”扩展为“数据操作 + 实例创建入口”。
-
-安装器方向的总体设计见：
-
-- `docs/product/aipanel-one-command-installer-plan.md`
-- `docs/product/aipanel-installer-phase-1.md`
+实例创建与安装流程由独立的 `aipanel-installer` skill 负责。
 
 ## Core tasks
 

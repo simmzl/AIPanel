@@ -2,14 +2,14 @@
 
 这一目录下的文档主要分成两类：
 
-## 当前仍然有价值、建议保留
+## 主线文档
 
-### 安装器 / 未来主线
+### 安装器
 
 - [AIPanel 一句话安装器实施方案](./aipanel-one-command-installer-plan.md)
 - [AIPanel 安装器 Phase 1：规格与状态机](./aipanel-installer-phase-1.md)
 
-### 仍然有参考价值的产品文档
+### 其他产品文档
 
 - [第一版公开发布计划](./first-public-release.md)
 - [开源就绪清单](./open-source-readiness-checklist.md)
@@ -26,4 +26,4 @@
 - `release-announcement-v0-experimental.md`
 - `release-candidate-checklist.md`
 
-如果当前工作围绕“一句话创建 AIPanel”，优先看安装器相关文档即可。
+如果当前工作围绕“一句话创建 AIPanel”，优先看安装器相关文档。
