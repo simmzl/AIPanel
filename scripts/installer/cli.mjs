@@ -419,6 +419,7 @@ switch (command) {
 
   case 'create-vercel': {
     const current = readState(statePath);
+    const repoRoot = resolveRepoRoot(current);
 
     if (!dryRun && !execute) {
       print({
@@ -431,7 +432,6 @@ switch (command) {
 
     progress('开始创建 Vercel 项目与部署', { dryRun, execute });
     const plan = planVercelSetup(current);
-
     if (dryRun) {
       print({
         ok: true,
