@@ -489,7 +489,15 @@ export default function App() {
                   数据源
                 </a>
               ) : null}
-              <span className="text-[var(--text-soft)]">面向个人工作流的轻量书签面板</span>
+              <a
+                href="https://github.com/simmzl/AIPanel"
+                target="_blank"
+                rel="noreferrer"
+                className="underline underline-offset-4 transition duration-200 hover:text-[var(--text-main)]"
+              >
+                GitHub
+              </a>
+              <span className="text-[var(--text-soft)]">Powered by AIPanel</span>
             </div>
           </div>
         </footer>
