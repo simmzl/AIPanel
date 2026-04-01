@@ -25,7 +25,7 @@
 - `npm run installer:vercel`
 - `npm run installer:run`
 - `npm run installer:clear-errors`
-- `node scripts/installer/cli.mjs set-final-inputs --access-password <password> --feishu-app-secret <secret>`
+- `node scripts/installer/cli.mjs set-final-inputs --access-password <password> --feishu-app-id <appId> --feishu-app-secret <secret>`
 
 说明：
 
@@ -36,11 +36,13 @@
 - `create-vercel` 现在的正确顺序应该是：project add -> link -> env -> deploy
 - `FEISHU_APP_ID` 会优先尝试从 `lark-cli auth status` 自动推断
 - `run` 会自动推进到“只剩最后人工输入项”为止
+- 最终人工输入项当前默认为：`ACCESS_PASSWORD` 与 `FEISHU_APP_SECRET`
+- 当索要 `FEISHU_APP_SECRET` 时，对话层必须明确提示：它需要对应自动识别到的 `FEISHU_APP_ID`
 
 当前还没有：
 
 - 完整的 Vercel 幂等 / 恢复策略
-- 最终的人机交互输入层（ACCESS_PASSWORD / FEISHU_APP_SECRET）
+- 完整的 installer skill 对话层（会单独由 `aipanel-installer` skill 承接）
 - 完整的 create-feishu 命名 / 清理策略
 
 目的不是一次做完，而是把 installer 从文档推进到真正可执行的 repo 结构。

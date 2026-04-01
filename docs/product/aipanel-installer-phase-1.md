@@ -31,7 +31,7 @@
 preflight
 -> create-feishu
 -> configure
--> ask-password
+-> ask-final-inputs
 -> deploy-vercel
 -> verify
 -> done
@@ -144,7 +144,7 @@ preflight
 ### 输入
 
 - 已创建的 Feishu 数据源信息
-- 已知的 Feishu app credentials
+- 自动识别到的 `FEISHU_APP_ID`
 - 系统生成的 JWT secret
 
 ### 输出
@@ -166,7 +166,7 @@ preflight
 
 ### 阻塞条件
 
-- `FEISHU_APP_ID` / `FEISHU_APP_SECRET` 无法自动获得
+- `FEISHU_APP_ID` 无法自动获得
 - JWT 生成失败
 
 ### 可恢复性
@@ -175,11 +175,11 @@ preflight
 
 ---
 
-## Stage 4 — `ask-password`
+## Stage 4 — `ask-final-inputs`
 
 ### 目的
 
-只在这一阶段向用户询问访问密码。
+只在这一阶段向用户询问最后必须由用户提供的输入项。
 
 ### 输入
 
@@ -189,7 +189,7 @@ preflight
 
 ```json
 {
-  "stage": "ask-password",
+  "stage": "ask-final-inputs",
   "env": {
     "APP_NAME": "AIPanel",
     "ACCESS_PASSWORD": "***",
@@ -205,12 +205,13 @@ preflight
 
 ### 阻塞条件
 
-- 用户没有输入密码
+- 用户没有输入访问密码
+- 用户没有提供与自动识别到的 `FEISHU_APP_ID` 对应的 `FEISHU_APP_SECRET`
 - 用户中断
 
 ### 可恢复性
 
-是。只需要再次向用户询问密码即可。
+是。只需要再次向用户询问缺失的最终输入项即可。
 
 ---
 

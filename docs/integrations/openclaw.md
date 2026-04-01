@@ -1,6 +1,6 @@
 # OpenClaw integration
 
-AIPanel includes an OpenClaw skill so an agent can operate the same Feishu Bitable data that the web UI reads and writes.
+AIPanel includes OpenClaw skills for both installer orchestration and ongoing Feishu Bitable operations.
 
 This is one of the core ideas behind the project:
 
@@ -10,17 +10,20 @@ This is one of the core ideas behind the project:
 
 ## Current location
 
-Canonical editable source:
+Canonical editable sources:
 
-- `integrations/openclaw-skill/`
+- `integrations/openclaw-skill/` — data-source operation skill
+- `integrations/openclaw-installer-skill/` — one-command installer skill
 
-Rendered mirror / distribution copy:
+Rendered mirrors / distribution copies:
 
 - `skills/aipanel-feishu-bitable/`
+- `skills/aipanel-installer/`
 
-Convenience installer:
+Convenience installers:
 
 - `integrations/install-scripts/install-openclaw-skill.sh`
+- `integrations/install-scripts/install-openclaw-installer-skill.sh`
 
 Recommended interpretation:
 
@@ -28,9 +31,27 @@ Recommended interpretation:
 - `skills/aipanel-feishu-bitable/` is rendered from that template for local browsing and packaging
 - contributors should not manually edit both copies
 
-## What the skill can do
+## What the skills can do
 
-The current AIPanel skill can help an agent:
+### `aipanel-installer`
+
+The installer skill can help an agent:
+
+- start creating AIPanel from scratch
+- continue a paused installer flow
+- report installer progress
+- collect final user inputs for deploy
+- finish deployment and report the final URL
+
+Typical prompts:
+
+- “开始创建 AIPanel”
+- “继续 AIPanel 安装”
+- “看看 AIPanel 装到哪一步了”
+
+### `aipanel-feishu-bitable`
+
+The data skill can help an agent:
 
 - list categories
 - count bookmarks by category
@@ -59,11 +80,13 @@ From the repo root:
 
 ```bash
 bash integrations/install-scripts/install-openclaw-skill.sh
+bash integrations/install-scripts/install-openclaw-installer-skill.sh
 ```
 
-This renders and installs the skill into:
+This renders and installs the skills into:
 
 - `~/.openclaw/skills/aipanel-feishu-bitable`
+- `~/.openclaw/skills/aipanel-installer`
 
 The installer fills template placeholders from these env vars if present:
 
@@ -77,16 +100,17 @@ It also removes the old legacy install target if present:
 
 ### Manual render + install
 
-You can also render the mirror yourself:
+You can also render the mirrors yourself:
 
 ```bash
 node scripts/render-openclaw-skill.mjs
+node scripts/render-openclaw-installer-skill.mjs
 ```
 
 Then copy:
 
-- source: `skills/aipanel-feishu-bitable/`
-- target: `~/.openclaw/skills/aipanel-feishu-bitable`
+- source: `skills/aipanel-feishu-bitable/` -> target: `~/.openclaw/skills/aipanel-feishu-bitable`
+- source: `skills/aipanel-installer/` -> target: `~/.openclaw/skills/aipanel-installer`
 
 ## Why this matters for AIPanel
 
@@ -100,16 +124,18 @@ With the skill:
 
 ## Current scope
 
-The current skill follows the AIPanel field names, ordering model, and placeholder-row behavior.
-That makes it straightforward to install and useful immediately, even though it is not a generic schema-mapping layer.
+The current installer skill focuses on orchestrating the one-command creation flow.
+The current data skill follows the AIPanel field names, ordering model, and placeholder-row behavior.
+Together they cover both instance creation and daily data operations.
 
 ## Packaging model
 
 For the current release, the packaging model is:
 
-- `integrations/openclaw-skill/` is the canonical editable template
-- `skills/aipanel-feishu-bitable/` is the rendered distribution folder
-- `integrations/install-scripts/install-openclaw-skill.sh` is the default install path for operators
+- `integrations/openclaw-skill/` is the canonical editable template for data operations
+- `integrations/openclaw-installer-skill/` is the canonical editable template for installation flow
+- `skills/aipanel-feishu-bitable/` and `skills/aipanel-installer/` are the rendered distribution folders
+- the install scripts under `integrations/install-scripts/` are the default install paths for operators
 - if a `.skill` artifact is later published, it should be built from the rendered distribution folder rather than the raw template
 
 ## Compatibility note

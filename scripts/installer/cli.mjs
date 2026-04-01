@@ -24,6 +24,10 @@ function inferFinalQuestions(state) {
   return missing;
 }
 
+function inferFeishuAppId(state, plan = null) {
+  return state?.env?.FEISHU_APP_ID || plan?.env?.FEISHU_APP_ID || null;
+}
+
 switch (command) {
   case 'init': {
     const state = createInitialState();
@@ -52,14 +56,16 @@ switch (command) {
   case 'set-final-inputs': {
     const passwordIndex = process.argv.indexOf('--access-password');
     const secretIndex = process.argv.indexOf('--feishu-app-secret');
+    const appIdIndex = process.argv.indexOf('--feishu-app-id');
     const accessPassword = passwordIndex !== -1 ? process.argv[passwordIndex + 1] : null;
     const feishuAppSecret = secretIndex !== -1 ? process.argv[secretIndex + 1] : null;
+    const feishuAppId = appIdIndex !== -1 ? process.argv[appIdIndex + 1] : null;
 
-    if (!accessPassword && !feishuAppSecret) {
+    if (!accessPassword && !feishuAppSecret && !feishuAppId) {
       print({
         ok: false,
         statePath,
-        error: 'Provide at least one of --access-password or --feishu-app-secret.'
+        error: 'Provide at least one of --access-password, --feishu-app-id, or --feishu-app-secret.'
       });
       break;
     }
@@ -68,6 +74,7 @@ switch (command) {
       stage: 'configure',
       env: {
         ACCESS_PASSWORD: accessPassword || undefined,
+        FEISHU_APP_ID: feishuAppId || undefined,
         FEISHU_APP_SECRET: feishuAppSecret || undefined
       }
     }, statePath);
@@ -223,7 +230,7 @@ switch (command) {
     const deploy = deployVercelProject({ cwd: '/tmp/AIPanel', dryRun: false });
 
     const next = updateState({
-      stage: 'create-vercel',
+      stage: 'deploy-vercel',
       vercel: {
         projectName: plan.projectName,
         projectId: deploy.projectId || current.vercel.projectId,
@@ -269,6 +276,8 @@ switch (command) {
       message: pendingQuestions.length
         ? 'Installer progressed automatically. Final user input still required for the listed fields before Vercel production deploy.'
         : 'Installer has all required final inputs and can proceed to create-vercel --execute.'
+    ,
+      detectedFeishuAppId: inferFeishuAppId(next, plan)
     });
     break;
   }
@@ -285,7 +294,7 @@ switch (command) {
         'node scripts/installer/cli.mjs init',
         'node scripts/installer/cli.mjs preflight',
         'node scripts/installer/cli.mjs generate-jwt',
-        'node scripts/installer/cli.mjs set-final-inputs --access-password <password> --feishu-app-secret <secret>',
+        'node scripts/installer/cli.mjs set-final-inputs --access-password <password> --feishu-app-id <appId> --feishu-app-secret <secret>',
         'node scripts/installer/cli.mjs clear-errors',
         'node scripts/installer/cli.mjs create-feishu --dry-run',
         'node scripts/installer/cli.mjs create-feishu --execute',

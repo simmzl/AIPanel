@@ -19,7 +19,8 @@
     "installer:vercel:dry": "node scripts/installer/cli.mjs create-vercel --dry-run",
     "installer:vercel": "node scripts/installer/cli.mjs create-vercel --execute",
     "installer:run": "node scripts/installer/cli.mjs run",
-    "installer:clear-errors": "node scripts/installer/cli.mjs clear-errors"
+    "installer:clear-errors": "node scripts/installer/cli.mjs clear-errors",
+    "skill:render:installer": "node scripts/render-openclaw-installer-skill.mjs"
   },
   "dependencies": {
     "cheerio": "^1.1.2",

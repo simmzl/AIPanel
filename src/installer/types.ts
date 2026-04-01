@@ -2,9 +2,9 @@ export type InstallerStage =
   | 'preflight'
   | 'create-feishu'
   | 'configure'
-  | 'ask-password'
   | 'deploy-vercel'
   | 'verify'
+  | 'ask-final-inputs'
   | 'done';
 
 export interface InstallerFeishuState {

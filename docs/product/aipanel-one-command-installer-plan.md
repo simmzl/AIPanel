@@ -56,8 +56,9 @@ OpenClaw 应该自动完成：
 5. 生成 `JWT_SECRET`
 6. 准备 Vercel 部署
 7. 注入所有必需环境变量
-8. 如果可能，只向用户询问一个人类输入：
+8. 如果可能，只向用户询问少量必要的人类输入：
    - 访问密码
+   - 与自动识别到的 Feishu App ID 对应的 App Secret
 9. 完成部署
 10. 返回最终的 AIPanel URL 和简洁的完成说明
 
@@ -105,10 +106,11 @@ FEISHU_BITABLE_SOURCE_URL=https://your-domain.feishu.cn/base/xxxxxxxx?table=tblx
 
 只有在真的必要时才提问。
 
-理想状态下，最终提问数应该只有：
+理想状态下，最终提问数应该尽量少：
 
 1. 也许确认一下项目名（可选，默认 `AIPanel`）
 2. 询问访问密码
+3. 询问与自动识别到的 Feishu App ID 对应的 App Secret
 
 除此之外，尽量全部自动推导。
 
@@ -269,7 +271,6 @@ FEISHU_BITABLE_SOURCE_URL=...
 ### 自动发现
 
 - `FEISHU_APP_ID`
-- `FEISHU_APP_SECRET`
 - `FEISHU_BITABLE_APP_TOKEN`
 - `FEISHU_BITABLE_TABLE_ID`
 - `FEISHU_BITABLE_SOURCE_URL`
@@ -281,6 +282,7 @@ FEISHU_BITABLE_SOURCE_URL=...
 ### 用户提供
 
 - `ACCESS_PASSWORD`
+- `FEISHU_APP_SECRET`（必须对应自动识别到的 `FEISHU_APP_ID`）
 
 ### 默认值
 
@@ -469,18 +471,20 @@ FEISHU_BITABLE_SOURCE_URL=...
 5. 创建所需 schema
 6. 获取 app token / table id / source URL
 7. 生成 JWT secret
-8. 向用户询问密码
-9. 创建 Vercel 项目
-10. 注入 env
-11. 触发部署
-12. 验证部署结果
-13. 返回最终 URL
+8. 自动识别 `FEISHU_APP_ID`
+9. 向用户询问访问密码与对应 App ID 的 App Secret
+10. 创建 Vercel 项目
+11. 注入 env
+12. 触发部署
+13. 验证部署结果
+14. 返回最终 URL
 
 ## 最少提问版本
 
 理想状态下，安装器只应该在这件事上打断用户：
 
 - 输入访问密码
+- 输入与自动识别到的 `FEISHU_APP_ID` 对应的 `FEISHU_APP_SECRET`
 
 其余都应自动完成。
 
@@ -499,7 +503,7 @@ FEISHU_BITABLE_SOURCE_URL=...
 
 任务：
 
-- 定义阶段：`preflight -> create-feishu -> configure -> ask-password -> deploy-vercel -> verify -> done`
+- 定义阶段：`preflight -> create-feishu -> configure -> ask-final-inputs -> deploy-vercel -> verify -> done`
 - 定义持久化状态结构
 - 定义重试 / 恢复规则
 
