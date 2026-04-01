@@ -15,9 +15,54 @@ const DEFAULT_FIELDS = [
   { field_name: '副标题', type: 'text' },
   { field_name: '链接', type: 'text' },
   { field_name: '图标', type: 'text' },
-  { field_name: '分类', type: 'select', options: [{ name: '其他' }] },
+  { field_name: '分类', type: 'select', options: [{ name: '其他' }, { name: 'AI' }, { name: '古法' }] },
   { field_name: '排序', type: 'number' },
   { field_name: '分类排序', type: 'number' }
+];
+
+const DEFAULT_RECORDS = [
+  {
+    favicon: 'https://cursor.com/favicon.ico',
+    title: 'Cursor',
+    subtitle: 'The best way to code with AI.',
+    url: 'https://cursor.com',
+    category: 'AI'
+  },
+  {
+    favicon: 'https://claude.ai/favicon.ico',
+    title: 'Claude',
+    subtitle: 'Meet your thinking partner — tackle big challenges with Claude.',
+    url: 'https://claude.ai',
+    category: 'AI'
+  },
+  {
+    favicon: 'https://t1.gstatic.com/faviconV2?client=SOCIAL&type=FAVICON&fallback_opts=TYPE,SIZE,URL&url=http://gemini.google.com&size=64',
+    title: 'Google Gemini',
+    subtitle: 'Google 的 AI 助手，对话、创作与推理。',
+    url: 'https://gemini.google.com',
+    category: 'AI'
+  },
+  {
+    favicon: 'https://chatgpt.com/favicon.ico',
+    title: 'ChatGPT',
+    subtitle: 'OpenAI 的对话式 AI，用于问答、写作与编程等。',
+    url: 'https://chatgpt.com',
+    category: 'AI'
+  },
+  {
+    favicon: 'https://developer.mozilla.org/favicon.ico',
+    title: 'MDN Web Docs',
+    subtitle: 'Resources for developers, by developers — documenting the open web since 2005.',
+    url: 'https://developer.mozilla.org',
+    category: '古法'
+  },
+  {
+    favicon: 'https://stackoverflow.com/Content/Sites/stackoverflow/Img/favicon.ico',
+    title: 'Stack Overflow',
+    subtitle: 'Where developers learn, share, & build careers.',
+    url: 'https://stackoverflow.com',
+    category: '古法'
+  }
 ];
 
 function extractJsonBlock(text) {
@@ -90,6 +135,45 @@ function findTableByName(baseToken, tableName) {
 function getExistingFieldNames(baseToken, tableId) {
   const result = listFields(baseToken, tableId);
   return new Set((result?.data?.items || []).map((item) => item.field_name));
+}
+
+function listRecords(baseToken, tableId) {
+  return runJson('lark-cli', ['base', '+record-list', '--base-token', baseToken, '--table-id', tableId]);
+}
+
+function hasAnyRecords(baseToken, tableId) {
+  const result = listRecords(baseToken, tableId);
+  return Array.isArray(result?.data?.items) && result.data.items.length > 0;
+}
+
+function seedDefaultRecords(baseToken, tableId) {
+  const existing = hasAnyRecords(baseToken, tableId);
+  if (existing) {
+    return { skipped: true, reason: 'records-already-exist' };
+  }
+
+  const records = DEFAULT_RECORDS.map((item, index) => ({
+    fields: {
+      标题: item.title,
+      副标题: item.subtitle,
+      链接: item.url,
+      图标: item.favicon,
+      分类: item.category,
+      排序: index + 1,
+      分类排序: item.category === 'AI' ? 1 : 2
+    }
+  }));
+
+  return runJson('lark-cli', [
+    'base',
+    '+record-batch-create',
+    '--base-token',
+    baseToken,
+    '--table-id',
+    tableId,
+    '--json',
+    JSON.stringify({ records })
+  ]);
 }
 
 export function getAipanelFieldSchema() {
@@ -172,7 +256,8 @@ export function createFeishuBitable({ appName = 'AIPanel', dryRun = false, resum
     raw: {
       baseCreate,
       tableCreate: null,
-      fieldResults: []
+      fieldResults: [],
+      seedResult: null
     }
   };
 
@@ -229,6 +314,15 @@ export function createFeishuBitable({ appName = 'AIPanel', dryRun = false, resum
         partial
       );
     }
+  }
+
+  try {
+    partial.raw.seedResult = seedDefaultRecords(baseToken, tableId);
+  } catch (error) {
+    throw new InstallerStepError(
+      `Failed while seeding default records: ${error instanceof Error ? error.message : String(error)}`,
+      partial
+    );
   }
 
   return {

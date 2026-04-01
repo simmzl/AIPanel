@@ -115,6 +115,9 @@ export function useBookmarks({ token, search, category }: UseBookmarksOptions) {
       try {
         await api.createBookmark(token, payload);
         await loadBookmarks();
+      } catch (requestError) {
+        setLastError(requestError);
+        throw requestError;
       } finally {
         setMutating(false);
       }
@@ -132,6 +135,9 @@ export function useBookmarks({ token, search, category }: UseBookmarksOptions) {
       try {
         await api.updateBookmark(token, id, payload);
         await loadBookmarks();
+      } catch (requestError) {
+        setLastError(requestError);
+        throw requestError;
       } finally {
         setMutating(false);
       }
@@ -149,6 +155,9 @@ export function useBookmarks({ token, search, category }: UseBookmarksOptions) {
       try {
         await api.deleteBookmark(token, id);
         await loadBookmarks();
+      } catch (requestError) {
+        setLastError(requestError);
+        throw requestError;
       } finally {
         setMutating(false);
       }
@@ -166,6 +175,9 @@ export function useBookmarks({ token, search, category }: UseBookmarksOptions) {
       try {
         await api.updateCategoryOrder(token, nextCategories);
         await loadBookmarks();
+      } catch (requestError) {
+        setLastError(requestError);
+        throw requestError;
       } finally {
         setMutating(false);
       }
@@ -183,6 +195,9 @@ export function useBookmarks({ token, search, category }: UseBookmarksOptions) {
       try {
         await api.createCategory(token, name);
         await loadBookmarks();
+      } catch (requestError) {
+        setLastError(requestError);
+        throw requestError;
       } finally {
         setMutating(false);
       }

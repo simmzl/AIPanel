@@ -154,6 +154,15 @@ export default function App() {
     category
   });
 
+  const showFeishuScopePrompt = (error: unknown) => {
+    const prompt = buildFeishuScopeAuthPrompt(error);
+    if (prompt) {
+      setFeishuScopeAuthPrompt(prompt);
+      return true;
+    }
+    return false;
+  };
+
   const resolvedTheme: ResolvedTheme = themePreference === 'system' ? systemTheme : themePreference;
   const allTabs = useMemo(() => ['全部', ...categories], [categories]);
 
@@ -278,9 +287,7 @@ export default function App() {
       writeStringArray(PINNED_KEY, nextPinned);
       writeStringArray(RECENT_KEY, nextRecent);
     } catch (deleteError) {
-      const prompt = buildFeishuScopeAuthPrompt(deleteError);
-      if (prompt) {
-        setFeishuScopeAuthPrompt(prompt);
+      if (showFeishuScopePrompt(deleteError)) {
         return;
       }
       window.alert(deleteError instanceof Error ? deleteError.message : '删除失败');
@@ -598,8 +605,8 @@ export default function App() {
             <h2 className="mt-2 text-[28px] leading-none text-[var(--text-main)]" style={{ fontFamily: 'Instrument Serif, serif' }}>
               需要补充飞书权限
             </h2>
-            <p className="mt-4 text-sm leading-6 text-[var(--text-muted)]">
-              {feishuScopeAuthPrompt.message}
+            <p className="mt-4 text-sm leading-6 text-[var(--text-muted)] whitespace-pre-wrap">
+              {feishuScopeAuthPrompt.rawMessage || feishuScopeAuthPrompt.message}
             </p>
             {feishuScopeAuthPrompt.permissionViolations && feishuScopeAuthPrompt.permissionViolations.length > 0 ? (
               <div className="mt-4 rounded-[12px] bg-[var(--surface-subtle)] p-4 text-sm text-[var(--text-strong)]">
