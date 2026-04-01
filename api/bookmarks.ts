@@ -1,5 +1,5 @@
 import type { ApiRequest, ApiResponse } from './_lib.js';
-import { feishuRequest, getFeishuConfig, normalizeUrl, requireAuth, sendJsonError, sendMethodNotAllowed } from './_lib.js';
+import { feishuRequest, getFeishuConfig, normalizeUrl, parseFeishuError, requireAuth, sendJsonError, sendMethodNotAllowed, sendStructuredError } from './_lib.js';
 
 interface FeishuFieldListResponse {
   data?: {

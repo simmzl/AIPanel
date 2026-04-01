@@ -5,7 +5,7 @@ import { CategoryTabs } from './components/CategoryTabs';
 import { LoginPage } from './components/LoginPage';
 import { SearchBar } from './components/SearchBar';
 import { useBookmarks } from './hooks/useBookmarks';
-import { api } from './services/api';
+import { ApiError, api } from './services/api';
 import type { Bookmark, BookmarkPayload } from './types';
 import { readMigratedStorageItem, removeStorageItem, writeStorageItem } from './utils/localStorage';
 
@@ -18,6 +18,14 @@ const DATA_SOURCE_URL = __AIPANEL_FEISHU_BITABLE_SOURCE_URL__;
 
 type ThemePreference = 'system' | 'light' | 'dark';
 type ResolvedTheme = 'light' | 'dark';
+
+type FeishuScopeAuthPrompt = {
+  message: string;
+  authorizationUrl?: string;
+  requestId?: string;
+  permissionViolations?: string[];
+  rawMessage?: string;
+};
 
 function readStringArray(key: string) {
   try {
@@ -58,6 +66,27 @@ function getStoredThemePreference(): ThemePreference {
   return stored === 'light' || stored === 'dark' || stored === 'system' ? stored : 'system';
 }
 
+
+function buildFeishuScopeAuthPrompt(error: unknown): FeishuScopeAuthPrompt | null {
+  if (!(error instanceof ApiError) || error.code !== 'FEISHU_SCOPE_AUTH_REQUIRED') {
+    return null;
+  }
+
+  const permissionViolations = Array.isArray(error.details?.permissionViolations)
+    ? error.details?.permissionViolations
+        ?.map((item) => (item && typeof item.subject === 'string' ? item.subject : ''))
+        .filter(Boolean)
+    : [];
+
+  return {
+    message: error.message,
+    authorizationUrl: typeof error.details?.authorizationUrl === 'string' ? error.details.authorizationUrl : undefined,
+    requestId: typeof error.details?.requestId === 'string' ? error.details.requestId : undefined,
+    permissionViolations,
+    rawMessage: typeof error.details?.rawMessage === 'string' ? error.details.rawMessage : undefined
+  };
+}
+
 function SectionHeader({
   title,
   subtitle,
@@ -94,6 +123,7 @@ export default function App() {
   const [editingBookmark, setEditingBookmark] = useState<Bookmark | null>(null);
   const [pinnedIds, setPinnedIds] = useState<string[]>([]);
   const [recentIds, setRecentIds] = useState<string[]>([]);
+  const [feishuScopeAuthPrompt, setFeishuScopeAuthPrompt] = useState<FeishuScopeAuthPrompt | null>(null);
 
   useEffect(() => {
     const storedToken = readMigratedStorageItem(TOKEN_KEY);
@@ -118,7 +148,7 @@ export default function App() {
     })();
   }, []);
 
-  const { bookmarks, filteredBookmarks, categories, loading, refreshing, mutating, error, createBookmark, updateBookmark, deleteBookmark, updateCategoryOrder, createCategory } = useBookmarks({
+  const { bookmarks, filteredBookmarks, categories, loading, refreshing, mutating, error, lastError, createBookmark, updateBookmark, deleteBookmark, updateCategoryOrder, createCategory } = useBookmarks({
     token,
     search,
     category
@@ -192,6 +222,13 @@ export default function App() {
 
   const isFlowMode = search.trim() === '' && category === '全部';
 
+  useEffect(() => {
+    const prompt = buildFeishuScopeAuthPrompt(lastError);
+    if (prompt) {
+      setFeishuScopeAuthPrompt(prompt);
+    }
+  }, [lastError]);
+
   const handleLogin = async (password: string) => {
     setAuthLoading(true);
     setAuthError(null);
@@ -208,12 +245,21 @@ export default function App() {
   };
 
   const handleSaveBookmark = async (payload: BookmarkPayload, id?: string) => {
-    if (id) {
-      await updateBookmark(id, payload);
-      return;
-    }
+    try {
+      if (id) {
+        await updateBookmark(id, payload);
+        return;
+      }
 
-    await createBookmark(payload);
+      await createBookmark(payload);
+    } catch (saveError) {
+      const prompt = buildFeishuScopeAuthPrompt(saveError);
+      if (prompt) {
+        setFeishuScopeAuthPrompt(prompt);
+        throw new Error(prompt.message);
+      }
+      throw saveError;
+    }
   };
 
   const handleDeleteBookmark = async (bookmark: Bookmark) => {
@@ -232,6 +278,11 @@ export default function App() {
       writeStringArray(PINNED_KEY, nextPinned);
       writeStringArray(RECENT_KEY, nextRecent);
     } catch (deleteError) {
+      const prompt = buildFeishuScopeAuthPrompt(deleteError);
+      if (prompt) {
+        setFeishuScopeAuthPrompt(prompt);
+        return;
+      }
       window.alert(deleteError instanceof Error ? deleteError.message : '删除失败');
     }
   };
@@ -539,6 +590,72 @@ export default function App() {
         </button>
       ) : null}
 
+
+      {feishuScopeAuthPrompt ? (
+        <div className="fixed inset-0 z-[70] flex items-center justify-center bg-black/45 p-4 backdrop-blur-sm">
+          <div className="w-full max-w-xl rounded-[16px] bg-[var(--panel-elevated)] p-5 shadow-[var(--shadow-strong)] md:p-6">
+            <p className="text-[11px] uppercase tracking-[0.24em] text-[var(--accent-strong)] md:text-sm md:tracking-[0.3em]">Feishu 授权提示</p>
+            <h2 className="mt-2 text-[28px] leading-none text-[var(--text-main)]" style={{ fontFamily: 'Instrument Serif, serif' }}>
+              需要补充飞书权限
+            </h2>
+            <p className="mt-4 text-sm leading-6 text-[var(--text-muted)]">
+              {feishuScopeAuthPrompt.message}
+            </p>
+            {feishuScopeAuthPrompt.permissionViolations && feishuScopeAuthPrompt.permissionViolations.length > 0 ? (
+              <div className="mt-4 rounded-[12px] bg-[var(--surface-subtle)] p-4 text-sm text-[var(--text-strong)]">
+                <p className="mb-2 text-[var(--text-main)]">缺少的权限：</p>
+                <ul className="space-y-1 text-[var(--text-muted)]">
+                  {feishuScopeAuthPrompt.permissionViolations.map((item) => (
+                    <li key={item}>- {item}</li>
+                  ))}
+                </ul>
+              </div>
+            ) : null}
+            {feishuScopeAuthPrompt.authorizationUrl ? (
+              <div className="mt-4 rounded-[12px] bg-[var(--surface-subtle)] p-4">
+                <p className="text-sm text-[var(--text-main)]">授权链接</p>
+                <p className="mt-2 break-all text-xs leading-5 text-[var(--text-muted)]">{feishuScopeAuthPrompt.authorizationUrl}</p>
+                <div className="mt-4 flex flex-wrap gap-3">
+                  <a
+                    href={feishuScopeAuthPrompt.authorizationUrl}
+                    target="_blank"
+                    rel="noreferrer"
+                    className="inline-flex items-center rounded-[10px] bg-[var(--button-primary)] px-4 py-2.5 text-sm font-medium text-[var(--text-main)] transition duration-200 hover:bg-[var(--button-primary-hover)]"
+                  >
+                    去授权
+                  </a>
+                  <button
+                    type="button"
+                    onClick={async () => {
+                      try {
+                        await navigator.clipboard.writeText(feishuScopeAuthPrompt.authorizationUrl || '');
+                        window.alert('授权链接已复制');
+                      } catch {
+                        window.alert('复制失败，请手动复制链接');
+                      }
+                    }}
+                    className="inline-flex items-center rounded-[10px] bg-[var(--button-secondary)] px-4 py-2.5 text-sm text-[var(--text-main)] transition duration-200 hover:bg-[var(--button-secondary-hover)]"
+                  >
+                    复制链接
+                  </button>
+                </div>
+              </div>
+            ) : null}
+            {feishuScopeAuthPrompt.requestId ? (
+              <p className="mt-4 text-xs text-[var(--text-soft)]">Request ID: {feishuScopeAuthPrompt.requestId}</p>
+            ) : null}
+            <div className="mt-5 flex justify-end">
+              <button
+                type="button"
+                onClick={() => setFeishuScopeAuthPrompt(null)}
+                className="rounded-[10px] bg-[var(--button-ghost)] px-4 py-2.5 text-sm text-[var(--text-strong)] transition duration-200 hover:bg-[var(--button-ghost-hover)]"
+              >
+                关闭
+              </button>
+            </div>
+          </div>
+        </div>
+      ) : null}
 
       <AddBookmark
         open={modalOpen}

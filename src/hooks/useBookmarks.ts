@@ -50,6 +50,7 @@ export function useBookmarks({ token, search, category }: UseBookmarksOptions) {
   const [refreshing, setRefreshing] = useState(Boolean(cached));
   const [mutating, setMutating] = useState(false);
   const [error, setError] = useState<string | null>(null);
+  const [lastError, setLastError] = useState<unknown>(null);
   const cacheSnapshotRef = useRef(stableStringify({ bookmarks: cached?.bookmarks ?? [], categories: cached?.categories ?? [] }));
 
   const loadBookmarks = useCallback(async () => {
@@ -63,6 +64,7 @@ export function useBookmarks({ token, search, category }: UseBookmarksOptions) {
     setLoading(!hasCache);
     setRefreshing(hasCache);
     setError(null);
+    setLastError(null);
 
     try {
       const data = await api.getBookmarks(token);
@@ -75,6 +77,7 @@ export function useBookmarks({ token, search, category }: UseBookmarksOptions) {
         cacheSnapshotRef.current = nextSnapshot;
       }
     } catch (requestError) {
+      setLastError(requestError);
       setError(requestError instanceof Error ? requestError.message : '加载书签失败');
     } finally {
       setLoading(false);
@@ -195,6 +198,7 @@ export function useBookmarks({ token, search, category }: UseBookmarksOptions) {
     refreshing,
     mutating,
     error,
+    lastError,
     reload: loadBookmarks,
     createBookmark,
     updateBookmark,

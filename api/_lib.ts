@@ -24,6 +24,95 @@ declare global {
 }
 
 const ACCESS_TOKEN_BUFFER_MS = 5 * 60 * 1000;
+
+export interface StructuredApiErrorPayload {
+  message: string;
+  code?: string;
+  details?: Record<string, unknown>;
+}
+
+export function sendStructuredError(res: ApiResponse, status: number, payload: StructuredApiErrorPayload) {
+  res.status(status).json(payload);
+}
+
+function extractAuthorizationUrl(value: unknown): string | undefined {
+  if (typeof value === 'string') {
+    const matched = value.match(/https?:\/\/[^\s"']+/);
+    return matched?.[0];
+  }
+
+  if (value && typeof value === 'object') {
+    for (const child of Object.values(value as Record<string, unknown>)) {
+      const nested = extractAuthorizationUrl(child);
+      if (nested) return nested;
+    }
+  }
+
+  return undefined;
+}
+
+export function parseFeishuError(error: unknown): StructuredApiErrorPayload | null {
+  const message = error instanceof Error ? error.message : String(error);
+  const prefix = 'Feishu request failed: ';
+
+  if (!message.startsWith(prefix)) {
+    return null;
+  }
+
+  const raw = message.slice(prefix.length);
+
+  try {
+    const detail = JSON.parse(raw) as {
+      httpStatus?: number;
+      feishuCode?: number;
+      msg?: string;
+      requestId?: string;
+      responseBody?: unknown;
+    };
+
+    const authorizationUrl = extractAuthorizationUrl(detail.responseBody) || extractAuthorizationUrl(detail.msg);
+    const permissionViolations =
+      detail.responseBody &&
+      typeof detail.responseBody === 'object' &&
+      'error' in detail.responseBody &&
+      detail.responseBody.error &&
+      typeof detail.responseBody.error === 'object' &&
+      'permission_violations' in detail.responseBody.error &&
+      Array.isArray(detail.responseBody.error.permission_violations)
+        ? detail.responseBody.error.permission_violations
+        : undefined;
+
+    if (detail.feishuCode === 99991672 || authorizationUrl) {
+      return {
+        message: '飞书应用缺少所需权限，请先点击链接完成授权后再重试。',
+        code: 'FEISHU_SCOPE_AUTH_REQUIRED',
+        details: {
+          feishuCode: detail.feishuCode,
+          requestId: detail.requestId,
+          authorizationUrl,
+          permissionViolations,
+          rawMessage: detail.msg
+        }
+      };
+    }
+
+    return {
+      message: detail.msg || message,
+      code: 'FEISHU_REQUEST_FAILED',
+      details: {
+        feishuCode: detail.feishuCode,
+        requestId: detail.requestId,
+        rawMessage: detail.msg
+      }
+    };
+  } catch {
+    return {
+      message,
+      code: 'FEISHU_REQUEST_FAILED'
+    };
+  }
+}
+
 export function sendMethodNotAllowed(res: ApiResponse, allowed: string[]) {
   res.setHeader('Allow', allowed.join(', '));
   res.status(405).json({ message: 'Method Not Allowed' });

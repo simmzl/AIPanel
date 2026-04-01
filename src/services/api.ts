@@ -1,8 +1,20 @@
-import type { AuthResponse, Bookmark, BookmarkPayload, MetaResponse } from '../types';
+import type { ApiErrorPayload, AuthResponse, Bookmark, BookmarkPayload, MetaResponse } from '../types';
 
 const jsonHeaders = {
   'Content-Type': 'application/json'
 };
+
+export class ApiError extends Error {
+  code?: string;
+  details?: ApiErrorPayload['details'];
+
+  constructor(payload: ApiErrorPayload) {
+    super(payload.message);
+    this.name = 'ApiError';
+    this.code = payload.code;
+    this.details = payload.details;
+  }
+}
 
 async function request<T>(path: string, init: RequestInit = {}, token?: string): Promise<T> {
   const headers = new Headers(init.headers ?? {});
@@ -24,11 +36,11 @@ async function request<T>(path: string, init: RequestInit = {}, token?: string):
   const data = text ? (JSON.parse(text) as unknown) : null;
 
   if (!response.ok) {
-    const message =
-      typeof data === 'object' && data && 'message' in data && typeof data.message === 'string'
-        ? data.message
-        : '请求失败';
-    throw new Error(message);
+    if (typeof data === 'object' && data && 'message' in data && typeof data.message === 'string') {
+      throw new ApiError(data as ApiErrorPayload);
+    }
+
+    throw new ApiError({ message: '请求失败' });
   }
 
   return data as T;

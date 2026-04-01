@@ -27,3 +27,16 @@ export interface MetaResponse {
 export interface AuthResponse {
   token: string;
 }
+
+
+export interface ApiErrorPayload {
+  message: string;
+  code?: string;
+  details?: {
+    authorizationUrl?: string;
+    permissionViolations?: Array<{ type?: string; subject?: string }>;
+    requestId?: string;
+    rawMessage?: string;
+    [key: string]: unknown;
+  };
+}
