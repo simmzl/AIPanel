@@ -22,7 +22,7 @@ interface FeishuRecord {
   fields: {
     标题?: string;
     副标题?: string;
-    链接?: {
+    链接?: string | {
       link?: string;
       text?: string;
     };
@@ -76,10 +76,13 @@ function resolveFavicon(icon: string | undefined, url: string | undefined): stri
 }
 
 function transformRecord(record: FeishuRecord) {
-  const url = record.fields.链接?.link || '';
+  const linkField = record.fields.链接;
+  const url = typeof linkField === 'string' ? linkField : linkField?.link || '';
+  const fallbackTitle = typeof linkField === 'string' ? linkField : linkField?.text;
+
   return {
     id: record.record_id,
-    title: record.fields.标题 || record.fields.链接?.text || '未命名网站',
+    title: record.fields.标题 || fallbackTitle || '未命名网站',
     subtitle: record.fields.副标题 || '',
     url,
     favicon: resolveFavicon(record.fields.图标, url),
@@ -373,6 +376,12 @@ export default async function handler(req: ApiRequest, res: ApiResponse) {
 
     sendMethodNotAllowed(res, ['GET', 'POST', 'PUT', 'PATCH', 'DELETE']);
   } catch (error) {
+    const structured = parseFeishuError(error);
+    if (structured) {
+      sendStructuredError(res, 500, structured);
+      return;
+    }
+
     sendJsonError(res, 500, error instanceof Error ? error.message : '书签请求失败');
   }
 }
