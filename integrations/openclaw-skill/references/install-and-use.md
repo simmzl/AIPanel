@@ -100,6 +100,21 @@ Use explicit names when possible:
 
 That makes the skill much more reliable.
 
+For actual Bitable operations, prefer **Feishu CLI** first (`lark-cli base +...`) whenever it can cover the action. The non-CLI Bitable tools should be the fallback path, not the default.
+
+## Permission errors
+
+If the agent hits `403`, `permission denied`, or another obvious Bitable permission error, the recommended guidance is:
+
+1. tell the user this is likely a permission/setup issue on the target Bitable rather than a data-format problem
+2. include the target Bitable link
+3. ask the user to open the Bitable and go to:
+   - `设置 → 更多 → 添加文档应用`
+4. ask the user to add the corresponding Feishu bot/app
+5. retry after the app has been added
+
+If the skill has been rendered with a concrete `AIPANEL_SOURCE_URL`, use that exact link in the response.
+
 ## Reference docs
 
 For richer usage examples, also read:

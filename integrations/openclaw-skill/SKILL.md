@@ -52,11 +52,42 @@ Interpretation:
 
 实例创建与安装流程由独立的 `aipanel-installer` skill 负责。
 
+## Preferred execution path
+
+When operating AIPanel Bitable data, prefer **Feishu CLI** first.
+
+Use `lark-cli base +...` for the common path whenever available, especially for:
+
+- reading field structure
+- listing records
+- creating records
+- updating records
+- deleting records
+- batch imports
+- reordering categories
+- reordering bookmarks inside a category
+
+Only fall back to non-CLI Feishu/OpenClaw Bitable tools if the CLI clearly cannot cover the required action.
+
+## Permission failure handling
+
+If a read or write returns `403`, `permission denied`, or another clear permission error:
+
+1. Do not keep retrying the same operation blindly.
+2. Tell the user this is most likely a permission/setup issue on the target Feishu Bitable, not a data-format problem.
+3. Include the target Bitable link in the response.
+4. Instruct the user to open the Bitable and go to: `设置 → 更多 → 添加文档应用`.
+5. Tell the user to add the corresponding Feishu bot/app, then ask the agent to retry.
+
+When the current deployment has a configured Bitable URL, use that exact link in the guidance.
+
 ## Core tasks
 
 ### Read bookmarks
 
-Use `feishu_bitable_app_table_record.list` with:
+Prefer `lark-cli base +record-list`.
+
+If CLI is unavailable for some reason, use `feishu_bitable_app_table_record.list` with:
 
 - `app_token="__AIPANEL_APP_TOKEN__"`
 - `table_id="__AIPANEL_TABLE_ID__"`
@@ -70,7 +101,9 @@ When summarizing data for the user:
 
 ### Add a bookmark
 
-Use `feishu_bitable_app_table_record.create`.
+Prefer `lark-cli base +record-upsert`.
+
+If CLI is unavailable for some reason, use `feishu_bitable_app_table_record.create`.
 
 Required fields to provide:
 
@@ -89,15 +122,15 @@ If the user gives only a category and no explicit in-category order, append to t
 
 ### Edit a bookmark
 
-1. Find the target record with `list` and, if needed, a structured `filter`
-2. Use `update` with the matching `record_id`
+1. Find the target record with `lark-cli base +record-list` first (or `list` if CLI is unavailable)
+2. Use `lark-cli base +record-upsert --record-id ...` when possible
 3. Preserve fields the user did not ask to change
 
 ### Delete a bookmark
 
 1. Find the target record precisely
 2. Confirm if the request is ambiguous or there are multiple matches
-3. Use `delete` with the `record_id`
+3. Prefer `lark-cli base +record-delete` with the resolved `record_id`
 
 ### Reorder categories
 
@@ -105,8 +138,9 @@ When the user asks to reorder AIPanel categories:
 
 1. Read all records
 2. Determine the desired category order
-3. Batch update every record in each category so `分类排序` matches the new category position
-4. Keep existing `排序` values unchanged
+3. Prefer CLI-based record updates in a serialized loop
+4. Batch or serial-update every record in each category so `分类排序` matches the new category position
+5. Keep existing `排序` values unchanged
 
 ### Reorder bookmarks inside a category
 
