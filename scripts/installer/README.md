@@ -26,6 +26,8 @@
 - `npm run installer:run`
 - `npm run installer:clear-errors`
 - `node scripts/installer/cli.mjs set-final-inputs --access-password <password> --feishu-app-id <appId> --feishu-app-secret <secret>`
+- `node scripts/installer/cli.mjs status`
+- `node scripts/installer/cli.mjs verify`
 
 说明：
 
@@ -35,7 +37,9 @@
 - `create-vercel` 会在真执行前检查关键 env 是否齐全
 - `create-vercel` 现在的正确顺序应该是：project add -> link -> env -> deploy
 - `FEISHU_APP_ID` 会优先尝试从 `lark-cli auth status` 自动推断
-- `run` 会自动推进到“只剩最后人工输入项”为止
+- `run` 会自动推进到“只剩最后人工输入项”为止，并在需要用户输入时把阶段落到 `ask-final-inputs`
+- `status` 会输出更适合对话层使用的人话摘要字段
+- `verify` 会对最终 deployment URL 做最小可达性检查
 - 最终人工输入项当前默认为：`ACCESS_PASSWORD` 与 `FEISHU_APP_SECRET`
 - 当索要 `FEISHU_APP_SECRET` 时，对话层必须明确提示：它需要对应自动识别到的 `FEISHU_APP_ID`
 

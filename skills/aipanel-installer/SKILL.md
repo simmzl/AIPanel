@@ -31,7 +31,7 @@ When a user says things like:
 
 follow this sequence:
 
-1. Read current installer state with `node scripts/installer/cli.mjs show`
+1. Read current installer summary with `node scripts/installer/cli.mjs status`
 2. If no state exists yet, initialize with `node scripts/installer/cli.mjs init`
 3. Run preflight with `node scripts/installer/cli.mjs preflight`
 4. Run `node scripts/installer/cli.mjs run` to auto-advance configuration
@@ -40,7 +40,7 @@ follow this sequence:
 7. If final user inputs are missing, ask only for the missing ones
 8. Once ready, run `node scripts/installer/cli.mjs create-vercel --dry-run`
 9. If dry-run is ready, run `node scripts/installer/cli.mjs create-vercel --execute`
-10. Verify the deployment result before declaring success
+10. Verify the deployment result with `node scripts/installer/cli.mjs verify` before declaring success
 
 ## Final user inputs
 

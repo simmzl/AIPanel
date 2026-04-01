@@ -6,6 +6,7 @@ import { runPreflight } from './preflight.mjs';
 import { createFeishuBitable, hasExistingFeishuState, hasFeishuBaseAndTable, InstallerStepError } from './feishu.mjs';
 import { progress } from './progress.mjs';
 import { planVercelSetup, createVercelProject, linkVercelProject, upsertVercelEnv, deployVercelProject } from './vercel.mjs';
+import { verifyDeployment } from './verify.mjs';
 
 const command = process.argv[2] || 'help';
 const statePath = process.env.AIPANEL_INSTALLER_STATE || getDefaultStatePath();
@@ -26,6 +27,27 @@ function inferFinalQuestions(state) {
 
 function inferFeishuAppId(state, plan = null) {
   return state?.env?.FEISHU_APP_ID || plan?.env?.FEISHU_APP_ID || null;
+}
+
+
+function buildStatusSummary(state) {
+  const missing = inferFinalQuestions(state);
+  const done = [];
+  if (state.feishu?.appToken && state.feishu?.tableId) done.push('Feishu 数据源');
+  if (state.env?.JWT_SECRET) done.push('JWT secret');
+  if (state.env?.FEISHU_APP_ID) done.push('Feishu App ID');
+  if (state.vercel?.deploymentUrl) done.push('Vercel 部署');
+  return {
+    stage: state.stage,
+    done,
+    pendingFinalInputs: missing,
+    detectedFeishuAppId: inferFeishuAppId(state),
+    nextAction: missing.length
+      ? 'collect-final-inputs'
+      : state.vercel?.deploymentUrl
+        ? 'verify'
+        : 'create-vercel'
+  };
 }
 
 switch (command) {
@@ -266,6 +288,7 @@ switch (command) {
     }, statePath);
 
     const pendingQuestions = inferFinalQuestions(next);
+    next = updateState({ stage: pendingQuestions.length ? 'ask-final-inputs' : 'configure' }, statePath);
 
     print({
       ok: true,
@@ -283,7 +306,22 @@ switch (command) {
   }
 
   case 'show': {
-    print({ ok: true, statePath, state: readState(statePath) });
+    const state = readState(statePath);
+    print({ ok: true, statePath, state });
+    break;
+  }
+
+  case 'status': {
+    const state = readState(statePath);
+    print({ ok: true, statePath, summary: buildStatusSummary(state), state });
+    break;
+  }
+
+  case 'verify': {
+    const state = readState(statePath);
+    const result = await verifyDeployment(state);
+    const next = updateState({ stage: result.ok ? 'done' : 'verify' }, statePath);
+    print({ ok: result.ok, statePath, result, state: next });
     break;
   }
 
@@ -301,7 +339,9 @@ switch (command) {
         'node scripts/installer/cli.mjs create-vercel --dry-run',
         'node scripts/installer/cli.mjs create-vercel --execute',
         'node scripts/installer/cli.mjs run',
-        'node scripts/installer/cli.mjs show'
+        'node scripts/installer/cli.mjs show',
+        'node scripts/installer/cli.mjs status',
+        'node scripts/installer/cli.mjs verify'
       ]
     });
   }
