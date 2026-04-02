@@ -26,7 +26,7 @@ export function BookmarkGrid({
 }: BookmarkGridProps) {
   if (loading) {
     return (
-      <div className="grid grid-cols-2 gap-3 md:grid-cols-3 md:gap-4 xl:grid-cols-4">
+      <div className="grid grid-cols-2 gap-2.5 md:grid-cols-3 md:gap-3 xl:grid-cols-4">
         {Array.from({ length: 8 }).map((_, index) => (
           <div
             key={index}
@@ -54,7 +54,7 @@ export function BookmarkGrid({
   }
 
   return (
-    <div className="grid grid-cols-2 gap-3 md:grid-cols-3 md:gap-4 xl:grid-cols-4">
+    <div className="grid grid-cols-2 gap-2.5 md:grid-cols-3 md:gap-3 xl:grid-cols-4">
       {bookmarks.map((bookmark) => (
         <BookmarkCard
           key={bookmark.id}

@@ -411,7 +411,7 @@ export default function App() {
             </div>
           </div>
 
-          <div className="mt-5 space-y-3 sm:mt-8 sm:space-y-4">
+          <div className="mt-4 space-y-2.5 sm:mt-6 sm:space-y-3">
             <div className="flex sm:hidden">
               <div className="inline-flex items-center rounded-full bg-[var(--surface-subtle)] p-1">
                 {([
@@ -448,9 +448,9 @@ export default function App() {
           </div>
         </header>
 
-        <section className="mt-6 flex-1 space-y-5 md:mt-8 md:space-y-6">
+        <section className="mt-4 flex-1 space-y-3.5 md:mt-6 md:space-y-4.5">
           {pinnedBookmarks.length > 0 ? (
-            <section className="p-2 md:p-3 lg:p-4">
+            <section className="p-2 md:p-2.5 lg:p-3">
               <SectionHeader title="置顶入口" subtitle="最常用的站点，始终排在前面。" />
               <BookmarkGrid
                 bookmarks={pinnedBookmarks}
@@ -469,7 +469,7 @@ export default function App() {
           ) : null}
 
           {isFlowMode && recentBookmarks.length > 0 ? (
-            <section className="p-2 md:p-3 lg:p-4">
+            <section className="p-2 md:p-2.5 lg:p-3">
               <SectionHeader title="最近访问" subtitle="你最近点开过的站点，方便回跳。" />
               <BookmarkGrid
                 bookmarks={recentBookmarks}
@@ -489,7 +489,7 @@ export default function App() {
 
           {isFlowMode ? (
             groupedBookmarks.map((group) => (
-              <section key={group.name} className="p-2 md:p-3 lg:p-4">
+              <section key={group.name} className="p-2 md:p-2.5 lg:p-3">
                 <SectionHeader title={group.name} subtitle={`${group.items.length} 个入口`} />
                 <BookmarkGrid
                   bookmarks={group.items}
@@ -507,7 +507,7 @@ export default function App() {
               </section>
             ))
           ) : (
-            <section className="p-2 md:p-3 lg:p-4">
+            <section className="p-2 md:p-2.5 lg:p-3">
               <SectionHeader
                 title={search.trim() ? '搜索结果' : category}
                 subtitle={search.trim() ? `关键词：${search}` : '当前分组'}
@@ -530,7 +530,7 @@ export default function App() {
           )}
         </section>
 
-        <footer className="mt-10 border-t border-[var(--border-subtle)] px-2 pt-6 pb-2 md:mt-14 md:px-4 md:pt-8" style={{ borderTopWidth: '0.5px' }}>
+        <footer className="mt-8 border-t border-[var(--border-subtle)] px-2 pt-5 pb-2 md:mt-10 md:px-4 md:pt-6" style={{ borderTopWidth: '0.5px' }}>
           <div className="flex flex-col gap-4 text-sm text-[var(--text-muted)] md:flex-row md:items-end md:justify-between">
             <div className="space-y-1.5">
               <p className="text-sm font-medium tracking-[0.02em] text-[var(--text-strong)] md:text-[15px]">AIPanel</p>

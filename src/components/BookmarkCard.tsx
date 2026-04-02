@@ -280,7 +280,7 @@ export function BookmarkCard({
   return (
     <article
       ref={cardRef}
-      className="group relative cursor-pointer overflow-hidden rounded-[12px] bg-[var(--panel-card)] p-3 shadow-[var(--card-shadow)] transition duration-200 hover:-translate-y-0.5 hover:bg-[var(--panel-card-hover)] active:bg-[var(--panel-card-active)] md:rounded-[14px] md:p-3.5"
+      className="group relative cursor-pointer overflow-hidden rounded-[12px] bg-[var(--panel-card)] p-2.5 shadow-[var(--card-shadow)] transition duration-200 hover:-translate-y-0.5 hover:bg-[var(--panel-card-hover)] active:bg-[var(--panel-card-active)] md:rounded-[14px] md:p-3"
       onClick={handleCardClick}
       onContextMenu={(event) => {
         if (showActions) {
@@ -357,13 +357,13 @@ export function BookmarkCard({
             <h3 className="line-clamp-2 text-[14px] font-semibold leading-5 text-[var(--text-main)] md:text-[15px] md:line-clamp-1 md:leading-[1.3]">
               {bookmark.title}
             </h3>
-            <p className="mt-1 line-clamp-1 text-[12px] leading-4 text-[var(--text-muted)] md:text-[13px] md:leading-[1.35]">
+            <p className="mt-0.5 line-clamp-1 text-[12px] leading-4 text-[var(--text-muted)] md:text-[13px] md:leading-[1.3]">
               {bookmark.subtitle || bookmark.category}
             </p>
           </div>
         </div>
 
-        <div className="mt-3 border-t border-[var(--border-subtle)] pt-3 md:mt-4 md:pt-4" style={{ borderTopWidth: '0.5px' }}>
+        <div className="mt-2.5 border-t border-[var(--border-subtle)] pt-2.5 md:mt-3 md:pt-3" style={{ borderTopWidth: '0.5px' }}>
           <div className="flex w-full items-center justify-end gap-2">
             <span className="min-w-0 truncate text-right text-[11px] text-[var(--text-soft)]">{hostname}</span>
           </div>
