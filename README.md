@@ -54,10 +54,12 @@ AIPanel supports two setup paths:
 
 Use this when you want an agent to help create the Feishu data source, assemble envs, deploy to Vercel, and guide the final setup.
 
-> Copy this sentence to your agent:
->
-> Please help me install this: https://github.com/simmzl/AIPanel/blob/main/README.md
->
+Copy this sentence to your agent:
+
+```
+Please help me install this: https://github.com/simmzl/AIPanel/blob/main/README.md
+```
+
 > After installation, if you want to import your current browser bookmarks, you can export them from your browser as an HTML file and provide that file to the AI agent helping you with setup, so it can import them into the Feishu Bitable used by AIPanel.
 
 ### 2. Manual install
