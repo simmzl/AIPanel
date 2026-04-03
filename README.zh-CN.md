@@ -56,7 +56,7 @@ AIPanel 支持两条安装路径：
 复制下面这句话给你的 Agent 即可：
 
 ```
-请帮我安装这个： https://github.com/simmzl/AIPanel/blob/main/README.md
+请帮我安装这个： https://github.com/simmzl/AIPanel/blob/main/README.zh-CN.md
 ```
 
 > 安装完成后，如果你想导入当前浏览器的收藏夹，可以先在浏览器中导出书签文件（HTML），再把该文件提供给正在帮你安装的 AI Agent，让它帮你导入到 AIPanel 使用的飞书多维表格中。
