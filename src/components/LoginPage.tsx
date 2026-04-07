@@ -1,4 +1,25 @@
-import { FormEvent, useState } from 'react';
+import { FormEvent, useMemo, useState } from 'react';
+
+function clearPasswordParamsFromUrl() {
+  if (typeof window === 'undefined') {
+    return;
+  }
+
+  const url = new URL(window.location.href);
+  const hadPasswordParam = ['password', 'pwd', 'pass'].some((key) => url.searchParams.has(key));
+
+  if (!hadPasswordParam) {
+    return;
+  }
+
+  url.searchParams.delete('password');
+  url.searchParams.delete('pwd');
+  url.searchParams.delete('pass');
+
+  const nextSearch = url.searchParams.toString();
+  const nextUrl = `${url.pathname}${nextSearch ? `?${nextSearch}` : ''}${url.hash}`;
+  window.history.replaceState({}, document.title, nextUrl);
+}
 
 interface LoginPageProps {
   onSubmit: (password: string) => Promise<void>;
@@ -7,11 +28,21 @@ interface LoginPageProps {
 }
 
 export function LoginPage({ onSubmit, loading, error }: LoginPageProps) {
-  const [password, setPassword] = useState('');
+  const initialPassword = useMemo(() => {
+    if (typeof window === 'undefined') {
+      return '';
+    }
+
+    const params = new URLSearchParams(window.location.search);
+    return params.get('password') ?? params.get('pwd') ?? params.get('pass') ?? '';
+  }, []);
+
+  const [password, setPassword] = useState(initialPassword);
 
   const handleSubmit = async (event: FormEvent<HTMLFormElement>) => {
     event.preventDefault();
     await onSubmit(password);
+    clearPasswordParamsFromUrl();
   };
 
   return (
