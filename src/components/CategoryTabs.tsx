@@ -1,4 +1,5 @@
 import { useEffect, useMemo, useState, type DragEvent, type KeyboardEvent } from 'react';
+import { Check, FolderPlus } from 'lucide-react';
 import { readMigratedStorageItem, writeStorageItem } from '../utils/localStorage';
 
 const STORAGE_KEY = 'category_order';
@@ -185,19 +186,21 @@ export function CategoryTabs({ tabs, activeTab, onChange, onReorder, onCreateCat
               onClick={() => void handleCreateCategory()}
               className="inline-flex h-7 w-7 items-center justify-center rounded-full bg-[var(--surface-chip-active)] text-[var(--text-main)] outline-none focus:outline-none"
               title="保存分类"
+              aria-label="保存分类"
             >
-              ✓
+              <Check className="h-4 w-4" aria-hidden="true" />
             </button>
           </div>
         ) : (
           <button
             type="button"
             onClick={() => setAddingCategory(true)}
-            className="inline-flex h-9 w-9 shrink-0 items-center justify-center rounded-full bg-[var(--surface-chip)] text-lg text-[var(--text-main)] outline-none transition duration-200 hover:bg-[var(--surface-chip-hover)] focus:outline-none"
+            className="group/category inline-flex h-9 w-9 shrink-0 items-center justify-center gap-1.5 overflow-hidden rounded-full bg-[var(--surface-chip)] px-0 text-[var(--text-main)] outline-none transition-all duration-200 hover:w-[94px] hover:bg-[var(--surface-chip-hover)] focus:outline-none"
             title="新建分类"
             aria-label="新建分类"
           >
-            +
+            <FolderPlus className="h-4 w-4 shrink-0" aria-hidden="true" />
+            <span className="max-w-0 overflow-hidden whitespace-nowrap text-[13px] opacity-0 transition-all duration-200 group-hover/category:max-w-16 group-hover/category:opacity-100 group-focus-visible/category:max-w-16 group-focus-visible/category:opacity-100">新建分类</span>
           </button>
         )}
       </div>

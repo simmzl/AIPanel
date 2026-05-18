@@ -104,7 +104,7 @@ export function SearchBar({ value, onChange }: SearchBarProps) {
       {pickerOpen ? (
         <div
           role="listbox"
-          className="absolute right-0 top-full z-40 mt-2 min-w-[8rem] rounded-[10px] bg-[var(--panel-elevated)] p-1 shadow-[var(--shadow-strong)] backdrop-blur-xl"
+          className="absolute right-0 top-full z-40 mt-2 min-w-[8.5rem] space-y-1 rounded-[10px] bg-[var(--panel-elevated)] p-1.5 shadow-[var(--shadow-strong)] backdrop-blur-xl"
         >
           {ENGINES.map((option) => {
             const active = option.id === engine.id;

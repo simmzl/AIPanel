@@ -1,4 +1,5 @@
 import { FormEvent, useEffect, useState } from 'react';
+import { X } from 'lucide-react';
 import { api } from '../services/api';
 import type { Bookmark, BookmarkPayload, MetaResponse } from '../types';
 
@@ -127,9 +128,11 @@ export function AddBookmark({
           <button
             type="button"
             onClick={onClose}
-            className="rounded-full bg-[var(--button-ghost)] px-3 py-1.5 text-sm text-[var(--text-strong)] transition duration-200 hover:bg-[var(--button-ghost-hover)]"
+            className="inline-flex h-9 w-9 shrink-0 items-center justify-center rounded-full bg-[var(--button-ghost)] text-[var(--text-strong)] transition duration-200 hover:bg-[var(--button-ghost-hover)]"
+            title="关闭"
+            aria-label="关闭"
           >
-            关闭
+            <X className="h-4 w-4" aria-hidden="true" />
           </button>
         </div>
 

@@ -1,5 +1,5 @@
 import { lazy, Suspense, useEffect, useMemo, useState, type ReactNode } from 'react';
-import { Database, GitBranch, Wrench } from 'lucide-react';
+import { BookmarkPlus, Database, LogOut, Monitor, Moon, Sun, Wrench } from 'lucide-react';
 import { BookmarkGrid } from './components/BookmarkGrid';
 import { CategoryTabs } from './components/CategoryTabs';
 import { SearchBar } from './components/SearchBar';
@@ -36,6 +36,12 @@ const DATA_SOURCE_URL = __AIPANEL_FEISHU_BITABLE_SOURCE_URL__;
 
 type ThemePreference = 'system' | 'light' | 'dark';
 type ResolvedTheme = 'light' | 'dark';
+
+const themeOptions = [
+  { value: 'system', label: '跟随系统', shortLabel: '系统', icon: Monitor },
+  { value: 'light', label: '浅色', shortLabel: '浅色', icon: Sun },
+  { value: 'dark', label: '深色', shortLabel: '深色', icon: Moon }
+] as const;
 
 type FeishuScopeAuthPrompt = {
   message: string;
@@ -124,6 +130,14 @@ function SectionHeader({
       </div>
       {action}
     </div>
+  );
+}
+
+function GitHubIcon({ className }: { className?: string }) {
+  return (
+    <svg viewBox="0 0 24 24" className={className} fill="currentColor" aria-hidden="true">
+      <path d="M12 2C6.48 2 2 6.58 2 12.25c0 4.52 2.87 8.35 6.84 9.7.5.1.68-.22.68-.49 0-.24-.01-1.04-.02-1.89-2.78.62-3.37-1.22-3.37-1.22-.45-1.19-1.11-1.5-1.11-1.5-.91-.64.07-.63.07-.63 1 .07 1.53 1.06 1.53 1.06.9 1.57 2.35 1.12 2.92.85.09-.67.35-1.12.63-1.38-2.22-.26-4.56-1.14-4.56-5.06 0-1.12.39-2.03 1.03-2.75-.1-.26-.45-1.3.1-2.71 0 0 .84-.28 2.75 1.05A9.33 9.33 0 0 1 12 6.95c.85 0 1.7.12 2.5.34 1.9-1.33 2.74-1.05 2.74-1.05.55 1.41.2 2.45.1 2.71.64.72 1.03 1.63 1.03 2.75 0 3.93-2.34 4.8-4.57 5.05.36.32.68.94.68 1.9 0 1.38-.01 2.49-.01 2.83 0 .27.18.59.69.49A10.04 10.04 0 0 0 22 12.25C22 6.58 17.52 2 12 2Z" />
+    </svg>
   );
 }
 
@@ -415,34 +429,37 @@ export default function App() {
                     setEditingBookmark(null);
                     setModalOpen(true);
                   }}
-                  className="inline-flex h-11 w-11 shrink-0 items-center justify-center rounded-full bg-[var(--accent-soft)] text-xl text-[var(--text-main)] transition duration-200 hover:opacity-90 sm:hidden"
+                  className="group/add inline-flex h-11 w-11 shrink-0 items-center justify-center gap-1.5 overflow-hidden rounded-full bg-[var(--accent-soft)] text-[var(--text-main)] transition-all duration-200 hover:w-[104px] hover:opacity-90 sm:hidden"
                   aria-label="添加书签"
+                  title="添加书签"
                 >
-                  +
+                  <BookmarkPlus className="h-5 w-5 shrink-0" aria-hidden="true" />
+                  <span className="max-w-0 overflow-hidden whitespace-nowrap text-sm opacity-0 transition-all duration-200 group-hover/add:max-w-16 group-hover/add:opacity-100 group-focus-visible/add:max-w-16 group-focus-visible/add:opacity-100">添加书签</span>
                 </button>
               </div>
             </div>
 
             <div className="hidden items-center gap-3 sm:flex">
               <div className="inline-flex items-center rounded-full bg-[var(--surface-subtle)] p-1">
-                {([
-                  ['system', '跟随系统'],
-                  ['light', '浅色'],
-                  ['dark', '深色']
-                ] as const).map(([value, label]) => {
+                {themeOptions.map(({ value, label, icon: Icon }) => {
                   const active = themePreference === value;
                   return (
                     <button
                       key={value}
                       type="button"
                       onClick={() => handleThemeChange(value)}
-                      className={`rounded-full px-3 py-2 text-xs transition duration-200 ${
+                      title={label}
+                      aria-label={label}
+                      className={`group/theme inline-flex h-9 min-w-9 items-center justify-center gap-1.5 overflow-hidden rounded-full px-2.5 text-xs transition-all duration-200 hover:min-w-[86px] ${
                         active
                           ? 'bg-[var(--surface-chip-active)] text-[var(--text-main)]'
                           : 'text-[var(--text-muted)] hover:bg-[var(--surface-chip-hover)] hover:text-[var(--text-main)]'
                       }`}
                     >
-                      {label}
+                      <Icon className="h-4 w-4 shrink-0" aria-hidden="true" />
+                      <span className="max-w-0 overflow-hidden whitespace-nowrap opacity-0 transition-all duration-200 group-hover/theme:max-w-16 group-hover/theme:opacity-100 group-focus-visible/theme:max-w-16 group-focus-visible/theme:opacity-100">
+                        {label}
+                      </span>
                     </button>
                   );
                 })}
@@ -453,16 +470,22 @@ export default function App() {
                   setEditingBookmark(null);
                   setModalOpen(true);
                 }}
-                className="rounded-[10px] bg-[var(--accent-soft)] px-4 py-3 text-sm text-[var(--text-main)] transition duration-200 hover:opacity-90"
+                title="添加书签"
+                aria-label="添加书签"
+                className="group/add inline-flex h-11 w-11 items-center justify-center gap-1.5 overflow-hidden rounded-[10px] bg-[var(--accent-soft)] px-0 text-sm text-[var(--text-main)] transition-all duration-200 hover:w-[112px] hover:opacity-90"
               >
-                添加书签
+                <BookmarkPlus className="h-5 w-5 shrink-0" aria-hidden="true" />
+                <span className="max-w-0 overflow-hidden whitespace-nowrap opacity-0 transition-all duration-200 group-hover/add:max-w-16 group-hover/add:opacity-100 group-focus-visible/add:max-w-16 group-focus-visible/add:opacity-100">添加书签</span>
               </button>
               <button
                 type="button"
                 onClick={handleLogout}
-                className="rounded-[10px] bg-[var(--surface-subtle)] px-4 py-3 text-sm text-[var(--text-strong)] transition duration-200 hover:bg-[var(--surface-subtle-hover)]"
+                title="退出登录"
+                aria-label="退出登录"
+                className="group/logout inline-flex h-11 w-11 items-center justify-center gap-1.5 overflow-hidden rounded-[10px] bg-[var(--surface-subtle)] px-0 text-sm text-[var(--text-strong)] transition-all duration-200 hover:w-[104px] hover:bg-[var(--surface-subtle-hover)]"
               >
-                退出登录
+                <LogOut className="h-5 w-5 shrink-0" aria-hidden="true" />
+                <span className="max-w-0 overflow-hidden whitespace-nowrap opacity-0 transition-all duration-200 group-hover/logout:max-w-16 group-hover/logout:opacity-100 group-focus-visible/logout:max-w-16 group-focus-visible/logout:opacity-100">退出登录</span>
               </button>
             </div>
           </div>
@@ -470,24 +493,25 @@ export default function App() {
           <div className="mt-4 space-y-2.5 sm:mt-6 sm:space-y-3">
             <div className="flex sm:hidden">
               <div className="inline-flex items-center rounded-full bg-[var(--surface-subtle)] p-1">
-                {([
-                  ['system', '系统'],
-                  ['light', '浅色'],
-                  ['dark', '深色']
-                ] as const).map(([value, label]) => {
+                {themeOptions.map(({ value, label, shortLabel, icon: Icon }) => {
                   const active = themePreference === value;
                   return (
                     <button
                       key={value}
                       type="button"
                       onClick={() => handleThemeChange(value)}
-                      className={`rounded-full px-3 py-2 text-xs transition duration-200 ${
+                      title={label}
+                      aria-label={label}
+                      className={`group/theme inline-flex h-9 min-w-9 items-center justify-center gap-1.5 overflow-hidden rounded-full px-2.5 text-xs transition-all duration-200 hover:min-w-[72px] ${
                         active
                           ? 'bg-[var(--surface-chip-active)] text-[var(--text-main)]'
                           : 'text-[var(--text-muted)] hover:bg-[var(--surface-chip-hover)] hover:text-[var(--text-main)]'
                       }`}
                     >
-                      {label}
+                      <Icon className="h-4 w-4 shrink-0" aria-hidden="true" />
+                      <span className="max-w-0 overflow-hidden whitespace-nowrap opacity-0 transition-all duration-200 group-hover/theme:max-w-12 group-hover/theme:opacity-100 group-focus-visible/theme:max-w-12 group-focus-visible/theme:opacity-100">
+                        {shortLabel}
+                      </span>
                     </button>
                   );
                 })}
@@ -612,7 +636,7 @@ export default function App() {
                 rel="noreferrer"
                 className="inline-flex items-center gap-1.5 rounded-full bg-[var(--surface-subtle)] px-3 py-1.5 text-[var(--text-strong)] transition duration-200 hover:bg-[var(--surface-subtle-hover)] hover:text-[var(--text-main)]"
               >
-                <GitBranch className="h-3.5 w-3.5" aria-hidden="true" />
+                <GitHubIcon className="h-3.5 w-3.5" />
                 <span>GitHub</span>
               </a>
               <button

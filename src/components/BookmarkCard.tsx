@@ -8,6 +8,7 @@ import {
   type PointerEvent as ReactPointerEvent,
   type ReactNode
 } from 'react';
+import { Pencil, Pin, PinOff, Trash2 } from 'lucide-react';
 import type { Bookmark } from '../types';
 
 function getHostname(url: string) {
@@ -126,27 +127,33 @@ function DesktopIconButton({
   );
 }
 
-function OverlayTextButton({
+function OverlayIconButton({
   title,
   onClick,
+  children,
   tone = 'default'
 }: {
   title: string;
   onClick: (event: MouseEvent<HTMLButtonElement>) => void;
+  children: ReactNode;
   tone?: 'default' | 'danger';
 }) {
   return (
     <button
       type="button"
       aria-label={title}
+      title={title}
       onClick={onClick}
-      className={`flex-1 whitespace-nowrap rounded-[14px] px-1 py-1 text-center text-[12px] font-medium leading-none tracking-[0] transition duration-200 active:scale-[0.98] ${
+      className={`group/action flex min-w-0 flex-1 items-center justify-center gap-1.5 overflow-hidden rounded-[14px] px-2 py-2 text-center text-[12px] font-medium leading-none tracking-[0] transition duration-200 active:scale-[0.98] ${
         tone === 'danger'
           ? 'bg-[var(--surface-button-danger)] text-rose-500 shadow-[inset_0_0_0_0.5px_rgba(251,113,133,0.10)]'
           : 'bg-[var(--surface-button)] text-[var(--text-main)] shadow-[inset_0_0_0_0.5px_rgba(255,255,255,0.05)]'
       }`}
     >
-      {title}
+      {children}
+      <span className="max-w-0 overflow-hidden whitespace-nowrap opacity-0 transition-all duration-200 group-hover/action:max-w-12 group-hover/action:opacity-100 group-focus-visible/action:max-w-12 group-focus-visible/action:opacity-100">
+        {title}
+      </span>
     </button>
   );
 }
@@ -307,9 +314,7 @@ export function BookmarkCard({
             onTogglePin(bookmark);
           }}
         >
-          <svg viewBox="0 0 20 20" className="h-3.5 w-3.5" fill="none" aria-hidden="true">
-            <path d="M7.5 3.5h5l-.8 3.2 2.3 2.1H6.8l2.3-2.1L7.5 3.5Zm2.5 5.3v7.7" stroke="currentColor" strokeWidth="1.6" strokeLinecap="round" strokeLinejoin="round" />
-          </svg>
+          {pinned ? <PinOff className="h-3.5 w-3.5" aria-hidden="true" /> : <Pin className="h-3.5 w-3.5" aria-hidden="true" />}
         </DesktopIconButton>
         <DesktopIconButton
           title="编辑"
@@ -318,9 +323,7 @@ export function BookmarkCard({
             onEdit(bookmark);
           }}
         >
-          <svg viewBox="0 0 20 20" className="h-3.5 w-3.5" fill="none" aria-hidden="true">
-            <path d="M3.8 13.9 13.9 3.8a1.6 1.6 0 0 1 2.3 0l.1.1a1.6 1.6 0 0 1 0 2.3L6.1 16.2 3 17l.8-3.1Z" stroke="currentColor" strokeWidth="1.6" strokeLinecap="round" strokeLinejoin="round" />
-          </svg>
+          <Pencil className="h-3.5 w-3.5" aria-hidden="true" />
         </DesktopIconButton>
         <DesktopIconButton
           title="删除"
@@ -330,9 +333,7 @@ export function BookmarkCard({
             onDelete(bookmark);
           }}
         >
-          <svg viewBox="0 0 20 20" className="h-3.5 w-3.5" fill="none" aria-hidden="true">
-            <path d="M4.5 5.8h11M8 3.8h4m-5.5 2 0.6 9a1 1 0 0 0 1 .9h3.8a1 1 0 0 0 1-.9l0.6-9" stroke="currentColor" strokeWidth="1.6" strokeLinecap="round" strokeLinejoin="round" />
-          </svg>
+          <Trash2 className="h-3.5 w-3.5" aria-hidden="true" />
         </DesktopIconButton>
       </div>
 
@@ -378,16 +379,18 @@ export function BookmarkCard({
       >
         <div className="flex h-full w-full items-center rounded-[12px] bg-[var(--surface-overlay)] p-3 shadow-[0_20px_60px_rgba(0,0,0,0.16)] md:rounded-[14px]">
           <div className="grid w-full grid-cols-3 gap-2.5">
-            <OverlayTextButton
-              title={pinned ? '置顶' : '置顶'}
+            <OverlayIconButton
+              title={pinned ? '取消置顶' : '置顶'}
               onClick={(event) => {
                 event.stopPropagation();
                 setShowActions(false);
                 vibrate(10);
                 onTogglePin(bookmark);
               }}
-            />
-            <OverlayTextButton
+            >
+              {pinned ? <PinOff className="h-4 w-4 shrink-0" aria-hidden="true" /> : <Pin className="h-4 w-4 shrink-0" aria-hidden="true" />}
+            </OverlayIconButton>
+            <OverlayIconButton
               title="编辑"
               onClick={(event) => {
                 event.stopPropagation();
@@ -395,8 +398,10 @@ export function BookmarkCard({
                 vibrate(10);
                 onEdit(bookmark);
               }}
-            />
-            <OverlayTextButton
+            >
+              <Pencil className="h-4 w-4 shrink-0" aria-hidden="true" />
+            </OverlayIconButton>
+            <OverlayIconButton
               title="删除"
               tone="danger"
               onClick={(event) => {
@@ -405,7 +410,9 @@ export function BookmarkCard({
                 vibrate([10, 30, 10]);
                 onDelete(bookmark);
               }}
-            />
+            >
+              <Trash2 className="h-4 w-4 shrink-0" aria-hidden="true" />
+            </OverlayIconButton>
           </div>
         </div>
       </div>
