@@ -173,7 +173,11 @@ export default function App() {
   const { bookmarks, filteredBookmarks, categories, loading, refreshing, mutating, error, lastError, createBookmark, updateBookmark, deleteBookmark, updateCategoryOrder, createCategory } = useBookmarks({
     token,
     search,
-    category
+    category,
+    onAuthInvalid: () => {
+      removeStorageItem(TOKEN_KEY);
+      setToken(null);
+    }
   });
 
   const showFeishuScopePrompt = (error: unknown) => {
