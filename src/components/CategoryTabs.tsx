@@ -10,6 +10,7 @@ interface CategoryTabsProps {
   onChange: (tab: string) => void;
   onReorder?: (tabs: string[]) => Promise<void> | void;
   onCreateCategory?: (name: string) => Promise<void> | void;
+  onToast?: (toast: { tone: 'success' | 'error' | 'info'; title: string; message?: string }) => void;
 }
 
 function readStoredOrder() {
@@ -42,7 +43,7 @@ function sortTabsByOrder(tabs: string[], storedOrder: string[]) {
   return ['全部', ...known, ...missing];
 }
 
-export function CategoryTabs({ tabs, activeTab, onChange, onReorder, onCreateCategory }: CategoryTabsProps) {
+export function CategoryTabs({ tabs, activeTab, onChange, onReorder, onCreateCategory, onToast }: CategoryTabsProps) {
   const [storedOrder, setStoredOrder] = useState<string[]>(() => readStoredOrder());
   const [draggingTab, setDraggingTab] = useState<string | null>(null);
   const [savingOrder, setSavingOrder] = useState(false);
@@ -81,10 +82,15 @@ export function CategoryTabs({ tabs, activeTab, onChange, onReorder, onCreateCat
     try {
       setSavingOrder(true);
       await onReorder(next);
+      onToast?.({ tone: 'success', title: '分类顺序已保存' });
     } catch (error) {
       setStoredOrder(previous);
       writeStoredOrder(previous);
-      window.alert(error instanceof Error ? error.message : '分类排序保存失败');
+      onToast?.({
+        tone: 'error',
+        title: '分类排序保存失败',
+        message: error instanceof Error ? error.message : undefined
+      });
     } finally {
       setSavingOrder(false);
     }
@@ -100,12 +106,12 @@ export function CategoryTabs({ tabs, activeTab, onChange, onReorder, onCreateCat
   const handleCreateCategory = async () => {
     const name = newCategory.trim();
     if (!name) {
-      window.alert('分类名称不能为空');
+      onToast?.({ tone: 'error', title: '分类名称不能为空' });
       return;
     }
 
     if (tabs.includes(name)) {
-      window.alert('这个分类已经存在了');
+      onToast?.({ tone: 'error', title: '这个分类已经存在了' });
       return;
     }
 
@@ -118,8 +124,13 @@ export function CategoryTabs({ tabs, activeTab, onChange, onReorder, onCreateCat
       setNewCategory('');
       setAddingCategory(false);
       onChange(name);
+      onToast?.({ tone: 'success', title: '分类已新建', message: name });
     } catch (error) {
-      window.alert(error instanceof Error ? error.message : '新建分类失败');
+      onToast?.({
+        tone: 'error',
+        title: '新建分类失败',
+        message: error instanceof Error ? error.message : undefined
+      });
     } finally {
       setSavingOrder(false);
     }

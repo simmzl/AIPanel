@@ -3,6 +3,7 @@ import { BookmarkPlus, Database, GitBranch, LogOut, Monitor, Moon, Sun, Wrench }
 import { BookmarkGrid } from './components/BookmarkGrid';
 import { CategoryTabs } from './components/CategoryTabs';
 import { SearchBar } from './components/SearchBar';
+import { ToastViewport, type ToastItem, type ToastTone } from './components/ToastViewport';
 import { useBookmarks } from './hooks/useBookmarks';
 import { ApiError, api } from './services/api';
 import type { Bookmark, BookmarkPayload } from './types';
@@ -156,6 +157,8 @@ export default function App() {
   const [recentIds, setRecentIds] = useState<string[]>(() => readStringArray(RECENT_KEY));
   const [feishuScopeAuthPrompt, setFeishuScopeAuthPrompt] = useState<FeishuScopeAuthPrompt | null>(null);
   const [repairing, setRepairing] = useState(false);
+  const [toasts, setToasts] = useState<ToastItem[]>([]);
+  const [lastSyncErrorMessage, setLastSyncErrorMessage] = useState<string | null>(null);
 
   // Background token verification. Doesn't block first paint.
   useEffect(() => {
@@ -189,10 +192,47 @@ export default function App() {
     }
   });
 
+  const dismissToast = (id: number) => {
+    setToasts((current) => current.filter((toast) => toast.id !== id));
+  };
+
+  const showToast = ({
+    tone,
+    title,
+    message,
+    action,
+    duration
+  }: {
+    tone: ToastTone;
+    title: string;
+    message?: string;
+    action?: ToastItem['action'];
+    duration?: number;
+  }) => {
+    const id = Date.now() + Math.floor(Math.random() * 1000);
+    const toast: ToastItem = { id, tone, title, message, action, duration };
+    setToasts((current) => [toast, ...current].slice(0, 4));
+
+    if (tone !== 'loading') {
+      window.setTimeout(() => dismissToast(id), duration ?? (tone === 'error' ? 5200 : 3200));
+    }
+
+    return id;
+  };
+
+  const showErrorToast = (title: string, error?: unknown) => {
+    showToast({
+      tone: 'error',
+      title,
+      message: error instanceof Error ? error.message : undefined
+    });
+  };
+
   const showFeishuScopePrompt = (error: unknown) => {
     const prompt = buildFeishuScopeAuthPrompt(error);
     if (prompt) {
       setFeishuScopeAuthPrompt(prompt);
+      showToast({ tone: 'error', title: '需要补充飞书权限', message: prompt.message });
       return true;
     }
     return false;
@@ -267,11 +307,24 @@ export default function App() {
   const isFlowMode = search.trim() === '' && category === '全部';
 
   useEffect(() => {
+    if (!lastError) return;
+
     const prompt = buildFeishuScopeAuthPrompt(lastError);
     if (prompt) {
       setFeishuScopeAuthPrompt(prompt);
+      if (lastSyncErrorMessage !== prompt.message) {
+        showToast({ tone: 'error', title: '需要补充飞书权限', message: prompt.message });
+        setLastSyncErrorMessage(prompt.message);
+      }
+      return;
     }
-  }, [lastError]);
+
+    const message = lastError instanceof Error ? lastError.message : '同步最新数据失败';
+    if (lastSyncErrorMessage !== message) {
+      showToast({ tone: 'error', title: '同步最新数据失败', message });
+      setLastSyncErrorMessage(message);
+    }
+  }, [lastError, lastSyncErrorMessage]);
 
   const handleLogin = async (password: string) => {
     setAuthLoading(true);
@@ -281,6 +334,7 @@ export default function App() {
       const response = await api.login(password);
       writeStorageItem(TOKEN_KEY, response.token);
       setToken(response.token);
+      showToast({ tone: 'success', title: '登录成功' });
     } catch (loginError) {
       setAuthError(loginError instanceof Error ? loginError.message : '登录失败');
     } finally {
@@ -292,41 +346,51 @@ export default function App() {
     try {
       if (id) {
         await updateBookmark(id, payload);
+        showToast({ tone: 'success', title: '书签已更新', message: payload.title || payload.url });
         return;
       }
 
       await createBookmark(payload);
+      showToast({ tone: 'success', title: '书签已添加', message: payload.title || payload.url });
     } catch (saveError) {
       const prompt = buildFeishuScopeAuthPrompt(saveError);
       if (prompt) {
         setFeishuScopeAuthPrompt(prompt);
+        showToast({ tone: 'error', title: '需要补充飞书权限', message: prompt.message });
         throw new Error(prompt.message);
       }
+      showErrorToast(id ? '更新书签失败' : '添加书签失败', saveError);
       throw saveError;
     }
   };
 
   const handleDeleteBookmark = async (bookmark: Bookmark) => {
-    const confirmed = window.confirm(`确认删除「${bookmark.title}」吗？`);
-
-    if (!confirmed) {
-      return;
-    }
-
-    try {
-      await deleteBookmark(bookmark.id);
-      const nextPinned = pinnedIds.filter((id) => id !== bookmark.id);
-      const nextRecent = recentIds.filter((id) => id !== bookmark.id);
-      setPinnedIds(nextPinned);
-      setRecentIds(nextRecent);
-      writeStringArray(PINNED_KEY, nextPinned);
-      writeStringArray(RECENT_KEY, nextRecent);
-    } catch (deleteError) {
-      if (showFeishuScopePrompt(deleteError)) {
-        return;
+    showToast({
+      tone: 'info',
+      title: `删除「${bookmark.title}」？`,
+      message: '点这里确认删除。',
+      duration: 7000,
+      action: {
+        label: '确认删除',
+        onClick: async () => {
+          try {
+            await deleteBookmark(bookmark.id);
+            const nextPinned = pinnedIds.filter((id) => id !== bookmark.id);
+            const nextRecent = recentIds.filter((id) => id !== bookmark.id);
+            setPinnedIds(nextPinned);
+            setRecentIds(nextRecent);
+            writeStringArray(PINNED_KEY, nextPinned);
+            writeStringArray(RECENT_KEY, nextRecent);
+            showToast({ tone: 'success', title: '书签已删除', message: bookmark.title });
+          } catch (deleteError) {
+            if (showFeishuScopePrompt(deleteError)) {
+              return;
+            }
+            showErrorToast('删除书签失败', deleteError);
+          }
+        }
       }
-      window.alert(deleteError instanceof Error ? deleteError.message : '删除失败');
-    }
+    });
   };
 
   const handleOpenBookmark = (bookmark: Bookmark) => {
@@ -348,46 +412,70 @@ export default function App() {
   const handleThemeChange = (nextTheme: ThemePreference) => {
     setThemePreference(nextTheme);
     writeStorageItem(THEME_KEY, nextTheme);
+    const label = themeOptions.find((option) => option.value === nextTheme)?.label ?? '主题';
+    showToast({ tone: 'success', title: `已切换为${label}` });
   };
 
   const handleLogout = () => {
     removeStorageItem(TOKEN_KEY);
     setToken(null);
     setAuthError(null);
+    showToast({ tone: 'info', title: '已退出登录' });
   };
 
-  const handleRepairOrdering = async () => {
+  const runRepairOrdering = async () => {
     if (!token || repairing) return;
-    const confirmed = window.confirm(
-      '将检查并修复所有书签的分类排序，使 tab 顺序与分组顺序一致。继续？'
-    );
-    if (!confirmed) return;
 
     setRepairing(true);
+    const loadingToastId = showToast({ tone: 'loading', title: '正在修复排序…', duration: 0 });
     try {
       const result = await api.repairBookmarks(token);
       if (result.repaired === 0) {
-        window.alert(`检查完成：${result.totalRecords} 条书签的分类排序都正确，无需修复。`);
+        showToast({
+          tone: 'success',
+          title: '排序检查完成',
+          message: `${result.totalRecords} 条书签的分类排序都正确。`
+        });
       } else {
-        window.alert(
-          `修复完成：共扫描 ${result.totalRecords} 条书签，更新了 ${result.repaired} 条，覆盖 ${result.categoryCount} 个分类。`
-        );
+        showToast({
+          tone: 'success',
+          title: '排序修复完成',
+          message: `扫描 ${result.totalRecords} 条，更新 ${result.repaired} 条，覆盖 ${result.categoryCount} 个分类。`
+        });
       }
       // Pull the corrected data back into the UI.
       dataWorkerClient.refresh();
     } catch (e) {
       if (showFeishuScopePrompt(e)) return;
-      window.alert(e instanceof Error ? e.message : '修复失败');
+      showErrorToast('修复排序失败', e);
     } finally {
+      dismissToast(loadingToastId);
       setRepairing(false);
     }
   };
 
+  const handleRepairOrdering = async () => {
+    if (!token || repairing) return;
+    showToast({
+      tone: 'info',
+      title: '修复分类排序？',
+      message: '将检查并修复所有书签的分类排序，使 tab 顺序与分组顺序一致。',
+      duration: 8000,
+      action: {
+        label: '开始修复',
+        onClick: runRepairOrdering
+      }
+    });
+  };
+
   if (!token) {
     return (
-      <Suspense fallback={<div className="flex min-h-screen items-center justify-center text-[var(--text-muted)]">加载登录…</div>}>
-        <LoginPage onSubmit={handleLogin} loading={authLoading} error={authError} />
-      </Suspense>
+      <>
+        <Suspense fallback={<div className="flex min-h-screen items-center justify-center text-[var(--text-muted)]">加载登录…</div>}>
+          <LoginPage onSubmit={handleLogin} loading={authLoading} error={authError} />
+        </Suspense>
+        <ToastViewport toasts={toasts} onDismiss={dismissToast} />
+      </>
     );
   }
 
@@ -507,7 +595,14 @@ export default function App() {
                 <span className="text-base text-[var(--text-main)]">{bookmarks.length}</span>
               </div>
             </div>
-            <CategoryTabs tabs={allTabs} activeTab={category} onChange={setCategory} onReorder={updateCategoryOrder} onCreateCategory={createCategory} />
+            <CategoryTabs
+              tabs={allTabs}
+              activeTab={category}
+              onChange={setCategory}
+              onReorder={updateCategoryOrder}
+              onCreateCategory={createCategory}
+              onToast={showToast}
+            />
           </div>
         </header>
 
@@ -638,6 +733,8 @@ export default function App() {
         </footer>
       </main>
 
+      <ToastViewport toasts={toasts} onDismiss={dismissToast} />
+
       {(refreshing || mutating) ? (
         <div className="fixed bottom-5 right-5 z-40 rounded-full bg-[var(--panel-elevated)] px-3 py-2 text-xs text-[var(--text-strong)] shadow-[var(--shadow-strong)] backdrop-blur-xl">
           {mutating ? '正在保存变更…' : '正在同步最新数据…'}
@@ -696,9 +793,9 @@ export default function App() {
                     onClick={async () => {
                       try {
                         await navigator.clipboard.writeText(feishuScopeAuthPrompt.authorizationUrl || '');
-                        window.alert('授权链接已复制');
-                      } catch {
-                        window.alert('复制失败，请手动复制链接');
+                        showToast({ tone: 'success', title: '授权链接已复制' });
+                      } catch (copyError) {
+                        showErrorToast('复制失败，请手动复制链接', copyError);
                       }
                     }}
                     className="inline-flex items-center rounded-[10px] bg-[var(--button-secondary)] px-4 py-2.5 text-sm text-[var(--text-main)] transition duration-200 hover:bg-[var(--button-secondary-hover)]"
@@ -737,6 +834,7 @@ export default function App() {
               setEditingBookmark(null);
             }}
             onSubmit={handleSaveBookmark}
+            onToast={showToast}
           />
         </Suspense>
       ) : null}

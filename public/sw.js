@@ -16,7 +16,7 @@
  * themselves, so day-to-day deploys do not require a bump.
  */
 
-const CACHE_VERSION = 'v2';
+const CACHE_VERSION = 'v3';
 const CACHE = {
   html: `aipanel-html-${CACHE_VERSION}`,
   static: `aipanel-static-${CACHE_VERSION}`,
@@ -169,6 +169,24 @@ async function networkFirst(cacheName, request) {
   }
 }
 
+async function networkOnlyAndUpdate(cacheName, request) {
+  const response = await fetch(request);
+  if (response && response.ok) {
+    const cache = await caches.open(cacheName);
+    const cacheKey = new Request(request.url, {
+      method: 'GET',
+      headers: request.headers,
+      credentials: request.credentials,
+      mode: request.mode,
+      redirect: request.redirect,
+      referrer: request.referrer,
+      referrerPolicy: request.referrerPolicy
+    });
+    cache.put(cacheKey, response.clone()).catch(() => {});
+  }
+  return response;
+}
+
 async function cacheFirstWithTtl(cacheName, request, ttlMs) {
   const cache = await caches.open(cacheName);
   const cached = await cache.match(request);
@@ -259,6 +277,13 @@ self.addEventListener('fetch', (event) => {
 
   // Bookmarks read — the core SWR path that makes offline / second-visit fast
   if (isApiBookmarksRead(request)) {
+    // Mutations re-fetch with cache: 'no-store' so the UI receives the canonical
+    // post-write snapshot instead of the stale SWR copy. Also refresh the SW cache
+    // with that canonical response for subsequent boots.
+    if (request.cache === 'no-store' || request.cache === 'reload') {
+      event.respondWith(networkOnlyAndUpdate(CACHE.api, request));
+      return;
+    }
     event.respondWith(staleWhileRevalidate(CACHE.api, request));
     return;
   }

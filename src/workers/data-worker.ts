@@ -120,10 +120,10 @@ function buildSnapshot(bookmarks: Bookmark[], categories: string[]): BookmarksSn
 // Server interactions
 // -----------------------------
 
-async function fetchBookmarks(): Promise<BookmarksSnapshot> {
+async function fetchBookmarks(options: { fresh?: boolean } = {}): Promise<BookmarksSnapshot> {
   const data = await apiFetch<{ bookmarks: Bookmark[]; categories: string[] }>(
     '/api/bookmarks',
-    { method: 'GET' }
+    { method: 'GET', cache: options.fresh ? 'no-store' : 'default' }
   );
   const snapshot = buildSnapshot(data.bookmarks, data.categories);
   void writeSnapshotToIdb(snapshot);
@@ -166,7 +166,7 @@ async function applyMutation(mutation: MutationKind): Promise<BookmarksSnapshot>
 
   // After any mutation we re-fetch the canonical snapshot so the UI converges
   // on whatever the Bitable side now says.
-  return fetchBookmarks();
+  return fetchBookmarks({ fresh: true });
 }
 
 // -----------------------------
