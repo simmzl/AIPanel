@@ -8,10 +8,201 @@
       content="AIPanel - agent-first navigation panel powered by React, Vite, and Feishu Bitable."
     />
     <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
+
+    <!-- Speed up first paint: preconnect to fonts and the Feishu API host the app will hit -->
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link rel="dns-prefetch" href="https://open.feishu.cn" />
+
     <title>AIPanel</title>
+
+    <!--
+      Critical CSS inlined to avoid blocking on the external stylesheet.
+      Mirrors the dark/light palette in src/index.css so the skeleton matches
+      the final UI and there is no flash of unstyled content.
+      The full stylesheet (Tailwind) loads after the bundle and replaces these
+      rules without visual jumps.
+    -->
+    <style>
+      :root {
+        color-scheme: dark light;
+        --aip-bg: #0f1111;
+        --aip-text: #f3f3ee;
+        --aip-text-soft: #8f9890;
+        --aip-card: rgba(255, 255, 255, 0.045);
+        --aip-card-border: rgba(255, 255, 255, 0.06);
+        --aip-chip: rgba(255, 255, 255, 0.04);
+        --aip-accent: rgba(93, 183, 173, 0.16);
+      }
+      @media (prefers-color-scheme: light) {
+        :root {
+          --aip-bg: #f5f7f5;
+          --aip-text: #17211f;
+          --aip-text-soft: #6f807a;
+          --aip-card: rgba(255, 255, 255, 0.72);
+          --aip-card-border: rgba(20, 38, 32, 0.08);
+          --aip-chip: rgba(20, 38, 32, 0.05);
+          --aip-accent: rgba(63, 157, 146, 0.14);
+        }
+      }
+      html, body {
+        margin: 0;
+        padding: 0;
+        background: var(--aip-bg);
+        color: var(--aip-text);
+        font-family: 'DM Sans', 'Segoe UI', -apple-system, BlinkMacSystemFont, sans-serif;
+        min-height: 100%;
+      }
+      #root { min-height: 100vh; }
+      .aip-skeleton { padding: 16px 12px 32px; max-width: 1400px; margin: 0 auto; }
+      @media (min-width: 640px) {
+        .aip-skeleton { padding: 32px 24px; }
+      }
+      @media (min-width: 1280px) {
+        .aip-skeleton { padding: 32px 40px; }
+      }
+      .aip-eyebrow {
+        font-size: 11px;
+        letter-spacing: 0.3em;
+        text-transform: uppercase;
+        color: rgba(93, 183, 173, 0.7);
+      }
+      .aip-title {
+        margin: 12px 0 0;
+        font-size: 36px;
+        line-height: 1;
+        font-family: 'Instrument Serif', 'Times New Roman', serif;
+      }
+      @media (min-width: 640px) {
+        .aip-title { font-size: 48px; }
+      }
+      .aip-search-row {
+        margin-top: 24px;
+        display: flex;
+        gap: 12px;
+      }
+      .aip-search {
+        flex: 1;
+        height: 44px;
+        border-radius: 10px;
+        background: var(--aip-chip);
+        border: 0.5px solid var(--aip-card-border);
+      }
+      .aip-tabs {
+        margin-top: 12px;
+        display: flex;
+        gap: 8px;
+        flex-wrap: wrap;
+      }
+      .aip-tab {
+        height: 32px;
+        width: 64px;
+        border-radius: 999px;
+        background: var(--aip-chip);
+      }
+      .aip-tab.aip-tab-active { background: var(--aip-accent); width: 48px; }
+      .aip-section { margin-top: 28px; }
+      .aip-section-title {
+        height: 22px;
+        width: 140px;
+        border-radius: 6px;
+        background: var(--aip-chip);
+      }
+      .aip-grid {
+        margin-top: 16px;
+        display: grid;
+        gap: 12px;
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+      }
+      @media (min-width: 640px) {
+        .aip-grid { grid-template-columns: repeat(3, minmax(0, 1fr)); }
+      }
+      @media (min-width: 1024px) {
+        .aip-grid { grid-template-columns: repeat(4, minmax(0, 1fr)); gap: 14px; }
+      }
+      @media (min-width: 1280px) {
+        .aip-grid { grid-template-columns: repeat(5, minmax(0, 1fr)); }
+      }
+      .aip-card {
+        height: 88px;
+        border-radius: 14px;
+        background: var(--aip-card);
+        border: 0.5px solid var(--aip-card-border);
+        position: relative;
+        overflow: hidden;
+      }
+      .aip-card::after {
+        content: '';
+        position: absolute;
+        inset: 0;
+        background: linear-gradient(90deg, transparent 0%, rgba(255,255,255,0.04) 50%, transparent 100%);
+        transform: translateX(-100%);
+        animation: aip-shimmer 1.6s ease-in-out infinite;
+      }
+      @keyframes aip-shimmer {
+        100% { transform: translateX(100%); }
+      }
+    </style>
+
+    <!--
+      Boot script: synchronously decides whether to render the skeleton or not.
+      If the user has no token / cache, we skip the skeleton (login page paints faster).
+      Otherwise the skeleton matches the panel layout so the perceived load time is minimal.
+    -->
+    <script>
+      (function () {
+        try {
+          var hasCache =
+            localStorage.getItem('aipanel_token') ||
+            localStorage.getItem('homepanel_token');
+          if (hasCache) {
+            window.__AIPANEL_SHOW_SKELETON__ = true;
+          }
+        } catch (e) {
+          // ignore (private mode, etc.)
+        }
+      })();
+    </script>
   </head>
   <body>
     <div id="root"></div>
+
+    <!-- Skeleton screen, only rendered when we expect to show the panel -->
+    <div class="aip-skeleton" aria-hidden="true" id="aip-skeleton">
+      <div class="aip-eyebrow">Agent-first panel</div>
+      <h1 class="aip-title">AIPanel</h1>
+      <div class="aip-search-row">
+        <div class="aip-search"></div>
+      </div>
+      <div class="aip-tabs">
+        <div class="aip-tab aip-tab-active"></div>
+        <div class="aip-tab"></div>
+        <div class="aip-tab"></div>
+        <div class="aip-tab"></div>
+        <div class="aip-tab"></div>
+      </div>
+      <div class="aip-section">
+        <div class="aip-section-title"></div>
+        <div class="aip-grid">
+          <div class="aip-card"></div>
+          <div class="aip-card"></div>
+          <div class="aip-card"></div>
+          <div class="aip-card"></div>
+          <div class="aip-card"></div>
+          <div class="aip-card"></div>
+          <div class="aip-card"></div>
+          <div class="aip-card"></div>
+        </div>
+      </div>
+    </div>
+    <script>
+      // Hide the skeleton if we decided not to show it (no cached token → login page).
+      if (!window.__AIPANEL_SHOW_SKELETON__) {
+        var el = document.getElementById('aip-skeleton');
+        if (el) el.style.display = 'none';
+      }
+    </script>
+
     <script type="module" src="/src/main.tsx"></script>
   </body>
 </html>

@@ -1,13 +1,29 @@
-import { useEffect, useMemo, useState, type ReactNode } from 'react';
-import { AddBookmark } from './components/AddBookmark';
+import { lazy, Suspense, useEffect, useMemo, useState, type ReactNode } from 'react';
 import { BookmarkGrid } from './components/BookmarkGrid';
 import { CategoryTabs } from './components/CategoryTabs';
-import { LoginPage } from './components/LoginPage';
 import { SearchBar } from './components/SearchBar';
 import { useBookmarks } from './hooks/useBookmarks';
 import { ApiError, api } from './services/api';
 import type { Bookmark, BookmarkPayload } from './types';
 import { readMigratedStorageItem, removeStorageItem, writeStorageItem } from './utils/localStorage';
+
+const LoginPage = lazy(() => import('./components/LoginPage').then((m) => ({ default: m.LoginPage })));
+const AddBookmark = lazy(() => import('./components/AddBookmark').then((m) => ({ default: m.AddBookmark })));
+
+function isJwtLikelyValid(token: string): boolean {
+  try {
+    const parts = token.split('.');
+    if (parts.length !== 3) return false;
+    const payload = JSON.parse(
+      atob(parts[1].replace(/-/g, '+').replace(/_/g, '/'))
+    ) as { exp?: number };
+    if (typeof payload.exp !== 'number') return false;
+    // require at least 60s of remaining validity to be optimistic
+    return payload.exp * 1000 > Date.now() + 60_000;
+  } catch {
+    return false;
+  }
+}
 
 const TOKEN_KEY = 'token';
 const PINNED_KEY = 'pinned_ids';
@@ -110,42 +126,48 @@ function SectionHeader({
 }
 
 export default function App() {
-  const [token, setToken] = useState<string | null>(null);
+  // Synchronously read token at boot. If it's structurally valid and unexpired,
+  // optimistically trust it so the first paint shows cached bookmarks immediately.
+  // Real verification happens in the background; on failure we drop the token.
+  const initialToken = (() => {
+    const stored = readMigratedStorageItem(TOKEN_KEY);
+    return stored && isJwtLikelyValid(stored) ? stored : null;
+  })();
+
+  const [token, setToken] = useState<string | null>(initialToken);
   const [showBackToTop, setShowBackToTop] = useState(false);
-  const [authReady, setAuthReady] = useState(false);
   const [authLoading, setAuthLoading] = useState(false);
   const [authError, setAuthError] = useState<string | null>(null);
-  const [themePreference, setThemePreference] = useState<ThemePreference>('system');
+  const [themePreference, setThemePreference] = useState<ThemePreference>(() => getStoredThemePreference());
   const [systemTheme, setSystemTheme] = useState<ResolvedTheme>(() => getSystemTheme());
   const [search, setSearch] = useState('');
   const [category, setCategory] = useState('全部');
   const [modalOpen, setModalOpen] = useState(false);
   const [editingBookmark, setEditingBookmark] = useState<Bookmark | null>(null);
-  const [pinnedIds, setPinnedIds] = useState<string[]>([]);
-  const [recentIds, setRecentIds] = useState<string[]>([]);
+  const [pinnedIds, setPinnedIds] = useState<string[]>(() => readStringArray(PINNED_KEY));
+  const [recentIds, setRecentIds] = useState<string[]>(() => readStringArray(RECENT_KEY));
   const [feishuScopeAuthPrompt, setFeishuScopeAuthPrompt] = useState<FeishuScopeAuthPrompt | null>(null);
 
+  // Background token verification. Doesn't block first paint.
   useEffect(() => {
-    const storedToken = readMigratedStorageItem(TOKEN_KEY);
-    setPinnedIds(readStringArray(PINNED_KEY));
-    setRecentIds(readStringArray(RECENT_KEY));
-    setThemePreference(getStoredThemePreference());
+    if (!initialToken) return;
 
-    if (!storedToken) {
-      setAuthReady(true);
-      return;
-    }
-
+    let cancelled = false;
     void (async () => {
       try {
-        await api.verifyToken(storedToken);
-        setToken(storedToken);
+        await api.verifyToken(initialToken);
       } catch {
+        if (cancelled) return;
         removeStorageItem(TOKEN_KEY);
-      } finally {
-        setAuthReady(true);
+        setToken(null);
       }
     })();
+
+    return () => {
+      cancelled = true;
+    };
+    // initialToken is captured once at boot, don't re-run on token state changes
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
   const { bookmarks, filteredBookmarks, categories, loading, refreshing, mutating, error, lastError, createBookmark, updateBookmark, deleteBookmark, updateCategoryOrder, createCategory } = useBookmarks({
@@ -321,12 +343,12 @@ export default function App() {
     setAuthError(null);
   };
 
-  if (!authReady) {
-    return <div className="flex min-h-screen items-center justify-center text-white">验证中...</div>;
-  }
-
   if (!token) {
-    return <LoginPage onSubmit={handleLogin} loading={authLoading} error={authError} />;
+    return (
+      <Suspense fallback={<div className="flex min-h-screen items-center justify-center text-[var(--text-muted)]">加载登录…</div>}>
+        <LoginPage onSubmit={handleLogin} loading={authLoading} error={authError} />
+      </Suspense>
+    );
   }
 
   return (
@@ -653,17 +675,21 @@ export default function App() {
         </div>
       ) : null}
 
-      <AddBookmark
-        open={modalOpen}
-        token={token}
-        categories={categories}
-        initialBookmark={editingBookmark}
-        onClose={() => {
-          setModalOpen(false);
-          setEditingBookmark(null);
-        }}
-        onSubmit={handleSaveBookmark}
-      />
+      {modalOpen ? (
+        <Suspense fallback={null}>
+          <AddBookmark
+            open={modalOpen}
+            token={token}
+            categories={categories}
+            initialBookmark={editingBookmark}
+            onClose={() => {
+              setModalOpen(false);
+              setEditingBookmark(null);
+            }}
+            onSubmit={handleSaveBookmark}
+          />
+        </Suspense>
+      ) : null}
     </div>
   );
 }

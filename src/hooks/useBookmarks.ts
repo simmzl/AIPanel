@@ -36,6 +36,26 @@ function stableStringify(value: unknown) {
   return JSON.stringify(value);
 }
 
+/**
+ * Schedule background work without blocking the first paint.
+ * Falls back to a setTimeout micro-defer when requestIdleCallback isn't available.
+ */
+function scheduleBackground(fn: () => void) {
+  if (typeof window === 'undefined') {
+    fn();
+    return;
+  }
+  const ric = (window as unknown as {
+    requestIdleCallback?: (cb: () => void, opts?: { timeout: number }) => number;
+  }).requestIdleCallback;
+
+  if (typeof ric === 'function') {
+    ric(fn, { timeout: 1500 });
+  } else {
+    setTimeout(fn, 0);
+  }
+}
+
 interface UseBookmarksOptions {
   token: string | null;
   search: string;
@@ -86,7 +106,15 @@ export function useBookmarks({ token, search, category }: UseBookmarksOptions) {
   }, [token]);
 
   useEffect(() => {
-    void loadBookmarks();
+    // Defer the network fetch to idle time so the cached UI paints first.
+    let cancelled = false;
+    scheduleBackground(() => {
+      if (cancelled) return;
+      void loadBookmarks();
+    });
+    return () => {
+      cancelled = true;
+    };
   }, [loadBookmarks]);
 
   const filteredBookmarks = useMemo(() => {
