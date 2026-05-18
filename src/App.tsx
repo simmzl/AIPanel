@@ -1,4 +1,5 @@
 import { lazy, Suspense, useEffect, useMemo, useState, type ReactNode } from 'react';
+import { Database, GitBranch, Wrench } from 'lucide-react';
 import { BookmarkGrid } from './components/BookmarkGrid';
 import { CategoryTabs } from './components/CategoryTabs';
 import { SearchBar } from './components/SearchBar';
@@ -599,9 +600,10 @@ export default function App() {
                   href={DATA_SOURCE_URL}
                   target="_blank"
                   rel="noreferrer"
-                  className="inline-flex items-center rounded-full bg-[var(--surface-subtle)] px-3 py-1.5 text-[var(--text-strong)] transition duration-200 hover:bg-[var(--surface-subtle-hover)] hover:text-[var(--text-main)]"
+                  className="inline-flex items-center gap-1.5 rounded-full bg-[var(--surface-subtle)] px-3 py-1.5 text-[var(--text-strong)] transition duration-200 hover:bg-[var(--surface-subtle-hover)] hover:text-[var(--text-main)]"
                 >
-                  数据源
+                  <Database className="h-3.5 w-3.5" aria-hidden="true" />
+                  <span>数据源</span>
                 </a>
               ) : null}
               <a
@@ -610,9 +612,7 @@ export default function App() {
                 rel="noreferrer"
                 className="inline-flex items-center gap-1.5 rounded-full bg-[var(--surface-subtle)] px-3 py-1.5 text-[var(--text-strong)] transition duration-200 hover:bg-[var(--surface-subtle-hover)] hover:text-[var(--text-main)]"
               >
-                <svg viewBox="0 0 20 20" className="h-3.5 w-3.5" fill="currentColor" aria-hidden="true">
-                  <path d="M10 1.7a8.3 8.3 0 0 0-2.62 16.18c.42.08.57-.18.57-.4l-.01-1.55c-2.33.5-2.82-.99-2.82-.99-.38-.95-.93-1.2-.93-1.2-.76-.52.06-.51.06-.51.84.06 1.29.86 1.29.86.75 1.28 1.96.91 2.44.69.08-.54.29-.91.53-1.12-1.86-.21-3.81-.93-3.81-4.14 0-.91.33-1.65.86-2.23-.08-.21-.37-1.05.08-2.18 0 0 .7-.22 2.3.85A7.92 7.92 0 0 1 10 5.73c.71 0 1.43.1 2.1.3 1.6-1.07 2.3-.85 2.3-.85.45 1.13.16 1.97.08 2.18.54.58.86 1.32.86 2.23 0 3.22-1.95 3.92-3.82 4.13.3.26.57.78.57 1.57l-.01 2.32c0 .22.15.48.58.4A8.3 8.3 0 0 0 10 1.7Z" />
-                </svg>
+                <GitBranch className="h-3.5 w-3.5" aria-hidden="true" />
                 <span>GitHub</span>
               </a>
               <button
@@ -620,9 +620,10 @@ export default function App() {
                 onClick={handleRepairOrdering}
                 disabled={repairing}
                 title="检查并修复书签的分类排序"
-                className="inline-flex items-center rounded-full bg-[var(--surface-subtle)] px-3 py-1.5 text-[var(--text-strong)] transition duration-200 hover:bg-[var(--surface-subtle-hover)] hover:text-[var(--text-main)] disabled:cursor-wait disabled:opacity-60"
+                className="inline-flex items-center gap-1.5 rounded-full bg-[var(--surface-subtle)] px-3 py-1.5 text-[var(--text-strong)] transition duration-200 hover:bg-[var(--surface-subtle-hover)] hover:text-[var(--text-main)] disabled:cursor-wait disabled:opacity-60"
               >
-                {repairing ? '修复中…' : '修复排序'}
+                <Wrench className="h-3.5 w-3.5" aria-hidden="true" />
+                <span>{repairing ? '修复中…' : '修复排序'}</span>
               </button>
               <span className="text-[var(--text-soft)]">Powered by AIPanel</span>
             </div>

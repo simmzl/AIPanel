@@ -26,6 +26,7 @@
     "cheerio": "^1.1.2",
     "idb-keyval": "^6.2.2",
     "jsonwebtoken": "^9.0.2",
+    "lucide-react": "^1.16.0",
     "react": "^18.3.1",
     "react-dom": "^18.3.1"
   },

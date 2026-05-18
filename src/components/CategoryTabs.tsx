@@ -158,7 +158,7 @@ export function CategoryTabs({ tabs, activeTab, onChange, onReorder, onCreateCat
                 event.preventDefault();
                 void handleDrop(tab);
               }}
-              className={`shrink-0 rounded-full px-3.5 py-2 text-[13px] transition duration-200 focus:outline-none focus:ring-2 focus:ring-[var(--accent-soft)] md:px-4 md:text-sm ${
+              className={`shrink-0 rounded-full px-3.5 py-2 text-[13px] outline-none transition duration-200 focus:outline-none focus:ring-0 md:px-4 md:text-sm ${
                 active
                   ? 'bg-[var(--surface-chip-active)] text-[var(--text-main)]'
                   : 'bg-[var(--surface-chip)] text-[var(--text-muted)] hover:bg-[var(--surface-chip-hover)] hover:text-[var(--text-main)]'
@@ -183,7 +183,7 @@ export function CategoryTabs({ tabs, activeTab, onChange, onReorder, onCreateCat
             <button
               type="button"
               onClick={() => void handleCreateCategory()}
-              className="inline-flex h-7 w-7 items-center justify-center rounded-full bg-[var(--surface-chip-active)] text-[var(--text-main)]"
+              className="inline-flex h-7 w-7 items-center justify-center rounded-full bg-[var(--surface-chip-active)] text-[var(--text-main)] outline-none focus:outline-none"
               title="保存分类"
             >
               ✓
@@ -193,7 +193,7 @@ export function CategoryTabs({ tabs, activeTab, onChange, onReorder, onCreateCat
           <button
             type="button"
             onClick={() => setAddingCategory(true)}
-            className="inline-flex h-9 w-9 shrink-0 items-center justify-center rounded-full bg-[var(--surface-chip)] text-lg text-[var(--text-main)] transition duration-200 hover:bg-[var(--surface-chip-hover)]"
+            className="inline-flex h-9 w-9 shrink-0 items-center justify-center rounded-full bg-[var(--surface-chip)] text-lg text-[var(--text-main)] outline-none transition duration-200 hover:bg-[var(--surface-chip-hover)] focus:outline-none"
             title="新建分类"
             aria-label="新建分类"
           >
