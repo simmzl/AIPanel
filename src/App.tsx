@@ -1,9 +1,10 @@
 import { lazy, Suspense, useEffect, useMemo, useState, type ReactNode } from 'react';
+import toast, { Toaster } from 'react-hot-toast';
 import { BookmarkPlus, Database, GitBranch, LogOut, Monitor, Moon, Sun, Wrench } from 'lucide-react';
 import { BookmarkGrid } from './components/BookmarkGrid';
 import { CategoryTabs } from './components/CategoryTabs';
 import { SearchBar } from './components/SearchBar';
-import { ToastViewport, type ToastItem, type ToastTone } from './components/ToastViewport';
+import { ConfirmDialog, type ConfirmDialogState } from './components/ConfirmDialog';
 import { useBookmarks } from './hooks/useBookmarks';
 import { ApiError, api } from './services/api';
 import type { Bookmark, BookmarkPayload } from './types';
@@ -157,7 +158,7 @@ export default function App() {
   const [recentIds, setRecentIds] = useState<string[]>(() => readStringArray(RECENT_KEY));
   const [feishuScopeAuthPrompt, setFeishuScopeAuthPrompt] = useState<FeishuScopeAuthPrompt | null>(null);
   const [repairing, setRepairing] = useState(false);
-  const [toasts, setToasts] = useState<ToastItem[]>([]);
+  const [confirmDialog, setConfirmDialog] = useState<ConfirmDialogState | null>(null);
   const [lastSyncErrorMessage, setLastSyncErrorMessage] = useState<string | null>(null);
 
   // Background token verification. Doesn't block first paint.
@@ -192,47 +193,17 @@ export default function App() {
     }
   });
 
-  const dismissToast = (id: number) => {
-    setToasts((current) => current.filter((toast) => toast.id !== id));
-  };
-
-  const showToast = ({
-    tone,
-    title,
-    message,
-    action,
-    duration
-  }: {
-    tone: ToastTone;
-    title: string;
-    message?: string;
-    action?: ToastItem['action'];
-    duration?: number;
-  }) => {
-    const id = Date.now() + Math.floor(Math.random() * 1000);
-    const toast: ToastItem = { id, tone, title, message, action, duration };
-    setToasts((current) => [toast, ...current].slice(0, 4));
-
-    if (tone !== 'loading') {
-      window.setTimeout(() => dismissToast(id), duration ?? (tone === 'error' ? 5200 : 3200));
-    }
-
-    return id;
-  };
-
+  const successToast = (message: string) => toast.success(message);
+  const infoToast = (message: string) => toast(message);
   const showErrorToast = (title: string, error?: unknown) => {
-    showToast({
-      tone: 'error',
-      title,
-      message: error instanceof Error ? error.message : undefined
-    });
+    toast.error(error instanceof Error ? `${title}：${error.message}` : title);
   };
 
   const showFeishuScopePrompt = (error: unknown) => {
     const prompt = buildFeishuScopeAuthPrompt(error);
     if (prompt) {
       setFeishuScopeAuthPrompt(prompt);
-      showToast({ tone: 'error', title: '需要补充飞书权限', message: prompt.message });
+      toast.error(`需要补充飞书权限：${prompt.message}`);
       return true;
     }
     return false;
@@ -313,7 +284,7 @@ export default function App() {
     if (prompt) {
       setFeishuScopeAuthPrompt(prompt);
       if (lastSyncErrorMessage !== prompt.message) {
-        showToast({ tone: 'error', title: '需要补充飞书权限', message: prompt.message });
+        toast.error(`需要补充飞书权限：${prompt.message}`);
         setLastSyncErrorMessage(prompt.message);
       }
       return;
@@ -321,7 +292,7 @@ export default function App() {
 
     const message = lastError instanceof Error ? lastError.message : '同步最新数据失败';
     if (lastSyncErrorMessage !== message) {
-      showToast({ tone: 'error', title: '同步最新数据失败', message });
+      toast.error(`同步最新数据失败：${message}`);
       setLastSyncErrorMessage(message);
     }
   }, [lastError, lastSyncErrorMessage]);
@@ -334,7 +305,7 @@ export default function App() {
       const response = await api.login(password);
       writeStorageItem(TOKEN_KEY, response.token);
       setToken(response.token);
-      showToast({ tone: 'success', title: '登录成功' });
+      successToast('登录成功');
     } catch (loginError) {
       setAuthError(loginError instanceof Error ? loginError.message : '登录失败');
     } finally {
@@ -346,17 +317,17 @@ export default function App() {
     try {
       if (id) {
         await updateBookmark(id, payload);
-        showToast({ tone: 'success', title: '书签已更新', message: payload.title || payload.url });
+        successToast(`书签已更新：${payload.title || payload.url}`);
         return;
       }
 
       await createBookmark(payload);
-      showToast({ tone: 'success', title: '书签已添加', message: payload.title || payload.url });
+      successToast(`书签已添加：${payload.title || payload.url}`);
     } catch (saveError) {
       const prompt = buildFeishuScopeAuthPrompt(saveError);
       if (prompt) {
         setFeishuScopeAuthPrompt(prompt);
-        showToast({ tone: 'error', title: '需要补充飞书权限', message: prompt.message });
+        toast.error(`需要补充飞书权限：${prompt.message}`);
         throw new Error(prompt.message);
       }
       showErrorToast(id ? '更新书签失败' : '添加书签失败', saveError);
@@ -365,29 +336,26 @@ export default function App() {
   };
 
   const handleDeleteBookmark = async (bookmark: Bookmark) => {
-    showToast({
-      tone: 'info',
-      title: `删除「${bookmark.title}」？`,
-      message: '点这里确认删除。',
-      duration: 7000,
-      action: {
-        label: '确认删除',
-        onClick: async () => {
-          try {
-            await deleteBookmark(bookmark.id);
-            const nextPinned = pinnedIds.filter((id) => id !== bookmark.id);
-            const nextRecent = recentIds.filter((id) => id !== bookmark.id);
-            setPinnedIds(nextPinned);
-            setRecentIds(nextRecent);
-            writeStringArray(PINNED_KEY, nextPinned);
-            writeStringArray(RECENT_KEY, nextRecent);
-            showToast({ tone: 'success', title: '书签已删除', message: bookmark.title });
-          } catch (deleteError) {
-            if (showFeishuScopePrompt(deleteError)) {
-              return;
-            }
-            showErrorToast('删除书签失败', deleteError);
+    setConfirmDialog({
+      title: '删除书签',
+      message: `确认删除「${bookmark.title}」吗？\n这个操作无法撤销。`,
+      confirmLabel: '删除书签',
+      danger: true,
+      onConfirm: async () => {
+        try {
+          await deleteBookmark(bookmark.id);
+          const nextPinned = pinnedIds.filter((id) => id !== bookmark.id);
+          const nextRecent = recentIds.filter((id) => id !== bookmark.id);
+          setPinnedIds(nextPinned);
+          setRecentIds(nextRecent);
+          writeStringArray(PINNED_KEY, nextPinned);
+          writeStringArray(RECENT_KEY, nextRecent);
+          successToast(`书签已删除：${bookmark.title}`);
+        } catch (deleteError) {
+          if (showFeishuScopePrompt(deleteError)) {
+            return;
           }
+          showErrorToast('删除书签失败', deleteError);
         }
       }
     });
@@ -413,58 +381,46 @@ export default function App() {
     setThemePreference(nextTheme);
     writeStorageItem(THEME_KEY, nextTheme);
     const label = themeOptions.find((option) => option.value === nextTheme)?.label ?? '主题';
-    showToast({ tone: 'success', title: `已切换为${label}` });
+    successToast(`已切换为${label}`);
   };
 
   const handleLogout = () => {
     removeStorageItem(TOKEN_KEY);
     setToken(null);
     setAuthError(null);
-    showToast({ tone: 'info', title: '已退出登录' });
+    infoToast('已退出登录');
   };
 
   const runRepairOrdering = async () => {
     if (!token || repairing) return;
 
     setRepairing(true);
-    const loadingToastId = showToast({ tone: 'loading', title: '正在修复排序…', duration: 0 });
+    const loadingToastId = toast.loading('正在修复排序…');
     try {
       const result = await api.repairBookmarks(token);
       if (result.repaired === 0) {
-        showToast({
-          tone: 'success',
-          title: '排序检查完成',
-          message: `${result.totalRecords} 条书签的分类排序都正确。`
-        });
+        toast.success(`${result.totalRecords} 条书签的分类排序都正确。`, { id: loadingToastId });
       } else {
-        showToast({
-          tone: 'success',
-          title: '排序修复完成',
-          message: `扫描 ${result.totalRecords} 条，更新 ${result.repaired} 条，覆盖 ${result.categoryCount} 个分类。`
-        });
+        toast.success(`排序修复完成：扫描 ${result.totalRecords} 条，更新 ${result.repaired} 条，覆盖 ${result.categoryCount} 个分类。`, { id: loadingToastId });
       }
       // Pull the corrected data back into the UI.
       dataWorkerClient.refresh();
     } catch (e) {
+      toast.dismiss(loadingToastId);
       if (showFeishuScopePrompt(e)) return;
       showErrorToast('修复排序失败', e);
     } finally {
-      dismissToast(loadingToastId);
       setRepairing(false);
     }
   };
 
   const handleRepairOrdering = async () => {
     if (!token || repairing) return;
-    showToast({
-      tone: 'info',
-      title: '修复分类排序？',
+    setConfirmDialog({
+      title: '修复分类排序',
       message: '将检查并修复所有书签的分类排序，使 tab 顺序与分组顺序一致。',
-      duration: 8000,
-      action: {
-        label: '开始修复',
-        onClick: runRepairOrdering
-      }
+      confirmLabel: '开始修复',
+      onConfirm: runRepairOrdering
     });
   };
 
@@ -474,7 +430,7 @@ export default function App() {
         <Suspense fallback={<div className="flex min-h-screen items-center justify-center text-[var(--text-muted)]">加载登录…</div>}>
           <LoginPage onSubmit={handleLogin} loading={authLoading} error={authError} />
         </Suspense>
-        <ToastViewport toasts={toasts} onDismiss={dismissToast} />
+        <Toaster position="top-center" toastOptions={{ duration: 3200 }} />
       </>
     );
   }
@@ -601,7 +557,12 @@ export default function App() {
               onChange={setCategory}
               onReorder={updateCategoryOrder}
               onCreateCategory={createCategory}
-              onToast={showToast}
+              onToast={({ tone, title, message }) => {
+                const text = message ? `${title}：${message}` : title;
+                if (tone === 'error') toast.error(text);
+                else if (tone === 'success') toast.success(text);
+                else toast(text);
+              }}
             />
           </div>
         </header>
@@ -696,44 +657,47 @@ export default function App() {
                 你的个人工作流入口面板，支持分类整理、搜索、拖拽排序与快速维护。
               </p>
             </div>
-            <div className="flex flex-wrap items-center gap-2.5 text-xs md:justify-end md:text-sm">
-              {DATA_SOURCE_URL ? (
+            <div className="flex flex-col items-start gap-2 text-xs md:items-end md:text-sm">
+              <div className="flex flex-wrap items-center gap-2.5 md:justify-end">
+                {DATA_SOURCE_URL ? (
+                  <a
+                    href={DATA_SOURCE_URL}
+                    target="_blank"
+                    rel="noreferrer"
+                    className="inline-flex items-center gap-1.5 rounded-full bg-[var(--surface-subtle)] px-3 py-1.5 text-[var(--text-strong)] transition duration-200 hover:bg-[var(--surface-subtle-hover)] hover:text-[var(--text-main)]"
+                  >
+                    <Database className="h-3.5 w-3.5" aria-hidden="true" />
+                    <span>数据源</span>
+                  </a>
+                ) : null}
                 <a
-                  href={DATA_SOURCE_URL}
+                  href="https://github.com/simmzl/AIPanel"
                   target="_blank"
                   rel="noreferrer"
                   className="inline-flex items-center gap-1.5 rounded-full bg-[var(--surface-subtle)] px-3 py-1.5 text-[var(--text-strong)] transition duration-200 hover:bg-[var(--surface-subtle-hover)] hover:text-[var(--text-main)]"
                 >
-                  <Database className="h-3.5 w-3.5" aria-hidden="true" />
-                  <span>数据源</span>
+                  <GitBranch className="h-3.5 w-3.5" aria-hidden="true" />
+                  <span>GitHub</span>
                 </a>
-              ) : null}
-              <a
-                href="https://github.com/simmzl/AIPanel"
-                target="_blank"
-                rel="noreferrer"
-                className="inline-flex items-center gap-1.5 rounded-full bg-[var(--surface-subtle)] px-3 py-1.5 text-[var(--text-strong)] transition duration-200 hover:bg-[var(--surface-subtle-hover)] hover:text-[var(--text-main)]"
-              >
-                <GitBranch className="h-3.5 w-3.5" aria-hidden="true" />
-                <span>GitHub</span>
-              </a>
-              <button
-                type="button"
-                onClick={handleRepairOrdering}
-                disabled={repairing}
-                title="检查并修复书签的分类排序"
-                className="inline-flex items-center gap-1.5 rounded-full bg-[var(--surface-subtle)] px-3 py-1.5 text-[var(--text-strong)] transition duration-200 hover:bg-[var(--surface-subtle-hover)] hover:text-[var(--text-main)] disabled:cursor-wait disabled:opacity-60"
-              >
-                <Wrench className="h-3.5 w-3.5" aria-hidden="true" />
-                <span>{repairing ? '修复中…' : '修复排序'}</span>
-              </button>
+                <button
+                  type="button"
+                  onClick={handleRepairOrdering}
+                  disabled={repairing}
+                  title="检查并修复书签的分类排序"
+                  className="inline-flex items-center gap-1.5 rounded-full bg-[var(--surface-subtle)] px-3 py-1.5 text-[var(--text-strong)] transition duration-200 hover:bg-[var(--surface-subtle-hover)] hover:text-[var(--text-main)] disabled:cursor-wait disabled:opacity-60"
+                >
+                  <Wrench className="h-3.5 w-3.5" aria-hidden="true" />
+                  <span>{repairing ? '修复中…' : '修复排序'}</span>
+                </button>
+              </div>
               <span className="text-[var(--text-soft)]">Powered by AIPanel</span>
             </div>
           </div>
         </footer>
       </main>
 
-      <ToastViewport toasts={toasts} onDismiss={dismissToast} />
+      <Toaster position="top-center" toastOptions={{ duration: 3200 }} />
+      <ConfirmDialog dialog={confirmDialog} onClose={() => setConfirmDialog(null)} />
 
       {(refreshing || mutating) ? (
         <div className="fixed bottom-5 right-5 z-40 rounded-full bg-[var(--panel-elevated)] px-3 py-2 text-xs text-[var(--text-strong)] shadow-[var(--shadow-strong)] backdrop-blur-xl">
@@ -793,7 +757,7 @@ export default function App() {
                     onClick={async () => {
                       try {
                         await navigator.clipboard.writeText(feishuScopeAuthPrompt.authorizationUrl || '');
-                        showToast({ tone: 'success', title: '授权链接已复制' });
+                        successToast('授权链接已复制');
                       } catch (copyError) {
                         showErrorToast('复制失败，请手动复制链接', copyError);
                       }
@@ -834,7 +798,6 @@ export default function App() {
               setEditingBookmark(null);
             }}
             onSubmit={handleSaveBookmark}
-            onToast={showToast}
           />
         </Suspense>
       ) : null}

@@ -10,7 +10,6 @@ interface AddBookmarkProps {
   initialBookmark?: Bookmark | null;
   onClose: () => void;
   onSubmit: (payload: BookmarkPayload, id?: string) => Promise<void>;
-  onToast?: (toast: { tone: 'success' | 'error' | 'info'; title: string; message?: string }) => void;
 }
 
 const emptyForm = {
@@ -28,8 +27,7 @@ export function AddBookmark({
   categories,
   initialBookmark,
   onClose,
-  onSubmit,
-  onToast
+  onSubmit
 }: AddBookmarkProps) {
   const [form, setForm] = useState(emptyForm);
   const [loadingMeta, setLoadingMeta] = useState(false);
@@ -82,11 +80,9 @@ export function AddBookmark({
         subtitle: current.subtitle || meta.description,
         favicon: current.favicon || meta.favicon
       }));
-      onToast?.({ tone: 'success', title: '网站信息已抓取', message: meta.title || form.url });
     } catch (requestError) {
       const message = requestError instanceof Error ? requestError.message : '抓取网站信息失败';
       setError(message);
-      onToast?.({ tone: 'error', title: '抓取网站信息失败', message });
     } finally {
       setLoadingMeta(false);
     }
