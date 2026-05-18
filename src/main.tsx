@@ -2,6 +2,7 @@ import React from 'react';
 import ReactDOM from 'react-dom/client';
 import App from './App';
 import './index.css';
+import { registerServiceWorker } from './utils/serviceWorker';
 
 const rootEl = document.getElementById('root') as HTMLElement;
 
@@ -19,3 +20,7 @@ requestAnimationFrame(() => {
     skeleton.parentNode.removeChild(skeleton);
   }
 });
+
+// Register the service worker. Production only; deferred to idle so it
+// doesn't compete with first paint.
+registerServiceWorker();

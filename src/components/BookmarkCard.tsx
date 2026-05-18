@@ -343,6 +343,9 @@ export function BookmarkCard({
               <img
                 src={imgSrc}
                 alt=""
+                loading="lazy"
+                decoding="async"
+                referrerPolicy="no-referrer"
                 className="h-6 w-6 rounded-md object-cover md:h-6.5 md:w-6.5"
                 onError={handleImgError}
               />
