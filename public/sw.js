@@ -16,7 +16,7 @@
  * themselves, so day-to-day deploys do not require a bump.
  */
 
-const CACHE_VERSION = 'v1';
+const CACHE_VERSION = 'v2';
 const CACHE = {
   html: `aipanel-html-${CACHE_VERSION}`,
   static: `aipanel-static-${CACHE_VERSION}`,
@@ -176,14 +176,26 @@ async function cacheFirstWithTtl(cacheName, request, ttlMs) {
   if (cached) {
     const dateHeader = cached.headers.get('x-sw-cached-at');
     const cachedAt = dateHeader ? Number(dateHeader) : 0;
-    if (cachedAt && Date.now() - cachedAt < ttlMs) {
+    // Opaque responses have no readable headers, so x-sw-cached-at will be
+    // missing. In that case we trust the cache (cross-origin favicons rarely
+    // change) and return it.
+    if (!cachedAt || Date.now() - cachedAt < ttlMs) {
       return cached;
     }
   }
 
   try {
     const response = await fetch(request);
-    if (response && (response.ok || response.type === 'opaque')) {
+    if (!response) return response;
+
+    // Opaque responses (status=0) cannot be reconstructed with `new Response`
+    // because the Response constructor rejects status 0. Cache them as-is.
+    if (response.type === 'opaque') {
+      cache.put(request, response.clone()).catch(() => {});
+      return response;
+    }
+
+    if (response.ok) {
       // Stamp the response so we can enforce a TTL on next visit.
       const headers = new Headers(response.headers);
       headers.set('x-sw-cached-at', String(Date.now()));
