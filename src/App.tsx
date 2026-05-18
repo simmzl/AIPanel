@@ -211,6 +211,44 @@ export default function App() {
 
   const resolvedTheme: ResolvedTheme = themePreference === 'system' ? systemTheme : themePreference;
   const allTabs = useMemo(() => ['全部', ...categories], [categories]);
+  const hotToastOptions = useMemo(
+    () => ({
+      duration: 3200,
+      style: {
+        maxWidth: 'min(92vw, 420px)',
+        padding: '12px 14px',
+        borderRadius: '14px',
+        border: '0.5px solid var(--border-subtle)',
+        background: 'var(--panel-elevated)',
+        color: 'var(--text-main)',
+        boxShadow: resolvedTheme === 'dark' ? 'var(--shadow-strong)' : '0 18px 50px rgba(20, 38, 32, 0.10)',
+        backdropFilter: 'blur(18px)',
+        WebkitBackdropFilter: 'blur(18px)',
+        fontSize: '14px',
+        lineHeight: '20px'
+      },
+      success: {
+        iconTheme: {
+          primary: 'var(--accent-strong)',
+          secondary: resolvedTheme === 'dark' ? '#101211' : '#f6faf8'
+        }
+      },
+      error: {
+        duration: 5200,
+        iconTheme: {
+          primary: '#f43f5e',
+          secondary: resolvedTheme === 'dark' ? '#101211' : '#fff1f2'
+        }
+      },
+      loading: {
+        iconTheme: {
+          primary: 'var(--accent-strong)',
+          secondary: resolvedTheme === 'dark' ? '#101211' : '#f6faf8'
+        }
+      }
+    }),
+    [resolvedTheme]
+  );
 
   useEffect(() => {
     if (category !== '全部' && !categories.includes(category)) {
@@ -380,8 +418,6 @@ export default function App() {
   const handleThemeChange = (nextTheme: ThemePreference) => {
     setThemePreference(nextTheme);
     writeStorageItem(THEME_KEY, nextTheme);
-    const label = themeOptions.find((option) => option.value === nextTheme)?.label ?? '主题';
-    successToast(`已切换为${label}`);
   };
 
   const handleLogout = () => {
@@ -430,7 +466,7 @@ export default function App() {
         <Suspense fallback={<div className="flex min-h-screen items-center justify-center text-[var(--text-muted)]">加载登录…</div>}>
           <LoginPage onSubmit={handleLogin} loading={authLoading} error={authError} />
         </Suspense>
-        <Toaster position="top-center" toastOptions={{ duration: 3200 }} />
+        <Toaster position="top-center" toastOptions={hotToastOptions} />
       </>
     );
   }
@@ -696,7 +732,7 @@ export default function App() {
         </footer>
       </main>
 
-      <Toaster position="top-center" toastOptions={{ duration: 3200 }} />
+      <Toaster position="top-center" toastOptions={hotToastOptions} />
       <ConfirmDialog dialog={confirmDialog} onClose={() => setConfirmDialog(null)} />
 
       {(refreshing || mutating) ? (
