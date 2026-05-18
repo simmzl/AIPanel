@@ -1,4 +1,4 @@
-import { useEffect, useRef, useState, type KeyboardEvent } from 'react';
+import { useEffect, useMemo, useRef, useState, type KeyboardEvent } from 'react';
 import { Search, ChevronDown } from 'lucide-react';
 import { readMigratedStorageItem, writeStorageItem } from '../utils/localStorage';
 
@@ -31,6 +31,13 @@ function readStoredEngine(): SearchEngine {
   return ENGINES[0];
 }
 
+function isApplePlatform() {
+  if (typeof navigator === 'undefined') return false;
+  const nav = navigator as Navigator & { userAgentData?: { platform?: string } };
+  const platform = nav.userAgentData?.platform || navigator.platform || navigator.userAgent;
+  return /mac|iphone|ipad|ipod/i.test(platform);
+}
+
 interface SearchBarProps {
   value: string;
   onChange: (value: string) => void;
@@ -40,6 +47,23 @@ export function SearchBar({ value, onChange }: SearchBarProps) {
   const [engine, setEngine] = useState<SearchEngine>(() => readStoredEngine());
   const [pickerOpen, setPickerOpen] = useState(false);
   const containerRef = useRef<HTMLDivElement | null>(null);
+  const inputRef = useRef<HTMLInputElement | null>(null);
+  const shortcutLabel = useMemo(() => (isApplePlatform() ? '⌘+K' : 'Ctrl+K'), []);
+
+  useEffect(() => {
+    const handleShortcut = (event: globalThis.KeyboardEvent) => {
+      if (event.key.toLowerCase() !== 'k') return;
+      if (!event.metaKey && !event.ctrlKey) return;
+
+      event.preventDefault();
+      inputRef.current?.focus();
+      inputRef.current?.select();
+      setPickerOpen(false);
+    };
+
+    window.addEventListener('keydown', handleShortcut);
+    return () => window.removeEventListener('keydown', handleShortcut);
+  }, []);
 
   // Close the picker when clicking outside.
   useEffect(() => {
@@ -78,10 +102,11 @@ export function SearchBar({ value, onChange }: SearchBarProps) {
       <label className="relative block">
         <span className="sr-only">搜索书签或网络</span>
         <input
+          ref={inputRef}
           value={value}
           onChange={(event) => onChange(event.target.value)}
           onKeyDown={handleKeyDown}
-          placeholder={`搜索书签，回车用 ${engine.label} 搜索`}
+          placeholder={`搜索书签，回车用 ${engine.label} 搜索 · ${shortcutLabel}`}
           className="w-full rounded-[10px] bg-[var(--surface-input)] py-3.5 pl-11 pr-[7.5rem] text-sm text-[var(--text-main)] placeholder:text-[var(--text-soft)] outline-none transition duration-200 focus:bg-[var(--surface-input-focus)] focus:ring-2 focus:ring-[var(--accent-soft)]"
         />
         <Search
