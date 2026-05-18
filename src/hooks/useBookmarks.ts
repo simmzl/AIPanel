@@ -232,6 +232,11 @@ export function useBookmarks({ token, search, category, onAuthInvalid }: UseBook
     [runMutation]
   );
 
+  const updateBookmarkPin = useCallback(
+    (id: string, pinned: boolean) => runMutation(() => dataWorkerClient.mutate({ kind: 'pin', id, pinned })),
+    [runMutation]
+  );
+
   const updateCategoryOrder = useCallback(
     (nextCategories: string[]) =>
       runMutation(() => dataWorkerClient.mutate({ kind: 'category-order', categories: nextCategories })),
@@ -256,6 +261,7 @@ export function useBookmarks({ token, search, category, onAuthInvalid }: UseBook
     createBookmark,
     updateBookmark,
     deleteBookmark,
+    updateBookmarkPin,
     updateCategoryOrder,
     createCategory
   };

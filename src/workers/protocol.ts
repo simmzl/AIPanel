@@ -26,6 +26,7 @@ export type MutationKind =
   | { kind: 'create'; payload: BookmarkPayload }
   | { kind: 'update'; id: string; payload: BookmarkPayload }
   | { kind: 'delete'; id: string }
+  | { kind: 'pin'; id: string; pinned: boolean }
   | { kind: 'category-order'; categories: string[] }
   | { kind: 'category-create'; name: string };
 

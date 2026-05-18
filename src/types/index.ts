@@ -6,6 +6,7 @@ export interface Bookmark {
   favicon: string;
   category: string;
   order: number;
+  pinned: boolean;
   categoryOrder?: number;
 }
 
@@ -16,6 +17,7 @@ export interface BookmarkPayload {
   favicon: string;
   category: string;
   order?: number;
+  pinned?: boolean;
 }
 
 export interface MetaResponse {

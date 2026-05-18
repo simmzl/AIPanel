@@ -17,7 +17,8 @@ const DEFAULT_FIELDS = [
   { field_name: '图标', type: 'text' },
   { field_name: '分类', type: 'select', options: [{ name: '其他' }, { name: 'AI' }, { name: '古法' }] },
   { field_name: '排序', type: 'number' },
-  { field_name: '分类排序', type: 'number' }
+  { field_name: '分类排序', type: 'number' },
+  { field_name: '是否置顶', type: 'checkbox' }
 ];
 
 const DEFAULT_RECORDS = [
@@ -160,7 +161,8 @@ function seedDefaultRecords(baseToken, tableId) {
       图标: item.favicon,
       分类: item.category,
       排序: index + 1,
-      分类排序: item.category === 'AI' ? 1 : 2
+      分类排序: item.category === 'AI' ? 1 : 2,
+      是否置顶: false
     }
   }));
 

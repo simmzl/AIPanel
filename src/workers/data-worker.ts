@@ -150,6 +150,12 @@ async function applyMutation(mutation: MutationKind): Promise<BookmarksSnapshot>
         { method: 'DELETE' }
       );
       break;
+    case 'pin':
+      await apiFetch<{ bookmark: Bookmark }>(
+        `/api/bookmarks?id=${encodeURIComponent(mutation.id)}&mode=pin`,
+        { method: 'PATCH', body: JSON.stringify({ pinned: mutation.pinned }) }
+      );
+      break;
     case 'category-order':
       await apiFetch<{ success: true }>('/api/bookmarks', {
         method: 'PATCH',

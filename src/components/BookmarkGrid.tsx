@@ -5,7 +5,6 @@ interface BookmarkGridProps {
   bookmarks: Bookmark[];
   loading: boolean;
   error: string | null;
-  pinnedIds?: string[];
   onOpen: (bookmark: Bookmark) => void;
   onTogglePin: (bookmark: Bookmark) => void;
   onEdit: (bookmark: Bookmark) => void;
@@ -17,7 +16,6 @@ export function BookmarkGrid({
   bookmarks,
   loading,
   error,
-  pinnedIds = [],
   onOpen,
   onTogglePin,
   onEdit,
@@ -59,7 +57,7 @@ export function BookmarkGrid({
         <BookmarkCard
           key={bookmark.id}
           bookmark={bookmark}
-          pinned={pinnedIds.includes(bookmark.id)}
+          pinned={bookmark.pinned}
           onOpen={onOpen}
           onTogglePin={onTogglePin}
           onEdit={onEdit}

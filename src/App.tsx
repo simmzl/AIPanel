@@ -1,4 +1,4 @@
-import { lazy, Suspense, useEffect, useMemo, useState, type ReactNode } from 'react';
+import { lazy, Suspense, useEffect, useMemo, useRef, useState, type ReactNode } from 'react';
 import toast, { Toaster } from 'react-hot-toast';
 import { BookmarkPlus, Database, GitBranch, LogOut, Monitor, Moon, Sun, Wrench } from 'lucide-react';
 import { BookmarkGrid } from './components/BookmarkGrid';
@@ -30,7 +30,8 @@ function isJwtLikelyValid(token: string): boolean {
 }
 
 const TOKEN_KEY = 'token';
-const PINNED_KEY = 'pinned_ids';
+const LEGACY_PINNED_KEY = 'pinned_ids';
+const PINNED_MIGRATION_KEY = 'pinned_ids_migrated_to_db';
 const RECENT_KEY = 'recent_ids';
 const THEME_KEY = 'theme_preference';
 const RECENT_LIMIT = 12;
@@ -154,12 +155,12 @@ export default function App() {
   const [category, setCategory] = useState('全部');
   const [modalOpen, setModalOpen] = useState(false);
   const [editingBookmark, setEditingBookmark] = useState<Bookmark | null>(null);
-  const [pinnedIds, setPinnedIds] = useState<string[]>(() => readStringArray(PINNED_KEY));
   const [recentIds, setRecentIds] = useState<string[]>(() => readStringArray(RECENT_KEY));
   const [feishuScopeAuthPrompt, setFeishuScopeAuthPrompt] = useState<FeishuScopeAuthPrompt | null>(null);
   const [repairing, setRepairing] = useState(false);
   const [confirmDialog, setConfirmDialog] = useState<ConfirmDialogState | null>(null);
   const [lastSyncErrorMessage, setLastSyncErrorMessage] = useState<string | null>(null);
+  const pinnedMigrationStartedRef = useRef(false);
 
   // Background token verification. Doesn't block first paint.
   useEffect(() => {
@@ -183,7 +184,7 @@ export default function App() {
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
-  const { bookmarks, filteredBookmarks, categories, loading, refreshing, mutating, error, lastError, createBookmark, updateBookmark, deleteBookmark, updateCategoryOrder, createCategory } = useBookmarks({
+  const { bookmarks, filteredBookmarks, categories, loading, refreshing, mutating, error, lastError, createBookmark, updateBookmark, deleteBookmark, updateBookmarkPin, updateCategoryOrder, createCategory } = useBookmarks({
     token,
     search,
     category,
@@ -257,6 +258,45 @@ export default function App() {
   }, [categories, category]);
 
   useEffect(() => {
+    if (!token || loading || pinnedMigrationStartedRef.current) return;
+    if (readMigratedStorageItem(PINNED_MIGRATION_KEY) === '1') return;
+
+    const legacyPinnedIds = readStringArray(LEGACY_PINNED_KEY);
+    if (legacyPinnedIds.length === 0) {
+      writeStorageItem(PINNED_MIGRATION_KEY, '1');
+      return;
+    }
+    if (bookmarks.length === 0) return;
+
+    const bookmarkMap = new Map(bookmarks.map((bookmark) => [bookmark.id, bookmark]));
+    const idsToMigrate = legacyPinnedIds.filter((id) => {
+      const bookmark = bookmarkMap.get(id);
+      return bookmark && !bookmark.pinned;
+    });
+
+    if (idsToMigrate.length === 0) {
+      removeStorageItem(LEGACY_PINNED_KEY);
+      writeStorageItem(PINNED_MIGRATION_KEY, '1');
+      return;
+    }
+
+    pinnedMigrationStartedRef.current = true;
+    void (async () => {
+      try {
+        for (const id of idsToMigrate) {
+          await updateBookmarkPin(id, true);
+        }
+        removeStorageItem(LEGACY_PINNED_KEY);
+        writeStorageItem(PINNED_MIGRATION_KEY, '1');
+        successToast(`已迁移 ${idsToMigrate.length} 个置顶书签到数据库`);
+      } catch (migrationError) {
+        pinnedMigrationStartedRef.current = false;
+        showErrorToast('置顶数据迁移失败', migrationError);
+      }
+    })();
+  }, [bookmarks, loading, token, updateBookmarkPin]);
+
+  useEffect(() => {
     const handleScroll = () => {
       setShowBackToTop(window.scrollY > 480);
     };
@@ -281,25 +321,21 @@ export default function App() {
     document.documentElement.dataset.theme = resolvedTheme;
   }, [resolvedTheme]);
 
-  const pinnedBookmarks = useMemo(() => {
-    const map = new Map(bookmarks.map((item) => [item.id, item]));
-    return pinnedIds.map((id) => map.get(id)).filter((item): item is Bookmark => Boolean(item));
-  }, [bookmarks, pinnedIds]);
+  const pinnedBookmarks = useMemo(() => bookmarks.filter((item) => item.pinned), [bookmarks]);
 
   const recentBookmarks = useMemo(() => {
     const map = new Map(bookmarks.map((item) => [item.id, item]));
     return recentIds
-      .filter((id) => !pinnedIds.includes(id))
       .map((id) => map.get(id))
-      .filter((item): item is Bookmark => Boolean(item));
-  }, [bookmarks, recentIds, pinnedIds]);
+      .filter((item): item is Bookmark => Boolean(item && !item.pinned));
+  }, [bookmarks, recentIds]);
 
   const groupedBookmarks = useMemo(() => {
     const source = search.trim() || category !== '全部' ? filteredBookmarks : bookmarks;
     const groups = new Map<string, Bookmark[]>();
 
     for (const bookmark of source) {
-      if (pinnedIds.includes(bookmark.id)) continue;
+      if (bookmark.pinned) continue;
 
       const key = bookmark.category || '其他';
       const list = groups.get(key) ?? [];
@@ -311,7 +347,7 @@ export default function App() {
       name,
       items: sortByCategoryAndOrder(items)
     }));
-  }, [bookmarks, filteredBookmarks, search, category, pinnedIds, recentIds]);
+  }, [bookmarks, filteredBookmarks, search, category]);
 
   const isFlowMode = search.trim() === '' && category === '全部';
 
@@ -382,11 +418,8 @@ export default function App() {
       onConfirm: async () => {
         try {
           await deleteBookmark(bookmark.id);
-          const nextPinned = pinnedIds.filter((id) => id !== bookmark.id);
           const nextRecent = recentIds.filter((id) => id !== bookmark.id);
-          setPinnedIds(nextPinned);
           setRecentIds(nextRecent);
-          writeStringArray(PINNED_KEY, nextPinned);
           writeStringArray(RECENT_KEY, nextRecent);
           successToast(`书签已删除：${bookmark.title}`);
         } catch (deleteError) {
@@ -406,13 +439,15 @@ export default function App() {
     window.open(bookmark.url, '_blank', 'noopener,noreferrer');
   };
 
-  const handleTogglePin = (bookmark: Bookmark) => {
-    const nextPinned = pinnedIds.includes(bookmark.id)
-      ? pinnedIds.filter((id) => id !== bookmark.id)
-      : [bookmark.id, ...pinnedIds.filter((id) => id !== bookmark.id)];
-
-    setPinnedIds(nextPinned);
-    writeStringArray(PINNED_KEY, nextPinned);
+  const handleTogglePin = async (bookmark: Bookmark) => {
+    const nextPinned = !bookmark.pinned;
+    try {
+      await updateBookmarkPin(bookmark.id, nextPinned);
+      successToast(nextPinned ? `已置顶：${bookmark.title}` : `已取消置顶：${bookmark.title}`);
+    } catch (pinError) {
+      if (showFeishuScopePrompt(pinError)) return;
+      showErrorToast(nextPinned ? '置顶失败' : '取消置顶失败', pinError);
+    }
   };
 
   const handleThemeChange = (nextTheme: ThemePreference) => {
@@ -609,7 +644,6 @@ export default function App() {
               <SectionHeader title="置顶入口" subtitle="最常用的站点，始终排在前面。" />
               <BookmarkGrid
                 bookmarks={pinnedBookmarks}
-                pinnedIds={pinnedIds}
                 loading={loading}
                 error={error}
                 onOpen={handleOpenBookmark}
@@ -628,7 +662,6 @@ export default function App() {
               <SectionHeader title="最近访问" subtitle="你最近点开过的站点，方便回跳。" />
               <BookmarkGrid
                 bookmarks={recentBookmarks}
-                pinnedIds={pinnedIds}
                 loading={loading}
                 error={error}
                 onOpen={handleOpenBookmark}
@@ -648,7 +681,6 @@ export default function App() {
                 <SectionHeader title={group.name} subtitle={`${group.items.length} 个入口`} />
                 <BookmarkGrid
                   bookmarks={group.items}
-                  pinnedIds={pinnedIds}
                   loading={loading}
                   error={error}
                   onOpen={handleOpenBookmark}
@@ -669,7 +701,6 @@ export default function App() {
               />
               <BookmarkGrid
                 bookmarks={filteredBookmarks}
-                pinnedIds={pinnedIds}
                 loading={loading}
                 error={error}
                 onOpen={handleOpenBookmark}

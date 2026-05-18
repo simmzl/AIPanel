@@ -107,12 +107,14 @@ Then make sure:
 - `分类`
 - `排序`
 - `分类排序`
+- `是否置顶`
 
 ### Field-type expectations
 
 - `分类` → single select
 - `排序` → number
 - `分类排序` → number
+- `是否置顶` → checkbox
 
 ## 5. Category order or bookmark order looks wrong
 

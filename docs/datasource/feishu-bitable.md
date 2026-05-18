@@ -64,6 +64,7 @@ The current AIPanel API expects these field names exactly.
 | `分类` | single select | category name |
 | `排序` | number | order within one category |
 | `分类排序` | number | category order across the whole panel |
+| `是否置顶` | checkbox | whether the bookmark is pinned at the top |
 
 If the field names or field types do not match, the app may read or write incorrectly.
 
@@ -99,6 +100,10 @@ Sort order across categories.
 
 This is how AIPanel preserves the category sequence in the UI.
 
+### `是否置顶`
+
+Checkbox field. When checked, the bookmark appears in the pinned section at the top of the panel.
+
 ## 5. Placeholder-row behavior
 
 AIPanel currently supports category creation by writing a placeholder row.
@@ -111,6 +116,7 @@ Current placeholder values are:
 - `图标`: empty string
 - `排序`: `0`
 - `分类排序`: append position
+- `是否置顶`: unchecked / false
 
 Why this exists:
 

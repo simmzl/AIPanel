@@ -85,7 +85,8 @@ const payload = {
     链接: sourceUrl,
     图标: `${sourceUrl.replace(/\/$/, '')}/favicon.ico`,
     分类: '其他',
-    排序: 999999
+    排序: 999999,
+    是否置顶: false
   }
 };
 

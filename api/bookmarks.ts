@@ -30,6 +30,7 @@ interface FeishuRecord {
     分类?: string;
     排序?: number;
     分类排序?: number;
+    是否置顶?: boolean | number | string;
   };
 }
 
@@ -40,6 +41,7 @@ interface BookmarkBody {
   favicon?: string;
   category?: string;
   order?: number;
+  pinned?: boolean;
 }
 
 interface CategoryOrderBody {
@@ -48,6 +50,10 @@ interface CategoryOrderBody {
 
 interface CategoryCreateBody {
   name?: string;
+}
+
+interface PinBody {
+  pinned?: boolean;
 }
 
 const CATEGORY_PLACEHOLDER_TITLE = '—';
@@ -75,6 +81,16 @@ function resolveFavicon(icon: string | undefined, url: string | undefined): stri
   return '';
 }
 
+function parsePinnedField(value: unknown): boolean {
+  if (typeof value === 'boolean') return value;
+  if (typeof value === 'number') return value !== 0;
+  if (typeof value === 'string') {
+    const normalized = value.trim().toLowerCase();
+    return normalized === 'true' || normalized === '1' || normalized === 'yes' || normalized === '是';
+  }
+  return false;
+}
+
 function transformRecord(record: FeishuRecord) {
   const linkField = record.fields.链接;
   const url = typeof linkField === 'string' ? linkField : linkField?.link || '';
@@ -88,6 +104,7 @@ function transformRecord(record: FeishuRecord) {
     favicon: resolveFavicon(record.fields.图标, url),
     category: record.fields.分类 || '其他',
     order: Number(record.fields.排序 || 0),
+    pinned: parsePinnedField(record.fields.是否置顶),
     categoryOrder: Number(record.fields.分类排序 ?? (Number(record.fields.排序 || 0) || 0))
   };
 }
@@ -111,7 +128,8 @@ function parseBody(body: unknown) {
     subtitle: candidate.subtitle?.trim() || '',
     favicon: candidate.favicon?.trim() || `${normalized.origin}/favicon.ico`,
     category: candidate.category?.trim() || '其他',
-    order: Number(candidate.order || 0)
+    order: Number(candidate.order || 0),
+    pinned: typeof candidate.pinned === 'boolean' ? candidate.pinned : undefined
   };
 }
 
@@ -151,6 +169,19 @@ function parseCategoryCreateBody(body: unknown) {
   return name;
 }
 
+function parsePinBody(body: unknown) {
+  if (!body || typeof body !== 'object') {
+    throw new Error('请求体格式错误');
+  }
+
+  const candidate = body as PinBody;
+  if (typeof candidate.pinned !== 'boolean') {
+    throw new Error('是否置顶必须是布尔值');
+  }
+
+  return candidate.pinned;
+}
+
 async function fetchAllRecords(basePath: string) {
   let allItems: FeishuRecord[] = [];
   let pageToken: string | undefined;
@@ -178,6 +209,20 @@ async function fetchAllRecords(basePath: string) {
   return allItems;
 }
 
+async function ensurePinnedField(fieldsPath: string) {
+  const fieldList = await feishuRequest<FeishuFieldListResponse>(fieldsPath);
+  const exists = fieldList.data?.items?.some((item) => item.field_name === '是否置顶');
+  if (exists) return;
+
+  await feishuRequest(fieldsPath, {
+    method: 'POST',
+    body: JSON.stringify({
+      field_name: '是否置顶',
+      type: 7
+    })
+  });
+}
+
 export default async function handler(req: ApiRequest, res: ApiResponse) {
   try {
     requireAuth(req);
@@ -188,6 +233,7 @@ export default async function handler(req: ApiRequest, res: ApiResponse) {
 
   const { appToken, tableId } = getFeishuConfig();
   const basePath = `/open-apis/bitable/v1/apps/${appToken}/tables/${tableId}/records`;
+  const fieldsPath = `/open-apis/bitable/v1/apps/${appToken}/tables/${tableId}/fields`;
 
   try {
     if (req.method === 'GET') {
@@ -222,6 +268,7 @@ export default async function handler(req: ApiRequest, res: ApiResponse) {
 
     if (req.method === 'POST') {
       const payload = parseBody(req.body);
+      await ensurePinnedField(fieldsPath);
 
       // Inherit 分类排序 from the existing bookmarks in the same category so
       // a new bookmark doesn't get a NULL 分类排序 (which sorts to 0 in GET
@@ -251,7 +298,8 @@ export default async function handler(req: ApiRequest, res: ApiResponse) {
             图标: payload.favicon,
             分类: payload.category,
             排序: payload.order,
-            分类排序: categoryOrder
+            分类排序: categoryOrder,
+            是否置顶: payload.pinned ?? false
           }
         })
       });
@@ -268,6 +316,7 @@ export default async function handler(req: ApiRequest, res: ApiResponse) {
       }
 
       const payload = parseBody(req.body);
+      await ensurePinnedField(fieldsPath);
 
       // If the category changed, the existing 分类排序 belongs to the old
       // category. Inherit a sane value from the new category so the tab
@@ -302,6 +351,9 @@ export default async function handler(req: ApiRequest, res: ApiResponse) {
       if (nextCategoryOrder !== undefined) {
         fields.分类排序 = nextCategoryOrder;
       }
+      if (payload.pinned !== undefined) {
+        fields.是否置顶 = payload.pinned;
+      }
 
       const data = await feishuRequest<{ data?: { record?: FeishuRecord } }>(`${basePath}/${recordId}`, {
         method: 'PUT',
@@ -314,9 +366,25 @@ export default async function handler(req: ApiRequest, res: ApiResponse) {
     if (req.method === 'PATCH') {
       const mode = typeof req.query.mode === 'string' ? req.query.mode : undefined;
 
+      if (mode === 'pin') {
+        const recordId = req.query.id;
+        if (typeof recordId !== 'string' || !recordId) {
+          sendJsonError(res, 400, '缺少书签 ID');
+          return;
+        }
+
+        const pinned = parsePinBody(req.body);
+        await ensurePinnedField(fieldsPath);
+        const data = await feishuRequest<{ data?: { record?: FeishuRecord } }>(`${basePath}/${recordId}`, {
+          method: 'PUT',
+          body: JSON.stringify({ fields: { 是否置顶: pinned } })
+        });
+        res.status(200).json({ bookmark: transformRecord(data.data?.record as FeishuRecord) });
+        return;
+      }
+
       if (mode === 'category') {
         const name = parseCategoryCreateBody(req.body);
-        const fieldsPath = `/open-apis/bitable/v1/apps/${appToken}/tables/${tableId}/fields`;
         const fieldList = await feishuRequest<FeishuFieldListResponse>(fieldsPath);
         const categoryField = fieldList.data?.items?.find((item) => item.field_name === '分类');
 
@@ -352,6 +420,7 @@ export default async function handler(req: ApiRequest, res: ApiResponse) {
           })
         });
 
+        await ensurePinnedField(fieldsPath);
         const allItems = await fetchAllRecords(basePath);
         const maxCategoryOrder = allItems.reduce((max, item) => Math.max(max, Number(item.fields.分类排序 || 0)), 0);
 
@@ -365,7 +434,8 @@ export default async function handler(req: ApiRequest, res: ApiResponse) {
               图标: '',
               分类: name,
               排序: 0,
-              分类排序: maxCategoryOrder + 1
+              分类排序: maxCategoryOrder + 1,
+              是否置顶: false
             }
           })
         });
