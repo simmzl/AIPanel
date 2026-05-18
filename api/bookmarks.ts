@@ -222,6 +222,25 @@ export default async function handler(req: ApiRequest, res: ApiResponse) {
 
     if (req.method === 'POST') {
       const payload = parseBody(req.body);
+
+      // Inherit 分类排序 from the existing bookmarks in the same category so
+      // a new bookmark doesn't get a NULL 分类排序 (which sorts to 0 in GET
+      // and pushes the whole category to the top of the tab bar).
+      // Falls back to max(分类排序) + 1 for brand-new categories.
+      const allItems = await fetchAllRecords(basePath);
+      let categoryOrder = 0;
+      let maxCategoryOrder = 0;
+      for (const item of allItems) {
+        const itemCategoryOrder = Number(item.fields.分类排序 || 0);
+        if (itemCategoryOrder > maxCategoryOrder) maxCategoryOrder = itemCategoryOrder;
+        if (categoryOrder === 0 && item.fields.分类 === payload.category && itemCategoryOrder > 0) {
+          categoryOrder = itemCategoryOrder;
+        }
+      }
+      if (categoryOrder === 0) {
+        categoryOrder = maxCategoryOrder + 1;
+      }
+
       const data = await feishuRequest<{ data?: { record?: FeishuRecord } }>(basePath, {
         method: 'POST',
         body: JSON.stringify({
@@ -231,7 +250,8 @@ export default async function handler(req: ApiRequest, res: ApiResponse) {
             链接: payload.url,
             图标: payload.favicon,
             分类: payload.category,
-            排序: payload.order
+            排序: payload.order,
+            分类排序: categoryOrder
           }
         })
       });
@@ -248,18 +268,44 @@ export default async function handler(req: ApiRequest, res: ApiResponse) {
       }
 
       const payload = parseBody(req.body);
+
+      // If the category changed, the existing 分类排序 belongs to the old
+      // category. Inherit a sane value from the new category so the tab
+      // ordering doesn't shift unexpectedly.
+      const allItems = await fetchAllRecords(basePath);
+      const currentRecord = allItems.find((item) => item.record_id === recordId);
+      const categoryChanged =
+        currentRecord && currentRecord.fields.分类 !== payload.category;
+
+      let nextCategoryOrder: number | undefined;
+      if (categoryChanged) {
+        let categoryOrder = 0;
+        let maxCategoryOrder = 0;
+        for (const item of allItems) {
+          const itemCategoryOrder = Number(item.fields.分类排序 || 0);
+          if (itemCategoryOrder > maxCategoryOrder) maxCategoryOrder = itemCategoryOrder;
+          if (categoryOrder === 0 && item.fields.分类 === payload.category && itemCategoryOrder > 0) {
+            categoryOrder = itemCategoryOrder;
+          }
+        }
+        nextCategoryOrder = categoryOrder || maxCategoryOrder + 1;
+      }
+
+      const fields: Record<string, unknown> = {
+        标题: payload.title,
+        副标题: payload.subtitle,
+        链接: payload.url,
+        图标: payload.favicon,
+        分类: payload.category,
+        排序: payload.order
+      };
+      if (nextCategoryOrder !== undefined) {
+        fields.分类排序 = nextCategoryOrder;
+      }
+
       const data = await feishuRequest<{ data?: { record?: FeishuRecord } }>(`${basePath}/${recordId}`, {
         method: 'PUT',
-        body: JSON.stringify({
-          fields: {
-            标题: payload.title,
-            副标题: payload.subtitle,
-            链接: payload.url,
-            图标: payload.favicon,
-            分类: payload.category,
-            排序: payload.order
-          }
-        })
+        body: JSON.stringify({ fields })
       });
       res.status(200).json({ bookmark: transformRecord(data.data?.record as FeishuRecord) });
       return;
