@@ -94,5 +94,14 @@ export const api = {
       method: 'POST',
       body: JSON.stringify({ url })
     }, token);
+  },
+  repairBookmarks(token: string) {
+    return request<{
+      success: true;
+      totalRecords: number;
+      repaired: number;
+      categoryCount: number;
+      newCategoriesAssigned: number;
+    }>('/api/bookmarks/repair', { method: 'POST' }, token);
   }
 };

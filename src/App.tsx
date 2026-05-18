@@ -6,6 +6,7 @@ import { useBookmarks } from './hooks/useBookmarks';
 import { ApiError, api } from './services/api';
 import type { Bookmark, BookmarkPayload } from './types';
 import { readMigratedStorageItem, removeStorageItem, writeStorageItem } from './utils/localStorage';
+import { dataWorkerClient } from './workers/client';
 
 const LoginPage = lazy(() => import('./components/LoginPage').then((m) => ({ default: m.LoginPage })));
 const AddBookmark = lazy(() => import('./components/AddBookmark').then((m) => ({ default: m.AddBookmark })));
@@ -147,6 +148,7 @@ export default function App() {
   const [pinnedIds, setPinnedIds] = useState<string[]>(() => readStringArray(PINNED_KEY));
   const [recentIds, setRecentIds] = useState<string[]>(() => readStringArray(RECENT_KEY));
   const [feishuScopeAuthPrompt, setFeishuScopeAuthPrompt] = useState<FeishuScopeAuthPrompt | null>(null);
+  const [repairing, setRepairing] = useState(false);
 
   // Background token verification. Doesn't block first paint.
   useEffect(() => {
@@ -345,6 +347,33 @@ export default function App() {
     removeStorageItem(TOKEN_KEY);
     setToken(null);
     setAuthError(null);
+  };
+
+  const handleRepairOrdering = async () => {
+    if (!token || repairing) return;
+    const confirmed = window.confirm(
+      '将检查并修复所有书签的分类排序，使 tab 顺序与分组顺序一致。继续？'
+    );
+    if (!confirmed) return;
+
+    setRepairing(true);
+    try {
+      const result = await api.repairBookmarks(token);
+      if (result.repaired === 0) {
+        window.alert(`检查完成：${result.totalRecords} 条书签的分类排序都正确，无需修复。`);
+      } else {
+        window.alert(
+          `修复完成：共扫描 ${result.totalRecords} 条书签，更新了 ${result.repaired} 条，覆盖 ${result.categoryCount} 个分类。`
+        );
+      }
+      // Pull the corrected data back into the UI.
+      dataWorkerClient.refresh();
+    } catch (e) {
+      if (showFeishuScopePrompt(e)) return;
+      window.alert(e instanceof Error ? e.message : '修复失败');
+    } finally {
+      setRepairing(false);
+    }
   };
 
   if (!token) {
@@ -586,6 +615,15 @@ export default function App() {
                 </svg>
                 <span>GitHub</span>
               </a>
+              <button
+                type="button"
+                onClick={handleRepairOrdering}
+                disabled={repairing}
+                title="检查并修复书签的分类排序"
+                className="inline-flex items-center rounded-full bg-[var(--surface-subtle)] px-3 py-1.5 text-[var(--text-strong)] transition duration-200 hover:bg-[var(--surface-subtle-hover)] hover:text-[var(--text-main)] disabled:cursor-wait disabled:opacity-60"
+              >
+                {repairing ? '修复中…' : '修复排序'}
+              </button>
               <span className="text-[var(--text-soft)]">Powered by AIPanel</span>
             </div>
           </div>
