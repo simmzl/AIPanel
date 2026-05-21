@@ -256,10 +256,10 @@ self.addEventListener('fetch', (event) => {
     return;
   }
 
-  // Public statics (favicon.svg, logo)
+  // Public statics (app icons, manifest, logo)
   if (
     isSameOrigin(request.url) &&
-    /^\/(favicon\.svg|aipanel-logo\.svg)$/.test(url.pathname)
+    /^(\/site\.webmanifest|\/apple-touch-icon\.png|\/favicon(?:\.svg|-16\.png|-32\.png)|\/aipanel-logo\.svg|\/icons\/icon-(?:192|512|1024)\.png)$/.test(url.pathname)
   ) {
     event.respondWith(cacheFirst(CACHE.static, request));
     return;

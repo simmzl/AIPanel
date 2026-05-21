@@ -8,6 +8,7 @@
   color-scheme: dark;
   font-family: 'DM Sans', 'Segoe UI', sans-serif;
   background: #0f1111;
+  --safe-area-top-bg: #101211;
   --text-main: #f3f3ee;
   --text-muted: #b4b8b1;
   --text-soft: #8f9890;
@@ -46,6 +47,7 @@
 :root[data-theme='light'] {
   color-scheme: light;
   background: #f5f7f5;
+  --safe-area-top-bg: #f6faf8;
   --text-main: #17211f;
   --text-muted: #50605b;
   --text-soft: #6f807a;
@@ -94,6 +96,7 @@ body,
 html {
   scroll-behavior: smooth;
   -webkit-text-size-adjust: 100%;
+  background: var(--safe-area-top-bg);
 }
 
 body {
@@ -101,6 +104,7 @@ body {
   min-height: 100vh;
   color: var(--text-main);
   background: var(--app-bg);
+  padding-top: env(safe-area-inset-top);
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
   transition: background-color 180ms ease, color 180ms ease, background-image 180ms ease;

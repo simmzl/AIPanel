@@ -7,7 +7,18 @@
       name="description"
       content="AIPanel - agent-first navigation panel powered by React, Vite, and Feishu Bitable."
     />
+    <meta name="theme-color" content="#101211" />
+    <meta name="theme-color" content="#f6faf8" media="(prefers-color-scheme: light)" />
+    <meta name="theme-color" content="#101211" media="(prefers-color-scheme: dark)" />
+    <meta name="mobile-web-app-capable" content="yes" />
+    <meta name="apple-mobile-web-app-capable" content="yes" />
+    <meta name="apple-mobile-web-app-title" content="AIPanel" />
+    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
+    <link rel="manifest" href="/site.webmanifest" />
     <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
+    <link rel="icon" type="image/png" sizes="32x32" href="/favicon-32.png" />
+    <link rel="icon" type="image/png" sizes="16x16" href="/favicon-16.png" />
+    <link rel="apple-touch-icon" sizes="180x180" href="/apple-touch-icon.png" />
 
     <!-- Speed up first paint: preconnect to fonts and the Feishu API host the app will hit -->
     <link rel="preconnect" href="https://fonts.googleapis.com" />
@@ -27,6 +38,7 @@
       :root {
         color-scheme: dark light;
         --aip-bg: #0f1111;
+        --aip-top-bg: #101211;
         --aip-text: #f3f3ee;
         --aip-text-soft: #8f9890;
         --aip-card: rgba(255, 255, 255, 0.045);
@@ -37,6 +49,7 @@
       @media (prefers-color-scheme: light) {
         :root {
           --aip-bg: #f5f7f5;
+          --aip-top-bg: #f6faf8;
           --aip-text: #17211f;
           --aip-text-soft: #6f807a;
           --aip-card: rgba(255, 255, 255, 0.72);
@@ -45,9 +58,14 @@
           --aip-accent: rgba(63, 157, 146, 0.14);
         }
       }
-      html, body {
+      html {
         margin: 0;
         padding: 0;
+        background: var(--aip-top-bg);
+      }
+      body {
+        margin: 0;
+        padding: env(safe-area-inset-top) 0 0;
         background: var(--aip-bg);
         color: var(--aip-text);
         font-family: 'DM Sans', 'Segoe UI', -apple-system, BlinkMacSystemFont, sans-serif;

@@ -319,6 +319,32 @@ export default function App() {
 
   useEffect(() => {
     document.documentElement.dataset.theme = resolvedTheme;
+
+    const themeColor = resolvedTheme === 'light' ? '#f6faf8' : '#101211';
+    const manifestThemeColor = resolvedTheme === 'light' ? '#f5f7f5' : '#0f1111';
+    document
+      .querySelectorAll<HTMLMetaElement>("meta[name='theme-color']")
+      .forEach((meta) => meta.setAttribute('content', themeColor));
+
+    const manifestLink = document.querySelector<HTMLLinkElement>("link[rel='manifest']");
+    const manifest = {
+      name: 'AIPanel',
+      short_name: 'AIPanel',
+      description: 'Agent-first navigation panel powered by React, Vite, and Feishu Bitable.',
+      start_url: '/',
+      scope: '/',
+      display: 'standalone',
+      background_color: manifestThemeColor,
+      theme_color: themeColor,
+      icons: [
+        { src: '/icons/icon-192.png', sizes: '192x192', type: 'image/png', purpose: 'any maskable' },
+        { src: '/icons/icon-512.png', sizes: '512x512', type: 'image/png', purpose: 'any maskable' }
+      ]
+    };
+    const manifestUrl = URL.createObjectURL(new Blob([JSON.stringify(manifest)], { type: 'application/manifest+json' }));
+    manifestLink?.setAttribute('href', manifestUrl);
+
+    return () => URL.revokeObjectURL(manifestUrl);
   }, [resolvedTheme]);
 
   const pinnedBookmarks = useMemo(() => bookmarks.filter((item) => item.pinned), [bookmarks]);
