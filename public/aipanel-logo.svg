@@ -28,10 +28,10 @@
   <rect width="1024" height="1024" rx="240" fill="url(#glow1)"/>
 
   <g filter="url(#shadow)">
-    <rect x="266" y="202" width="492" height="148" rx="46" fill="url(#cardAccent)"/>
-    <rect x="266" y="438" width="492" height="148" rx="46" fill="#315C57"/>
-    <rect x="266.75" y="438.75" width="490.5" height="146.5" rx="45.25" stroke="white" stroke-opacity="0.045" stroke-width="1.5"/>
-    <rect x="266" y="674" width="492" height="148" rx="46" fill="#1E3330"/>
-    <rect x="266.75" y="674.75" width="490.5" height="146.5" rx="45.25" stroke="white" stroke-opacity="0.04" stroke-width="1.5"/>
+    <rect x="148" y="158" width="728" height="178" rx="54" fill="url(#cardAccent)"/>
+    <rect x="148" y="423" width="728" height="178" rx="54" fill="#315C57"/>
+    <rect x="148.75" y="423.75" width="726.5" height="176.5" rx="53.25" stroke="white" stroke-opacity="0.045" stroke-width="1.5"/>
+    <rect x="148" y="688" width="728" height="178" rx="54" fill="#1E3330"/>
+    <rect x="148.75" y="688.75" width="726.5" height="176.5" rx="53.25" stroke="white" stroke-opacity="0.04" stroke-width="1.5"/>
   </g>
 </svg>
