@@ -361,8 +361,6 @@ export default function App() {
     const groups = new Map<string, Bookmark[]>();
 
     for (const bookmark of source) {
-      if (bookmark.pinned) continue;
-
       const key = bookmark.category || '其他';
       const list = groups.get(key) ?? [];
       list.push(bookmark);

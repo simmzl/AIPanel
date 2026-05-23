@@ -339,7 +339,7 @@ export function BookmarkCard({
 
       <div className={`transition duration-200 ${showActions ? 'scale-[0.985] opacity-30 blur-[1px]' : 'opacity-100'}`}>
         <div className="flex items-start gap-3 pr-0 md:gap-3.5 md:pr-0">
-          <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-[10px] bg-[rgba(255,255,255,0.92)] md:h-10 md:w-10 md:rounded-[11px]">
+          <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-[12px] bg-[rgba(255,255,255,0.92)] md:h-10 md:w-10 md:rounded-[14px]">
             {imgSrc && !imgFailed ? (
               <img
                 src={imgSrc}
