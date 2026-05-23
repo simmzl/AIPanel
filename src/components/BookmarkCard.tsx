@@ -347,11 +347,11 @@ export function BookmarkCard({
                 loading="lazy"
                 decoding="async"
                 referrerPolicy="no-referrer"
-                className="h-6 w-6 rounded-md object-cover md:h-6.5 md:w-6.5"
+                className="h-6 w-6 rounded-[8px] object-cover md:h-6.5 md:w-6.5"
                 onError={handleImgError}
               />
             ) : (
-              <div className={`flex h-6 w-6 items-center justify-center rounded-md text-[12px] font-semibold md:h-6.5 md:w-6.5 md:text-sm ${fallbackTone}`}>
+              <div className={`flex h-6 w-6 items-center justify-center rounded-[8px] text-[12px] font-semibold md:h-6.5 md:w-6.5 md:text-sm ${fallbackTone}`}>
                 {fallbackLabel}
               </div>
             )}
