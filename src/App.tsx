@@ -5,6 +5,7 @@ import { BookmarkGrid } from './components/BookmarkGrid';
 import { CategoryTabs } from './components/CategoryTabs';
 import { SearchBar } from './components/SearchBar';
 import { ConfirmDialog, type ConfirmDialogState } from './components/ConfirmDialog';
+import { VisitorInfoCard } from './components/VisitorInfo';
 import { useBookmarks } from './hooks/useBookmarks';
 import { ApiError, api } from './services/api';
 import type { Bookmark, BookmarkPayload } from './types';
@@ -549,6 +550,7 @@ export default function App() {
                   >
                     AIPanel
                   </h1>
+                  <VisitorInfoCard />
                   {/* <p className="mt-2 max-w-3xl text-[13px] leading-5 text-[#b4b8b1] sm:mt-4 sm:text-sm sm:leading-6 lg:text-[15px]">
                     先打开你最常用的入口，再从分组流里往下浏览。
                   </p> */}
