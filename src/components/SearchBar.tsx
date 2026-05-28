@@ -1,5 +1,5 @@
 import { useEffect, useMemo, useRef, useState, type KeyboardEvent } from 'react';
-import { Search, ChevronDown } from 'lucide-react';
+import { Search, ChevronDown, X } from 'lucide-react';
 import { readMigratedStorageItem, writeStorageItem } from '../utils/localStorage';
 
 interface SearchEngine {
@@ -113,6 +113,16 @@ export function SearchBar({ value, onChange }: SearchBarProps) {
           aria-hidden="true"
           className="pointer-events-none absolute left-4 top-1/2 h-4 w-4 -translate-y-1/2 text-[var(--text-soft)]"
         />
+        {value ? (
+          <button
+            type="button"
+            onClick={() => onChange('')}
+            className="absolute right-[7.5rem] top-1/2 -translate-y-1/2 p-1 text-[var(--text-soft)] transition duration-150 hover:text-[var(--text-main)]"
+            aria-label="清空搜索"
+          >
+            <X className="h-4 w-4" />
+          </button>
+        ) : null}
         <button
           type="button"
           onClick={() => setPickerOpen((open) => !open)}
