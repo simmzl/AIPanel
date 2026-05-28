@@ -117,7 +117,7 @@ export function SearchBar({ value, onChange }: SearchBarProps) {
           <button
             type="button"
             onClick={() => onChange('')}
-            className="absolute right-[7.5rem] top-1/2 -translate-y-1/2 p-1 text-[var(--text-soft)] transition duration-150 hover:text-[var(--text-main)]"
+            className="absolute right-[5.2rem] top-1/2 -translate-y-1/2 p-1 text-[var(--text-soft)] transition duration-150 hover:text-[var(--text-main)]"
             aria-label="清空搜索"
           >
             <X className="h-4 w-4" />
