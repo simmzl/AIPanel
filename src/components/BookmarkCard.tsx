@@ -339,7 +339,7 @@ export function BookmarkCard({
 
       <div className={`transition duration-200 ${showActions ? 'scale-[0.985] opacity-30 blur-[1px]' : 'opacity-100'}`}>
         <div className="flex items-start gap-3 pr-0 md:gap-3.5 md:pr-0">
-          <div className={`flex h-10 w-10 shrink-0 items-center justify-center rounded-[12px] md:h-10 md:w-10 md:rounded-[14px] ${imgSrc && !imgFailed ? '' : 'bg-[rgba(255,255,255,0.92)]'}`}>
+          <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-[8px] md:h-10 md:w-10 md:rounded-[10px]">
             {imgSrc && !imgFailed ? (
               <img
                 src={imgSrc}
@@ -347,11 +347,11 @@ export function BookmarkCard({
                 loading="lazy"
                 decoding="async"
                 referrerPolicy="no-referrer"
-                className="h-full w-full rounded-[12px] object-cover md:rounded-[14px]"
+                className="h-full w-full rounded-[8px] object-cover md:rounded-[10px]"
                 onError={handleImgError}
               />
             ) : (
-              <div className={`flex h-6 w-6 items-center justify-center rounded-[8px] text-[14px] font-semibold md:h-6.5 md:w-6.5 md:text-[15px] ${fallbackTone}`}>
+              <div className={`flex h-full w-full items-center justify-center rounded-[8px] text-[14px] font-semibold md:rounded-[10px] md:text-[15px] ${fallbackTone}`}>
                 {fallbackLabel}
               </div>
             )}
