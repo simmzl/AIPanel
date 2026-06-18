@@ -35,6 +35,13 @@
 - 把 网络工具 里重复的测速站删掉
 - 删除标题叫 Temp Test 的书签
 
+## Pin / unpin bookmarks
+
+- 把 ChatGPT 置顶
+- 取消 Claude 的置顶
+- 把 效率工具 里的 ChatGPT 和 Claude 都置顶
+- 把 Vercel 取消置顶
+
 ## Category operations
 
 - 新增一个分类叫 AI 工作流

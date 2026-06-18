@@ -35,11 +35,13 @@ Main fields in the AIPanel table:
 - `分类` single select
 - `排序` number
 - `分类排序` number
+- `是否置顶` boolean (checkbox)
 
 Interpretation:
 
 - `排序`: order inside the same category
 - `分类排序`: category order across the whole panel
+- `是否置顶`: whether the bookmark is pinned to the top of its category
 
 ## Core tasks
 
@@ -49,7 +51,7 @@ Use `feishu_bitable_app_table_record.list` with:
 
 - `app_token="YOUR_FEISHU_BITABLE_APP_TOKEN"`
 - `table_id="YOUR_FEISHU_BITABLE_TABLE_ID"`
-- `field_names=["标题","副标题","链接","图标","分类","排序","分类排序"]`
+- `field_names=["标题","副标题","链接","图标","分类","排序","分类排序","是否置顶"]`
 
 When summarizing data for the user:
 
@@ -73,6 +75,7 @@ Usually also set:
 - `图标`
 - `排序`
 - `分类排序` if needed for consistency
+- `是否置顶` — default `false`, set to `true` if the user wants it pinned
 
 If the user gives only a category and no explicit in-category order, append to the end of that category by reading current records and setting `排序 = current max + 1`.
 
@@ -106,6 +109,16 @@ When the user asks to reorder items inside one category:
 3. Batch update `排序` for those records only
 4. Leave `分类排序` unchanged
 
+### Pin or unpin a bookmark
+
+When the user asks to pin or unpin a bookmark:
+
+1. Find the target record with `list` and title/URL match
+2. Use `update` with the matching `record_id`, setting `是否置顶` to `true` (pin) or `false` (unpin)
+3. Preserve all other fields
+
+Pinned bookmarks appear at the top of their category in the panel UI.
+
 ### Create a new category
 
 When creating a category for AIPanel, do both actions:
@@ -122,6 +135,7 @@ Placeholder row values:
 - `分类`: new category name
 - `排序`: `0`
 - `分类排序`: append at the end unless the user specified another position
+- `是否置顶`: `false`
 
 If the category already exists, do not create a duplicate option.
 

@@ -12,6 +12,7 @@ You can talk to the skill in plain language to:
 - add bookmarks
 - edit existing bookmarks
 - delete bookmarks
+- pin or unpin bookmarks
 - create categories
 - reorder categories
 - reorder bookmarks inside one category
@@ -87,11 +88,18 @@ Prefer:
 
 ### Delete a bookmark
 
-- “删除 网络工具 里的旧测速站”
-- “删掉标题是 — 的那条占位记录”
-- “把 交易 分类里那个重复的 OKX 删除”
+- "删除 网络工具 里的旧测速站"
+- "删掉标题是 — 的那条占位记录"
+- "把 交易 分类里那个重复的 OKX 删除"
 
 If there may be multiple matches, the skill should ask a clarifying question before deleting.
+
+### Pin or unpin a bookmark
+
+- "把 ChatGPT 置顶"
+- "取消 Claude 的置顶"
+- "把 Vercel 设为置顶"
+- "把 网络工具 里的 Ping0 取消置顶"
 
 ## Category prompts
 

@@ -21,6 +21,7 @@ After installation, you can ask the agent to:
 - add bookmarks
 - edit bookmarks
 - delete bookmarks
+- pin or unpin bookmarks
 - create categories
 - reorder categories
 - reorder bookmarks inside categories
