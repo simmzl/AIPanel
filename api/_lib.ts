@@ -145,7 +145,7 @@ export function createJwt() {
   const secret = getEnv('JWT_SECRET');
 
   return jwt.sign({ scope: 'aipanel' }, secret, {
-    expiresIn: '7d'
+    expiresIn: '30d'
   });
 }
 
